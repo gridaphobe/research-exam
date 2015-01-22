@@ -1,7 +1,7 @@
 #+TITLE: Research Exam
 #+AUTHOR:
 #+DATE:
-#+OPTIONS: toc:nil texht:t
+#+OPTIONS: toc:nil texht:t ':t H:4
 #+LATEX_CLASS: sigplanconf
 #+LATEX_CLASS_OPTIONS: [blockstyle,preprint,nocopyrightspace]
 #+LATEX_HEADER: \authorinfo{Eric Seidel}
@@ -34,7 +34,7 @@ answer:
 In general, the answer for (2) involves checking that the execution
 satisfies some property, e.g. crash-freedom. As such, we will primarily
 categorize systems by their answer to (1).
-* A Running Example
+* A Running Example?
 #+BEGIN_SRC haskell
 data Tree a 
   = Leaf
@@ -66,10 +66,18 @@ gain a large degree of confidence in our program.
 *** QuickCheck
 *** JCrasher
 * Enumerating Code Paths
-- Enumerating code paths can be thought of as enumeration of inputs with
-  a filter that discards inputs that would trigger a previously explored
-  path.
-** DART
+The drawback to explicit enumeration of input vectors is that many
+inputs will trigger similar behavior in the program under test. Indeed
+unit testing texts often advise programmers to first partition program
+inputs into /equivalence classes/, and then test a single input vector
+from each equivalence class, thereby minimizing the number of
+handwritten tests required (*CITE*). So instead of enumerating inputs,
+perhaps we should enumerate program behaviors, i.e. paths through the
+program. 
+
+** Overview of Symbolic Execution?
+** Concolic Testing
+*** DART
 Godefroid et al. introduced the notion of /concolic testing/, which
 combines symbolic and concrete execution, with DART
 \cite{godefroid_dart:_2005}. DART instruments a C program to execute
@@ -78,7 +86,7 @@ depth-first search of all paths through the program, starting
 with a random input vector. At each branch point, DART records the branch
 condition and the direction taken, thereby building a /path
 constraint/. For example, suppose DART is testing the following C program
-with initial inputs ={x = 5, y = 6}=.
+with initial inputs $\{x \mapsto 5, y \mapsto 6\}$.
 
 #+BEGIN_SRC c
 int f (int x, int y) {
@@ -91,17 +99,16 @@ int f (int x, int y) {
 }
 #+END_SRC
 
-This execution will satisfy =x = 5= but not =2*y = x=, thus the path
-constraint will be =<x = 5, 2*y != x>=. Next, DART will negate the last
-(right-most) predicate in the path constraint and query a constraint
-solver for a solution to =x = 5 && 2*y = x=, in order to produce a new
-input vector.
-There is only one solution to this constraint, ={x = 5, y = 10}=, which
-will force execution through the /true/ branch of both
-conditionals, right into the erroneous =abort()= call. Since the
-concrete execution reached the =abort()= call, we know it is a real bug
-as opposed to a false positive that could come from a purely symbolic
-approach, i.e. DART /soundly/ reports bugs.
+This execution will satisfy $x = 5$ but not $2y = x$, thus the path
+constraint will be $\langle x = 5,\ 2y \neq x \rangle$. Next, DART will
+negate the last (right-most) predicate in the path constraint and query
+a constraint solver for a solution to $x = 5 \land 2y = x$, in order to
+produce a new input vector.  There is only one solution to this
+constraint, $\{x \mapsto 5, y \mapsto 10\}$, which will force execution
+through the /true/ branch of both conditionals, right into the erroneous
+=abort()= call. Since the concrete execution reached the =abort()= call,
+we know it is a real bug as opposed to a false positive that could come
+from a purely symbolic approach, i.e. DART /soundly/ reports bugs.
 
 When confronted with an expression that it cannot reason about
 symbolically, e.g. multiplication of two variables or a dereference of a
@@ -117,18 +124,138 @@ int f (int x, int y) {
 }
 #+END_SRC
 
-and starting inputs ={x = 5, y = 2}=, DART will produce a path
-constraint =<x != 4>= for the first execution. Refuting this path
-constraint will /not/ produce an input vector that is guaranteed to take
-the /true/ branch -- indeed the solver may return the original input
-vector -- thus DART suffers a severe loss of precision when the program
-veers outside the language of the constraint solver. In effect, this
-means DART degenerates to brute-force enumeration of inputs, as in Sec
-[[Enumerating Inputs]].
+and starting inputs $\{x \mapsto 5, y \mapsto 2\}$, DART will produce a
+path constraint $\langle x \neq 4 \rangle$ for the first
+execution. Refuting this path constraint will /not/ produce an input
+vector that is guaranteed to take the /true/ branch -- indeed the solver
+may return the original input vector -- thus DART suffers a severe loss
+of precision when the program veers outside the language of the
+constraint solver. In effect, this means DART degenerates to brute-force
+enumeration of inputs, as in Sec [[Enumerating Inputs]].
 
-** CUTE
-** PEX
-** KLEE
+Furthermore, DART's depth-first enumeration of paths means that it may
+fail to discover all paths when presented with recursive programs,
+e.g. a program that checks the ordering invariant of a binary-search
+tree. In this case DART will loop forever, generating increasingly deep
+trees whose right sub-trees are always =NULL= (assuming the program
+checks the left sub-tree first).
+
+*** CUTE
+Sen et al. introduced CUTE \cite{sen_cute:_2005}, an extension of DART
+that adds support for testing complex datatypes. CUTE enhances DART's
+technique by adding support for (dis)equality constraints on pointers,
+and by switching to a /bounded/ depth-first search.
+
+**** Pointer (dis)equality
+Whereas DART maintained a single map of memory locations to symbolic
+expressions, CUTE maintains two maps of memory locations: (1) $\mathcal{A}$ to
+arithmetic expressions and (2) $\mathcal{P}$ to pointer expressions. $\mathcal{A}$
+contains the usual linear arithmetic expressions as in DART; however,
+$\mathcal{P}$ contains expressions of the form $x_p \cong y_p$ where
+$x_p$ is either a symbolic variable or the constant symbol =NULL= and 
+$\cong\ \in \{=, \neq\}$. When solving a pointer constraint, CUTE partitions the
+variables in $\mathcal{P}$ into equivalence classes and applying the arithmetic
+constraints to all members of the equivalence class. For example, given
+
+#+BEGIN_SRC c
+int f (int *x, int *y) {
+  if (x == y) {
+    if (*x == 5) {
+      return 0;
+    }
+  }
+  return 0;
+}
+#+END_SRC
+
+and the path constraint $\langle x = y,\ *x \neq 5 \rangle$, when CUTE refutes
+the $*x \neq 5$ conjunct, the value of $*y$ will /also/ be forced to $5$ as $x$
+and $y$ are in the same equivalence class.
+
+**** Bounded Depth-First Search
+In order to avoid an infinite loop from the repeated inlining of a loop body or
+recursive call, CUTE places a configurable bound $k$ on the number of predicates
+in the path constraint. Once the path constraint is full, CUTE stops recording
+any further nested branch conditions, thereby forcing the refutation process to
+negate an earlier constraint. For example, given
+
+#+BEGIN_SRC c
+int f (int n) {
+  for (int i = 0; i < n; i++ ) {
+    ...
+  }
+  return 0;
+}
+#+END_SRC
+
+and $k = 4$, CUTE will never force more than four iterations of the
+loop body, as the path constraint will be cut off at
+$\langle i_0 < n,\ i_1 < n,\ i_2 < n,\ i_3 < n \rangle$. Negating the last conjunct
+will force $n \leq 3$, and CUTE will begin to backtrack through the path
+constraint until it terminates. While this tactic forces broad rather than deep
+coverage, it also means that CUTE may miss bugs deep in the execution graph of
+the program, e.g. if the loop body above were ~if (i == 5) abort();~.
+
+Another tactic CUTE employs to quickly achieve high coverage is branch
+prediction. Since CUTE only refutes the final conjunct of the path constraint,
+the outcomes of the previous branches should remain the same. Deviation from the
+previous path at an earlier branch indicates an imprecision in the symbolic
+executor; in this case CUTE will decide to restart execution with random inputs
+instead of allowing the loss of precision.
+
+**** Notes :noexport:
+Two main improvements over DART:
+1. handles (dis)equality constraints on pointers, whereas DART pointers
+   were either =NULL= or non-=NULL=.
+2. Bounded Depth-first Search: restricts length of path constraint.
+   remembers evaluation of conditionals from
+   previous execution. if any conditional evaluates differently from
+   last execution (prediction), throw exception to restart with
+   randomized inputs. intuition is that failed prediction implies some
+   imprecision in constraints
+
+*** PEX
+Tillman and Halleaux further extend concolic testing with Pex
+\cite{tillmann_pexwhite_2008}, adding heuristics to improve path-selection,
+modeling of interactions with the environment, and a richer constraint
+language.
+
+**** Richer constraints
+Whereas previous systems had limited constraint languages -- linear arithmetic
+for DART, with the addition of pointer equality for CUTE -- Pex takes advantage
+of the rich constraint language offered by Z3 \cite{de_moura_z3:_2008}. Pex
+supports linear arithmetic, bit-vectors, arrays directly via Z3. Pex further
+supports floating-point numbers with an approximation to rational numbers.
+
+**** Improving path-selection
+Instead of performing a depth-first search of all program paths, Pex maintains a
+tree of all branch conditions it has encountered. After exploring a path, Pex
+will choose a new unexplored path from the unexplored leaves of the execution
+tree, using several heuristics to partition branches into equivalence classes
+and then choosing a new branch from the least-often chosen class. Thus, Pex
+favors a more breadth-oriented search than DART or CUTE, while avoiding
+randomness in its path-selection.
+
+**** Dealing with the environment
+Pex builds a model of the environment by recording the inputs and outputs of
+function calls where the source code is unavailable. This allows Pex to increase
+its precision when determining the feasibility of a path, but it also makes Pex
+unsound as the model is necessarily an under-approximation.
+
+**** Notes :noexport:
+- collection of heuristics for finding new paths
+  - maintains execution tree of explored branches
+  - picks a new unexplored branch from set of all known unexplored branches
+- handles environment
+  - builds model of environment based on actual inputs and outputs
+  - (under-approximation)
+- extends constraint language with
+  - floats
+  - arrays
+- inserts checks for potentially unsafe operations, e.g. array index
+** Execution-Guided Testing
+*** EXE
+*** KLEE
 \cite{cadar_klee}
 - maps memory locations to symbolic expressions
 - symbolically executes llvm IR
