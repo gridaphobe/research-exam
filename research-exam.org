@@ -1,0 +1,158 @@
+#+TITLE: Research Exam
+#+AUTHOR:
+#+DATE:
+#+OPTIONS: toc:nil texht:t
+#+LATEX_CLASS: sigplanconf
+#+LATEX_CLASS_OPTIONS: [blockstyle,preprint,nocopyrightspace]
+#+LATEX_HEADER: \authorinfo{Eric Seidel}
+# #+BIBLIOGRAPHY: bibliography plain
+
+# FOCUS: Automatic test-case generation
+# 1. enumerate inputs
+# 2. enumerate code-paths
+# 3. translate counterexamples from static analysis into tests
+
+# Systems to cover
+# - QuickCheck
+# - SmallCheck
+# - Korat (/ TestEra)
+# - CUTE / DART / PEX
+# - jCrasher / Check'n'Crash
+# - BLAST (generating tests from counterexamples)
+# - (Target)
+
+#+BEGIN_ABSTRACT
+Testing is tedious.
+#+END_ABSTRACT
+
+* Introduction
+There are two core questions an automatic test-case generator must
+answer:
+1. How do we generate input values?
+2. How do we determine the correctness of an execution?
+
+In general, the answer for (2) involves checking that the execution
+satisfies some property, e.g. crash-freedom. As such, we will primarily
+categorize systems by their answer to (1).
+* A Running Example
+#+BEGIN_SRC haskell
+data Tree a 
+  = Leaf
+  | Node a (Tree a) (Tree a)
+
+insert :: Ord a => a -> Tree a -> Tree a
+#+END_SRC
+
+* Enumerating Inputs
+Perhaps the simplest method of automatically testing a program is to
+enumerate valid inputs and check whether the program behaves correctly
+on these inputs. Of course, enumerating /all/ inputs is generally
+infeasible, so we must find some way of narrowing the search space. The
+two common solutions are enumerating /small/ inputs and random sampling
+of the entire space.
+
+** Enumerating "small" inputs
+The /small-scope hypothesis/ \cite{jackson_software_2006} argues that if
+a property is invalid, there is likely a small counterexample, i.e. if a
+program contains a bug there is likely a small input that will trigger
+it. Thus, we can restrict our enumeration to "small" inputs and still
+gain a large degree of confidence in our program.
+
+*** SmallCheck
+
+*** Korat
+
+** Random sampling of inputs
+*** QuickCheck
+*** JCrasher
+* Enumerating Code Paths
+- Enumerating code paths can be thought of as enumeration of inputs with
+  a filter that discards inputs that would trigger a previously explored
+  path.
+** DART
+Godefroid et al. introduced the notion of /concolic testing/, which
+combines symbolic and concrete execution, with DART
+\cite{godefroid_dart:_2005}. DART instruments a C program to execute
+each instruction both concretely and symbolically, then performs a
+depth-first search of all paths through the program, starting
+with a random input vector. At each branch point, DART records the branch
+condition and the direction taken, thereby building a /path
+constraint/. For example, suppose DART is testing the following C program
+with initial inputs ={x = 5, y = 6}=.
+
+#+BEGIN_SRC c
+int f (int x, int y) {
+  if (x == 5) {
+    if (2 * y == x) {
+      abort();
+    }
+  }
+  return 0;
+}
+#+END_SRC
+
+This execution will satisfy =x = 5= but not =2*y = x=, thus the path
+constraint will be =<x = 5, 2*y != x>=. Next, DART will negate the last
+(right-most) predicate in the path constraint and query a constraint
+solver for a solution to =x = 5 && 2*y = x=, in order to produce a new
+input vector.
+There is only one solution to this constraint, ={x = 5, y = 10}=, which
+will force execution through the /true/ branch of both
+conditionals, right into the erroneous =abort()= call. Since the
+concrete execution reached the =abort()= call, we know it is a real bug
+as opposed to a false positive that could come from a purely symbolic
+approach, i.e. DART /soundly/ reports bugs.
+
+When confronted with an expression that it cannot reason about
+symbolically, e.g. multiplication of two variables or a dereference of a
+pointer that depends on program input, DART will fall back to recording
+the result of the concrete evaluation. For example, given
+
+#+BEGIN_SRC c
+int f (int x, int y) {
+  if (x == y*y) {
+    abort();
+  }
+  return 0;
+}
+#+END_SRC
+
+and starting inputs ={x = 5, y = 2}=, DART will produce a path
+constraint =<x != 4>= for the first execution. Refuting this path
+constraint will /not/ produce an input vector that is guaranteed to take
+the /true/ branch -- indeed the solver may return the original input
+vector -- thus DART suffers a severe loss of precision when the program
+veers outside the language of the constraint solver. In effect, this
+means DART degenerates to brute-force enumeration of inputs, as in Sec
+[[Enumerating Inputs]].
+
+** CUTE
+** PEX
+** KLEE
+\cite{cadar_klee}
+- maps memory locations to symbolic expressions
+- symbolically executes llvm IR
+  - builds path condition a la CUTE
+  - concrete execution when all operands are concrete values
+- queries constraint solver at branch
+  - pursues feasible directions
+- "dangerous" operations (div-zero, load/store) induce implicit branches
+  with one direction throwing ERROR
+- handles pointer aliasing by forking execution for each possible reference
+- if ERROR (or EXIT) detected, generate test case to trigger path
+- /random path selection/: tree of program paths, start at root and
+  randomly pick subtree until a leaf is found.
+- models system calls with simple C implementations (sounds like an
+  under-approximation)
+** CREST?
+* Tests from Counterexamples
+- /Filtered/ enumeration of code paths, symbolically discarding
+uninteresting paths
+** Check'n'Crash
+** BLAST
+* Type-Targeted Testing
+- /Filtered/ enumeration of inputs
+
+
+#+LATEX: \bibliographystyle{plain}
+#+LATEX: \bibliography{bibliography}
