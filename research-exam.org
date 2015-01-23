@@ -68,11 +68,13 @@ program contains a bug there is likely a small input that will trigger
 it. Thus, we can restrict our enumeration to "small" inputs and still
 gain a large degree of confidence in our program.
 
+
 *** SmallCheck
 
 *** Korat
 
 ** Random sampling of inputs
+
 *** QuickCheck
 *** JCrasher
 *** Randoop
@@ -91,7 +93,69 @@ handwritten tests required (*CITE*). So instead of enumerating inputs,
 perhaps we should enumerate program behaviors, i.e. paths through the
 program. 
 
+Tools that take this approach typically use /dynamic-symbolic execution/, which
+combines traditional symbolic execution with concrete execution, to quickly
+explore different paths through the program. The two main categories of
+dynamic-symbolic execution-based testing tools are concolic testing and
+execution-generated testing both introduced independently in 2005
+\cite{godefroid_dart:_2005,cadar_execution_2005}.
+
 ** Overview of Symbolic Execution?
+Symbolic execution as a method of testing programs is not a new idea, it was
+introduced in 1976 by King \cite{king_symbolic_1976}. The key difference in
+between symbolic and concrete execution is that instead of mapping program
+variables to /values/, a symbolic executor maps them to /symbolic
+expressions/. For example, given the simple program
+
+#+BEGIN_SRC c
+int f (int x, int y) {
+  return 2 * (x + y);
+}
+#+END_SRC
+
+a concrete execution with input vector $\{x \mapsto 1, y \mapsto 2\}$ will
+return $6$. A symbolic execution will begin with an input vector
+$\{x \mapsto \alpha_1, y \mapsto \alpha_2\}$ -- where $\alpha_i$ are symbolic
+variables -- and return $2 * (\alpha_1 + \alpha_2)$, thereby precisely
+describing /all/ possible executions of ~f~.
+
+Another key difference of symbolic execution is its handling of
+conditionals. Consider the first conditional in the following program.
+
+#+BEGIN_SRC c
+int f (int x) {
+  if (x > 0) {
+    if (x == 0) {
+      abort();
+    }
+  }
+  return 0;
+}
+#+END_SRC
+
+With the input vector $\{x \mapsto \alpha_1\}$, the symbolic executor does not
+know which direction of the branch it should take, as it knows nothing about the
+symbolic variable $\alpha_1$. Therefore it must follow both directions! When
+following a branch, the symbolic executor records the symbolic expression
+associated with the chosen direction in its /path constraint/, which we will
+write as a sequence of expressions $\langle e_1, e_2, \ldots \rangle$. For example, in
+the outer conditional above, the "true" case would record $\langle \alpha_1 > 0
+\rangle$ and the false case would record $\langle \lnot (\alpha_1 > 0)
+\rangle$. Thus, it remembers what properties of the program inputs will trigger
+specific paths through the code. When the symbolic executor reaches a branch
+point, it consults the current path constraint to determine with directions are
+feasible. For example, upon reaching the inner conditional above, the symbolic
+executor will check whether $\alpha_1 = 0$ is consistent with the path condition
+$\langle \alpha_1 > 0 \rangle$, i.e. is the formula $\alpha_1 = 0\ \land\ \alpha_1
+> 0$ satisfiable? As the formula is clearly unsatisfiable, the symbolic executor
+decides that the "true" branch is /unreachable/, and continues by only pursuing
+the "false" branch. Thus, a symbolic executor can statically determine that the
+~abort()~ call above can /never/ be executed.
+
+While a powerful idea in theory, symbolic execution crucially relies on a
+theorem prover to solve the symbolic expressions it creates, and as such it went
+relatively unused until recent advances in constraint solving technology.
+
 ** Concolic Testing
 *** DART
 In 2005 Godefroid et al. introduced the notion of /concolic testing/, which
@@ -351,7 +415,6 @@ paths to be chosen. /Coverage-optimized search/ weights each process according
 to some heuristics, e.g. distance to an unexecuted instruction, and biases the
 choice accordingly.
 
-
 **** KLEE Notes                                                    :noexport:
 - rewrite of EXE with enhancements
 - symbolically executes llvm IR
@@ -361,7 +424,9 @@ choice accordingly.
   under-approximation)
 ** CREST? :noexport:
 ** Limitations
+
 **** Path explosion
+
 **** Modeling the environment
 * Tests from Counterexamples
 - /Filtered/ enumeration of code paths, symbolically discarding
