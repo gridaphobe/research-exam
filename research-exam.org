@@ -5,6 +5,7 @@
 #+LATEX_CLASS: sigplanconf
 #+LATEX_CLASS_OPTIONS: [blockstyle,preprint,nocopyrightspace]
 #+LATEX_HEADER: \authorinfo{Eric Seidel}
+# #+LATEX_HEADER: \usepackage{courier}
 # #+BIBLIOGRAPHY: bibliography plain
 
 # FOCUS: Automatic test-case generation
@@ -22,7 +23,17 @@
 # - (Target)
 
 #+BEGIN_ABSTRACT
-Testing is tedious.
+Program testing is a crucial yet tedious part of software development. The
+standard /unit-testing/ practice dictates manual specification of input-output
+pairs for each expected behavior of a program, which involves large amounts of
+programmer effort and does not scale well with the size of a program. As a
+result, many groups have investigated techniques for automatically generating
+test-cases from a specification or directly from the source code.
+
+We survey a selection of the prominent approaches for test-case generation and
+present our own contribution to the field, a technique for generating inputs to
+highly constrained functions by specifying the expected behavior via /refinement
+types/.
 #+END_ABSTRACT
 
 * Introduction
@@ -34,7 +45,7 @@ answer:
 In general, the answer for (2) involves checking that the execution
 satisfies some property, e.g. crash-freedom. As such, we will primarily
 categorize systems by their answer to (1).
-* A Running Example?
+* A Running Example? :noexport:
 #+BEGIN_SRC haskell
 data Tree a 
   = Leaf
@@ -42,7 +53,6 @@ data Tree a
 
 insert :: Ord a => a -> Tree a -> Tree a
 #+END_SRC
-
 * Enumerating Inputs
 Perhaps the simplest method of automatically testing a program is to
 enumerate valid inputs and check whether the program behaves correctly
@@ -65,6 +75,12 @@ gain a large degree of confidence in our program.
 ** Random sampling of inputs
 *** QuickCheck
 *** JCrasher
+*** Randoop
+** Limitations
+*** Preconditions
+- need for programmer intervention to specify "smart" generators
+  - or fall back to generate-and-filter approach
+  - can be mitigated to some extent by lazy construction of inputs
 * Enumerating Code Paths
 The drawback to explicit enumeration of input vectors is that many
 inputs will trigger similar behavior in the program under test. Indeed
@@ -78,8 +94,8 @@ program.
 ** Overview of Symbolic Execution?
 ** Concolic Testing
 *** DART
-Godefroid et al. introduced the notion of /concolic testing/, which
-combines symbolic and concrete execution, with DART
+In 2005 Godefroid et al. introduced the notion of /concolic testing/, which
+combines symbolic and concrete execution, with DART 
 \cite{godefroid_dart:_2005}. DART instruments a C program to execute
 each instruction both concretely and symbolically, then performs a
 depth-first search of all paths through the program, starting
@@ -141,10 +157,10 @@ trees whose right sub-trees are always =NULL= (assuming the program
 checks the left sub-tree first).
 
 *** CUTE
-Sen et al. introduced CUTE \cite{sen_cute:_2005}, an extension of DART
-that adds support for testing complex datatypes. CUTE enhances DART's
-technique by adding support for (dis)equality constraints on pointers,
-and by switching to a /bounded/ depth-first search.
+Sen et al. introduced CUTE \cite{sen_cute:_2005} later that year, an extension
+of DART that adds support for testing complex datatypes. CUTE enhances DART's
+technique by adding support for (dis)equality constraints on pointers, and by
+switching to a /bounded/ depth-first search.
 
 **** Pointer (dis)equality
 Whereas DART maintained a single map of memory locations to symbolic
@@ -216,9 +232,9 @@ Two main improvements over DART:
 
 *** PEX
 Tillman and Halleaux further extend concolic testing with Pex
-\cite{tillmann_pexwhite_2008}, adding heuristics to improve path-selection,
-modeling of interactions with the environment, and a richer constraint
-language.
+\cite{tillmann_pexwhite_2008} in 2008, adding heuristics to improve
+path-selection, modeling of interactions with the environment, and a richer
+constraint language.
 
 **** Richer constraints
 Whereas previous systems had limited constraint languages -- linear arithmetic
@@ -253,12 +269,50 @@ unsound as the model is necessarily an under-approximation.
   - floats
   - arrays
 - inserts checks for potentially unsafe operations, e.g. array index
-** Execution-Guided Testing
+** Execution-Generated Testing
+Instead of performing symbolic and concrete execution in tandem,
+/execution-generated testing/ \cite{cadar_execution_2005} begins with pure
+symbolic execution and lazily generates concrete inputs on demand. When a
+dangerous operation (e.g. division or memory read/write) is about to be
+executed, the system will insert an implicit branch denoting the possibility of
+an error (e.g. divide-by-zero or out-of-bounds write). If the error branch is
+deemed feasible, the system will then solve the path constraint for an input
+vector designed to trigger the error condition. Similarly, function calls into
+uninstrumented code, e.g. library functions or system calls, will induce a call
+to the constraint solver for a concrete set of inputs designed to trigger the
+call. When the external call returns, the system will continue execution with
+the concrete result, thus improving precision over pure-symbolic approaches that
+would have to somehow model the interaction with the external world (often
+simply assuming nothing about the result).
+
 *** EXE
-*** KLEE
-\cite{cadar_klee}
-- maps memory locations to symbolic expressions
-- symbolically executes llvm IR
+Cadar et al. introduced execution-generated testing with EXE
+\cite{cadar_exe:_2006}. EXE models program memory as arrays of bitvectors,
+enabling bit-precise reasoning about the C programs it tests via the
+co-developed constraint solver STP \cite{ganesh_decision_2007}. This crucial
+distinction from DART and CUTE allows EXE and STP to view program values in the
+same way as the systems software they test, as untyped bytes.
+
+At each branch EXE forks execution for each direction of the branch that is
+deemed feasible. The child processes add their direction to the path contraint
+and go to sleep. A master process then decides which child (path) should
+continue executing, using a combination of depth-first and best-first
+search. The master process chooses the child blocked on the instruction with the
+lowest execution count and runs it and its children in DFS for some period of
+time. Then it picks another best candidate and repeats the process.
+
+An important optimization of EXE is /aggressive concretization/. If the operands
+are all concrete (i.e. constant values), EXE will simply perform the operation
+and record the resulting concrete value. This helps simplify the queries sent
+to STP, such that the only symbolic variables in a query will have a data
+dependence on one of the initial symbolic variables.
+
+**** EXE Notes                                                     :noexport:
+- "bit-precise" handling of memory
+  - models memory as array of bitvectors, untyped
+- custom developed constraint solver STP, optimized for bitvector queries
+  - bit-blast to propositional logic formula, send to SAT solver
+- symbolically executes code
   - builds path condition a la CUTE
   - concrete execution when all operands are concrete values
 - queries constraint solver at branch
@@ -267,11 +321,48 @@ unsound as the model is necessarily an under-approximation.
   with one direction throwing ERROR
 - handles pointer aliasing by forking execution for each possible reference
 - if ERROR (or EXIT) detected, generate test case to trigger path
+- combination of DFS and best-first search
+  - chooses path whose current LoC has been hit fewest time, runs path/children
+    in DFS for a while, repeat
+- aggressive concretization
+  - user must mark inputs as symbolic
+  - everything else assumed concrete
+  - if both operands are concrete, just perform the operation concretely
+
+*** KLEE
+In 2008, Cadar et al. rewrote EXE as KLEE \cite{cadar_klee:_2008}, which
+symbolically executes LLVM IR \cite{lattner_llvm:_2004} and provides several
+enhancements over EXE.
+
+**** Compact process representation
+Whereas EXE processes relied on the host OS to share memory and was thus limited
+to page-level granularity, KLEE implements sharing with a granularity of
+individual objects, thus tracking many more processes than EXE could with the
+same memory limit. This optimization enabled KLEE to scale up to testing all of
+GNU Coreutils.
+
+**** Random path selection and Coverage-optimized search
+KLEE employs two path selection strategies in round robin to prevent either one
+from getting stuck. /Random path selection/ maintains a tree of all branches
+KLEE has encountered. It starts at the root and randomly picks a child node
+until it hits a leaf, and schedules the corresponding process for
+execution. This favors broad and shallow coverage, while still allowing for deep
+paths to be chosen. /Coverage-optimized search/ weights each process according
+to some heuristics, e.g. distance to an unexecuted instruction, and biases the
+choice accordingly.
+
+
+**** KLEE Notes                                                    :noexport:
+- rewrite of EXE with enhancements
+- symbolically executes llvm IR
 - /random path selection/: tree of program paths, start at root and
   randomly pick subtree until a leaf is found.
 - models system calls with simple C implementations (sounds like an
   under-approximation)
-** CREST?
+** CREST? :noexport:
+** Limitations
+**** Path explosion
+**** Modeling the environment
 * Tests from Counterexamples
 - /Filtered/ enumeration of code paths, symbolically discarding
 uninteresting paths

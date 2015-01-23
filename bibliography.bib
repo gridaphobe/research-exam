@@ -19,6 +19,24 @@
 	file = {Christiansen and Fischer - 2008 - EasyCheck — Test Data for Free.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/NZPXB44S/Christiansen and Fischer - 2008 - EasyCheck — Test Data for Free.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/VZDTRF3G/978-3-540-78969-7_23.html:text/html}
 }
 
+@inproceedings{visser_test_2004,
+	address = {New York, {NY}, {USA}},
+	series = {{ISSTA} '04},
+	title = {Test Input Generation with Java {PathFinder}},
+	isbn = {1-58113-820-2},
+	url = {http://doi.acm.org/10.1145/1007512.1007526},
+	doi = {10.1145/1007512.1007526},
+	abstract = {We show how model checking and symbolic execution can be used to generate test inputs to achieve structural coverage of code that manipulates complex data structures. We focus on obtaining branch-coverage during unit testing of some of the core methods of the red-black tree implementation in the Java {TreeMap} library, using the Java {PathFinder} model checker. Three different test generation techniques will be introduced and compared, namely, straight model checking of the code, model checking used in a black-box fashion to generate all inputs up to a fixed size, and lastly, model checking used during white-box test input generation. The main contribution of this work is to show how efficient white-box test input generation can be done for code manipulating complex data, taking into account complex method preconditions.},
+	urldate = {2015-01-23},
+	booktitle = {Proceedings of the 2004 {ACM} {SIGSOFT} International Symposium on Software Testing and Analysis},
+	publisher = {{ACM}},
+	author = {Visser, Willem and Pǎsǎreanu, Corina S. and Khurshid, Sarfraz},
+	year = {2004},
+	keywords = {coverage, model checking, red-black trees, symbolic execution, testing object-oriented programs},
+	pages = {97--107},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/HQVUM56P/Visser et al. - 2004 - Test Input Generation with Java PathFinder.pdf:application/pdf}
+}
+
 @inproceedings{naylor_finding_2007,
 	series = {{SCAM} '07},
 	title = {Finding Inputs that Reach a Target Expression},
@@ -198,6 +216,43 @@
 	keywords = {\_tablet, datatype-generic programming, generic views, json, lenses, metadata, sums of products, universes},
 	pages = {83--94},
 	file = {de Vries and Löh - 2014 - True Sums of Products.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/56UJ2W4K/de Vries and Löh - 2014 - True Sums of Products.pdf:application/pdf}
+}
+
+@article{beyer_software_2007,
+	title = {The software model checker Blast},
+	volume = {9},
+	issn = {1433-2779, 1433-2787},
+	url = {http://link.springer.com/article/10.1007/s10009-007-0044-z},
+	doi = {10.1007/s10009-007-0044-z},
+	abstract = {Blast is an automatic verification tool for checking temporal safety properties of C programs. Given a C program and a temporal safety property, Blast either statically proves that the program satisfies the safety property, or provides an execution path that exhibits a violation of the property (or, since the problem is undecidable, does not terminate). Blast constructs, explores, and refines abstractions of the program state space based on lazy predicate abstraction and interpolation-based predicate discovery. This paper gives an introduction to Blast and demonstrates, through two case studies, how it can be applied to program verification and test-case generation. In the first case study, we use Blast to statically prove memory safety for C programs. We use {CCured}, a type-based memory-safety analyzer, to annotate a program with run-time assertions that check for safe memory operations. Then, we use Blast to remove as many of the run-time checks as possible (by proving that these checks never fail), and to generate execution scenarios that violate the assertions for the remaining run-time checks. In our second case study, we use Blast to automatically generate test suites that guarantee full coverage with respect to a given predicate. Given a C program and a target predicate p, Blast determines the program locations q for which there exists a program execution that reaches q with p true, and automatically generates a set of test vectors that cause such executions. Our experiments show that Blast can provide automated, precise, and scalable analysis for C programs.},
+	language = {en},
+	number = {5-6},
+	urldate = {2015-01-23},
+	journal = {International Journal on Software Tools for Technology Transfer},
+	author = {Beyer, Dirk and Henzinger, Thomas A. and Jhala, Ranjit and Majumdar, Rupak},
+	month = sep,
+	year = {2007},
+	keywords = {Memory safety, model checking, Software Engineering, Software Engineering/Programming and Operating Systems, Software specification, software verification, Test-case generation, Theory of Computation},
+	pages = {505--525},
+	file = {Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/GF9MUEC2/Beyer et al. - 2007 - The software model checker Blast.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/6XV7T3IJ/s10009-007-0044-z.html:text/html}
+}
+
+@article{jhala_software_2009,
+	title = {Software Model Checking},
+	volume = {41},
+	issn = {0360-0300},
+	url = {http://doi.acm.org/10.1145/1592434.1592438},
+	doi = {10.1145/1592434.1592438},
+	abstract = {We survey recent progress in software model checking.},
+	number = {4},
+	urldate = {2015-01-23},
+	journal = {{ACM} Comput. Surv.},
+	author = {Jhala, Ranjit and Majumdar, Rupak},
+	month = oct,
+	year = {2009},
+	keywords = {abstraction, counterexample-guided refinement, enumerative and symbolic model checking, liveness, safety, Software model checking},
+	pages = {21:1--21:54},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/FZ2GJ2VS/Jhala and Majumdar - 2009 - Software Model Checking.pdf:application/pdf}
 }
 
 @inproceedings{zhang_toward_2014,
@@ -578,14 +633,6 @@
 	file = {Kuncak et al. - 2013 - Executing Specifications Using Synthesis and Const.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/28PCQ3UI/Kuncak et al. - 2013 - Executing Specifications Using Synthesis and Const.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/FCQZM2X5/978-3-642-40787-1_1.html:text/html}
 }
 
-@book{cadar_klee:_????,
-	title = {{KLEE}: Unassisted and Automatic Generation of High-Coverage Tests for Complex Systems Programs},
-	shorttitle = {{KLEE}},
-	abstract = {We present a new symbolic execution tool, {KLEE}, capable of automatically generating tests that achieve high coverage on a diverse set of complex and environmentally-intensive programs. We used {KLEE} to thoroughly check all 89 stand-alone programs in the {GNU} {COREUTILS} utility suite, which form the core user-level environment installed on millions of Unix systems, and arguably are the single most heavily tested set of open-source programs in existence. {KLEE}-generated tests achieve high line coverage — on average over 90\% per tool (median: over 94\%)  — and significantly beat the coverage of the developers ’ own hand-written test suite. When we did the same for 75 equivalent tools in the {BUSYBOX} embedded system suite, results were even better, including 100 \% coverage on 31 of them. We also used {KLEE} as a bug finding tool, applying it to 452 applications (over 430K total lines of code), where it found 56 serious bugs, including three in {COREUTILS} that had been missed for over 15 years. Finally, we used {KLEE} to crosscheck purportedly identical {BUSYBOX} and {COREUTILS} utilities, finding functional correctness errors and a myriad of inconsistencies. 1},
-	author = {Cadar, Cristian and Dunbar, Daniel and Engler, Dawson},
-	file = {Cadar et al. - KLEE Unassisted and Automatic Generation of High-.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/4DAJT3BF/Cadar et al. - KLEE Unassisted and Automatic Generation of High-.pdf:application/pdf;Citeseer - Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/EZXISK7A/summary.html:text/html}
-}
-
 @article{clarke_bounded_2001,
 	title = {Bounded Model Checking Using Satisfiability Solving},
 	volume = {19},
@@ -854,6 +901,19 @@
 	file = {Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/XCCFAV4S/Griswold et al. - 2001 - Coping with Crosscutting Software Changes Using In.html:text/html}
 }
 
+@inproceedings{pacheco_feedback-directed_2007,
+	title = {Feedback-Directed Random Test Generation},
+	doi = {10.1109/ICSE.2007.37},
+	abstract = {We present a technique that improves random test generation by incorporating feedback obtained from executing test inputs as they are created. Our technique builds inputs incrementally by randomly selecting a method call to apply and finding arguments from among previously-constructed inputs. As soon as an input is built, it is executed and checked against a set of contracts and filters. The result of the execution determines whether the input is redundant, illegal, contract-violating, or useful for generating more inputs. The technique outputs a test suite consisting of unit tests for the classes under test. Passing tests can be used to ensure that code contracts are preserved across program changes; failing tests (that violate one or more contract) point to potential errors that should be corrected. Our experimental results indicate that feedback-directed random test generation can outperform systematic and undirected random test generation, in terms of coverage and error detection. On four small but nontrivial data structures (used previously in the literature), our technique achieves higher or equal block and predicate coverage than model checking (with and without abstraction) and undirected random generation. On 14 large, widely-used libraries (comprising 780KLOC), feedback-directed random test generation finds many previously-unknown errors, not found by either model checking or undirected random generation.},
+	booktitle = {29th International Conference on Software Engineering, 2007. {ICSE} 2007},
+	author = {Pacheco, C. and Lahiri, S.K. and Ernst, M.D. and Ball, T.},
+	month = may,
+	year = {2007},
+	keywords = {Contracts, Error correction codes, error detection, failing tests, Feedback, feedback-directed random test generation, Filters, Law, Legal factors, Object oriented modeling, Open source software, passing tests, program testing, software testing, System testing},
+	pages = {75--84},
+	file = {IEEE Xplore Abstract Record:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/5AMA6QCU/abs_all.html:text/html;IEEE Xplore Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/5B9A7FW2/Pacheco et al. - 2007 - Feedback-Directed Random Test Generation.pdf:application/pdf}
+}
+
 @inproceedings{kaki_relational_2014,
 	address = {New York, {NY}, {USA}},
 	series = {{ICFP} '14},
@@ -946,6 +1006,27 @@
 	keywords = {backward execution, concolic, goal-directed, symcretic},
 	pages = {31--36},
 	file = {Dinges and Agha - 2014 - Targeted Test Input Generation Using Symbolic-conc.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/SZ7CUCPX/Dinges and Agha - 2014 - Targeted Test Input Generation Using Symbolic-conc.pdf:application/pdf}
+}
+
+@incollection{cadar_execution_2005,
+	series = {Lecture Notes in Computer Science},
+	title = {Execution Generated Test Cases: How to Make Systems Code Crash Itself},
+	copyright = {©2005 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-540-28195-5, 978-3-540-31899-6},
+	shorttitle = {Execution Generated Test Cases},
+	url = {http://link.springer.com/chapter/10.1007/11537328_2},
+	abstract = {This paper presents a technique that uses code to automatically generate its own test cases at run time by using a combination of symbolic and concrete (i.e regular) execution The input values to a program (or software component) provide the standard interface of any testing framework with the program it is testing and generating input values that will explore all the “interesting” behavior in the tested program remains an important open problem in software testing research. Our approach works by turning the problem on its head: we lazily generate from within the program itself the input values to the program (and values derived from input values) as needed. We applied the technique to real code and found numerous corner case errors ranging from simple memory overflows and infinite loops to subtle issues in the interpretation of language standards.},
+	language = {en},
+	number = {3639},
+	urldate = {2015-01-23},
+	booktitle = {Model Checking Software},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Cadar, Cristian and Engler, Dawson},
+	editor = {Godefroid, Patrice},
+	year = {2005},
+	keywords = {Logics and Meanings of Programs, Programming Languages, Compilers, Interpreters, Software Engineering},
+	pages = {2--23},
+	file = {Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/5SNNI9U6/Cadar and Engler - 2005 - Execution Generated Test Cases How to Make System.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/9V96TJXV/10.html:text/html}
 }
 
 @inproceedings{magalhaes_generic_2010,
@@ -1165,6 +1246,25 @@
 	file = {Flanagan et al. - 2002 - Extended Static Checking for Java.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/PPV4AIWQ/Flanagan et al. - 2002 - Extended Static Checking for Java.pdf:application/pdf}
 }
 
+@inproceedings{cadar_exe:_2006,
+	address = {New York, {NY}, {USA}},
+	series = {{CCS} '06},
+	title = {{EXE}: Automatically Generating Inputs of Death},
+	isbn = {1-59593-518-5},
+	shorttitle = {{EXE}},
+	url = {http://doi.acm.org/10.1145/1180405.1180445},
+	doi = {10.1145/1180405.1180445},
+	abstract = {This paper presents {EXE}, an effective bug-finding tool that automatically generates inputs that crash real code. Instead of running code on manually or randomly constructed input, {EXE} runs it on symbolic input initially allowed to be "anything." As checked code runs, {EXE} tracks the constraints on each symbolic (i.e., input-derived) memory location. If a statement uses a symbolic value, {EXE} does not run it, but instead adds it as an input-constraint; all other statements run as usual. If code conditionally checks a symbolic expression, {EXE} forks execution, constraining the expression to be true on the true branch and false on the other. Because {EXE} reasons about all possible values on a path, it has much more power than a traditional runtime tool: (1) it can force execution down any feasible program path and (2) at dangerous operations (e.g., a pointer dereference), it detects if the current path constraints allow any value that causes a bug.When a path terminates or hits a bug, {EXE} automatically generates a test case by solving the current path constraints to find concrete values using its own co-designed constraint solver, {STP}. Because {EXE}'s constraints have no approximations, feeding this concrete input to an uninstrumented version of the checked code will cause it to follow the same path and hit the same bug (assuming deterministic code).{EXE} works well on real code, finding bugs along with inputs that trigger them in: the {BSD} and Linux packet filter implementations, the udhcpd {DHCP} server, the pcre regular expression library, and three Linux file systems.},
+	urldate = {2015-01-22},
+	booktitle = {Proceedings of the 13th {ACM} Conference on Computer and Communications Security},
+	publisher = {{ACM}},
+	author = {Cadar, Cristian and Ganesh, Vijay and Pawlowski, Peter M. and Dill, David L. and Engler, Dawson R.},
+	year = {2006},
+	keywords = {attack generation, bug finding, constraint solving, dynamic analysis, symbolic execution, test case generation},
+	pages = {322--335},
+	file = {Cadar et al. - 2006 - EXE Automatically Generating Inputs of Death.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/M938IQV7/Cadar et al. - 2006 - EXE Automatically Generating Inputs of Death.pdf:application/pdf}
+}
+
 @inproceedings{chugh_nested_2012,
 	title = {Nested refinements: a logic for duck typing},
 	url = {http://portal.acm.org/citation.cfm?id=2103656.2103686&coll=DL&dl=ACM&CFID=445811551&CFTOKEN=90926960},
@@ -1261,6 +1361,20 @@
 	file = {Majumdar and Sen - 2007 - LATEST  Lazy Dynamic Test Input Generation.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/G4SZKE4S/Majumdar and Sen - 2007 - LATEST  Lazy Dynamic Test Input Generation.pdf:application/pdf}
 }
 
+@inproceedings{lattner_llvm:_2004,
+	title = {{LLVM}: a compilation framework for lifelong program analysis transformation},
+	shorttitle = {{LLVM}},
+	doi = {10.1109/CGO.2004.1281665},
+	abstract = {We describe {LLVM} (low level virtual machine), a compiler framework designed to support transparent, lifelong program analysis and transformation for arbitrary programs, by providing high-level information to compiler transformations at compile-time, link-time, run-time, and in idle time between runs. {LLVM} defines a common, low-level code representation in static single assignment ({SSA}) form, with several novel features: a simple, language-independent type-system that exposes the primitives commonly used to implement high-level language features; an instruction for typed address arithmetic; and a simple mechanism that can be used to implement the exception handling features of high-level languages (and setjmp/longjmp in C) uniformly and efficiently. The {LLVM} compiler framework and code representation together provide a combination of key capabilities that are important for practical, lifelong analysis and transformation of programs. To our knowledge, no existing compilation approach provides all these capabilities. We describe the design of the {LLVM} representation and compiler framework, and evaluate the design in three ways: (a) the size and effectiveness of the representation, including the type information it provides; (b) compiler performance for several interprocedural problems; and (c) illustrative examples of the benefits {LLVM} provides for several challenging compiler problems.},
+	booktitle = {International Symposium on Code Generation and Optimization, 2004. {CGO} 2004},
+	author = {Lattner, C. and Adve, V.},
+	month = mar,
+	year = {2004},
+	keywords = {Algorithm design and analysis, Application software, Arithmetic, C language, code representation, compiler framework, compiler performance, compiler transformations, exception handling, High level languages, Information analysis, language-independent type-system, low level virtual machine, optimising compilers, Performance analysis, program analysis, program diagnostics, Program processors, program transformation, Runtime, Software safety, static single assignment form, typed address arithmetic, virtual machines, Virtual machining},
+	pages = {75--86},
+	file = {IEEE Xplore Abstract Record:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/4JIHTBUF/abs_all.html:text/html;IEEE Xplore Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/7TKE4IKJ/Lattner and Adve - 2004 - LLVM a compilation framework for lifelong program.pdf:application/pdf}
+}
+
 @inproceedings{bahr_composing_2014,
 	address = {New York, {NY}, {USA}},
 	series = {{WGP} '14},
@@ -1307,6 +1421,35 @@
 	keywords = {haskell, lazy, library, purely functional},
 	pages = {67--76},
 	file = {Chitil - 2012 - Practical Typed Lazy Contracts.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/5JI2MTWV/Chitil - 2012 - Practical Typed Lazy Contracts.pdf:application/pdf}
+}
+
+@inproceedings{cadar_klee:_2008,
+	address = {Berkeley, {CA}, {USA}},
+	series = {{OSDI}'08},
+	title = {{KLEE}: Unassisted and Automatic Generation of High-coverage Tests for Complex Systems Programs},
+	shorttitle = {{KLEE}},
+	url = {http://dl.acm.org/citation.cfm?id=1855741.1855756},
+	abstract = {We present a new symbolic execution tool, {KLEE}, capable of automatically generating tests that achieve high coverage on a diverse set of complex and environmentally-intensive programs. We used {KLEE} to thoroughly check all 89 stand-alone programs in the {GNU} {COREUTILS} utility suite, which form the core user-level environment installed on millions of Unix systems, and arguably are the single most heavily tested set of open-source programs in existence. {KLEE}-generated tests achieve high line coverage -- on average over 90\% per tool (median: over 94\%) -- and significantly beat the coverage of the developers' own hand-written test suite. When we did the same for 75 equivalent tools in the {BUSYBOX} embedded system suite, results were even better, including 100\% coverage on 31 of them. We also used {KLEE} as a bug finding tool, applying it to 452 applications (over 430K total lines of code), where it found 56 serious bugs, including three in {COREUTILS} that had been missed for over 15 years. Finally, we used {KLEE} to crosscheck purportedly identical {BUSYBOX} and {COREUTILS} utilities, finding functional correctness errors and a myriad of inconsistencies.},
+	urldate = {2015-01-23},
+	booktitle = {Proceedings of the 8th {USENIX} Conference on Operating Systems Design and Implementation},
+	publisher = {{USENIX} Association},
+	author = {Cadar, Cristian and Dunbar, Daniel and Engler, Dawson},
+	year = {2008},
+	pages = {209--224},
+	file = {Cadar et al. - KLEE Unassisted and Automatic Generation of High-.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/4DAJT3BF/Cadar et al. - KLEE Unassisted and Automatic Generation of High-.pdf:application/pdf;Citeseer - Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/EZXISK7A/summary.html:text/html}
+}
+
+@inproceedings{yang_automatically_2006,
+	title = {Automatically generating malicious disks using symbolic execution},
+	doi = {10.1109/SP.2006.7},
+	abstract = {Many current systems allow data produced by potentially malicious sources to be mounted as a file system. File system code must check this data for dangerous values or invariant violations before using it. Because file system code typically runs inside the operating system kernel, even a single unchecked value can crash the machine or lead to an exploit. Unfortunately, validating file system images is complex: they form {DAGs} with complex dependency relationships across massive amounts of data bound together with intricate, undocumented assumptions. This paper shows how to automatically find bugs in such code using symbolic execution. Rather than running the code on manually-constructed concrete input, we instead run it on symbolic input that is initially allowed to be "anything." As the code runs, it observes (tests) this input and thus constrains its possible values. We generate test cases by solving these constraints for concrete values. The approach works well in practice: we checked the disk mounting code of three widely-used Linux file systems: ext2, ext3, and {JFS} and found bugs in all of them where malicious data could either cause a kernel panic or form the basis of a buffer overflow attack},
+	booktitle = {2006 {IEEE} Symposium on Security and Privacy},
+	author = {Yang, Junfeng and Sar, Can and Twohey, P. and Cadar, C. and Engler, D.},
+	month = may,
+	year = {2006},
+	keywords = {Buffer overflow, buffer overflow attack, Computer bugs, Computer crashes, computer viruses, Concrete, disk mounting code, ext2 file system, ext3 file system, file system code, file system image validation, File systems, invariant violations, Kernel, Laboratories, Linux, Linux file systems, malicious disk automatic generation, operating system kernel, Operating Systems, program debugging, symbolic execution, Testing},
+	pages = {15 pp.--257},
+	file = {IEEE Xplore Abstract Record:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/JW7V2CKS/abs_all.html:text/html;IEEE Xplore Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/E9I9BG2W/Yang et al. - 2006 - Automatically generating malicious disks using sym.pdf:application/pdf}
 }
 
 @inproceedings{boyapati_korat:_2002,
@@ -1600,6 +1743,24 @@
 	file = {Majumdar and Sen - 2007 - Hybrid Concolic Testing.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/ICRU7PZM/Majumdar and Sen - 2007 - Hybrid Concolic Testing.pdf:application/pdf}
 }
 
+@inproceedings{godefroid_compositional_2007,
+	address = {New York, {NY}, {USA}},
+	series = {{POPL} '07},
+	title = {Compositional Dynamic Test Generation},
+	isbn = {1-59593-575-4},
+	url = {http://doi.acm.org/10.1145/1190216.1190226},
+	doi = {10.1145/1190216.1190226},
+	abstract = {Dynamic test generation is a form of dynamic program analysis that attempts to compute test inputs to drive a program along a specific program path. Directed Automated Random Testing, or {DART} for short, blends dynamic test generation with model checking techniques with the goal of systematically executing all feasible program paths of a program while detecting various types of errors using run-time checking tools (like Purify, for instance). Unfortunately, systematically executing all feasible program paths does not scale to large, realistic programs.This paper addresses this major limitation and proposes to perform dynamic test generation compositionally, by adapting known techniques for interprocedural static analysis. Specifically, we introduce a new algorithm, dubbed {SMART} for Systematic Modular Automated Random Testing, that extends {DART} by testing functions in isolation, encoding test results as function summaries expressed using input preconditions and output postconditions, and then re-using those summaries when testing higher-level functions. We show that, for a fixed reasoning capability, our compositional approach to dynamic test generation ({SMART}) is both sound and complete compared to monolithic dynamic test generation ({DART}). In other words, {SMART} can perform dynamic test generation compositionally without any reduction in program path coverage. We also show that, given a bound on the maximum number of feasible paths in individual program functions, the number of program executions explored by {SMART} is linear in that bound, while the number of program executions explored by {DART} can be exponential in that bound. We present examples of C programs and preliminary experimental results that illustrate and validate empirically these properties.},
+	urldate = {2015-01-23},
+	booktitle = {Proceedings of the 34th Annual {ACM} {SIGPLAN}-{SIGACT} Symposium on Principles of Programming Languages},
+	publisher = {{ACM}},
+	author = {Godefroid, Patrice},
+	year = {2007},
+	keywords = {automatic test generation, compositional program analysis, program verification, scalability, software testing},
+	pages = {47--54},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/3V8679H2/Godefroid - 2007 - Compositional Dynamic Test Generation.pdf:application/pdf}
+}
+
 @inproceedings{ray_large_2014,
 	address = {New York, {NY}, {USA}},
 	series = {{FSE} 2014},
@@ -1826,4 +1987,24 @@
 	keywords = {\_tablet},
 	pages = {178--188},
 	file = {Tucker et al. - 2007 - OPIUM Optimal Package InstallUninstall Manager.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/M2F8CMUH/Tucker et al. - 2007 - OPIUM Optimal Package InstallUninstall Manager.pdf:application/pdf}
+}
+
+@incollection{ganesh_decision_2007,
+	series = {Lecture Notes in Computer Science},
+	title = {A Decision Procedure for Bit-Vectors and Arrays},
+	copyright = {©2007 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-540-73367-6, 978-3-540-73368-3},
+	url = {http://link.springer.com/chapter/10.1007/978-3-540-73368-3_52},
+	abstract = {{STP} is a decision procedure for the satisfiability of quantifier-free formulas in the theory of bit-vectors and arrays that has been optimized for large problems encountered in software analysis applications. The basic architecture of the procedure consists of word-level pre-processing algorithms followed by translation to {SAT}. The primary bottlenecks in software verification and bug finding applications are large arrays and linear bit-vector arithmetic. New algorithms based on the abstraction-refinement paradigm are presented for reasoning about large arrays. A solver for bit-vector linear arithmetic is presented that eliminates variables and parts of variables to enable other transformations, and reduce the size of the problem that is eventually received by the {SAT} solver. These and other algorithms have been implemented in {STP}, which has been heavily tested over thousands of examples obtained from several real-world applications. Experimental results indicate that the above mix of algorithms along with the overall architecture is far more effective, for a variety of applications, than a direct translation of the original formula to {SAT} or other comparable decision procedures.},
+	language = {en},
+	number = {4590},
+	urldate = {2015-01-23},
+	booktitle = {Computer Aided Verification},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Ganesh, Vijay and Dill, David L.},
+	editor = {Damm, Werner and Hermanns, Holger},
+	year = {2007},
+	keywords = {Artificial Intelligence (incl. Robotics), Logic Design, Logics and Meanings of Programs, Mathematical Logic and Formal Languages, Software Engineering},
+	pages = {519--531},
+	file = {Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/BT5X3GJG/Ganesh and Dill - 2007 - A Decision Procedure for Bit-Vectors and Arrays.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/9FMI9C68/10.html:text/html}
 }
