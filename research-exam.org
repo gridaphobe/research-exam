@@ -30,10 +30,10 @@ programmer effort and does not scale well with the size of a program. As a
 result, many groups have investigated techniques for automatically generating
 test-cases from a specification or directly from the source code.
 
-We survey a selection of the prominent approaches for test-case generation and
-present our own contribution to the field, a technique for generating inputs to
-highly constrained functions by specifying the expected behavior via /refinement
-types/.
+We survey a selection of the prominent approaches for automatic test-case
+generation and present our own contribution to the field, a technique for
+generating inputs to highly constrained functions by specifying the expected
+behavior via /refinement types/.
 #+END_ABSTRACT
 
 * Introduction
@@ -156,11 +156,15 @@ theorem prover to solve the symbolic expressions it creates, and as such it went
 relatively unused until recent advances in constraint solving technology.
 
 ** Concolic Testing
+Godefroid et al. introduced /concolic testing/ in 2005
+\cite{godefroid_dart:_2005}. Concolic testing performs symbolic and concrete
+execution of a program in tandem. Thus, when confronted with a program expression
+that the symbolic executor cannot reason about, a concolic tester can fall back
+to the concrete value and continue execution with more precision than a purely
+symbolic approach.
 
 *** DART
-In 2005 Godefroid et al. introduced the notion of /concolic testing/, which
-combines symbolic and concrete execution, with DART 
-\cite{godefroid_dart:_2005}. DART instruments a C program to execute
+DART \cite{godefroid_dart:_2005} instruments a C program to execute
 each instruction both concretely and symbolically, then performs a
 depth-first search of all paths through the program, starting
 with a random input vector. At each branch point, DART records the branch
@@ -195,6 +199,19 @@ symbolically, e.g. multiplication of two variables or a dereference of a
 pointer that depends on program input, DART will fall back to recording
 the result of the concrete evaluation. For example, given
 
+# #+BEGIN_SRC c
+# struct foo { int i; char c; }
+# bar (struct foo *a) {
+#   *((char *)a + sizeof(int)) = 1;
+#   if (a->c != 1)
+#     abort();
+# }
+# #+END_SRC
+
+# and input vector $\{a \mapsto \{i = 0, c = 0\}\}$, DART will be unable to
+# symbolically execute the first statement, so it will just record the concrete
+# result, which sets =a->c= to the constant $1$. In the following conditional 
+
 #+BEGIN_SRC c
 int f (int x, int y) {
   if (x == y*y) {
@@ -209,7 +226,7 @@ path constraint $\langle x \neq 4 \rangle$ for the first
 execution. Refuting this path constraint will /not/ produce an input
 vector that is guaranteed to take the /true/ branch -- indeed the solver
 may return the original input vector -- thus DART suffers a severe loss
-of precision when the program veers outside the language of the
+of precision when the path-constraint veers outside the language of the
 constraint solver. In effect, this means DART degenerates to brute-force
 enumeration of inputs, as in Sec [[Enumerating Inputs]].
 
