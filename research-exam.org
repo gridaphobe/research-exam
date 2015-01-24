@@ -295,7 +295,7 @@ Two main improvements over DART:
    imprecision in constraints
 
 *** PEX
-Tillman and Halleaux further extend concolic testing with Pex
+Tillman and Halleaux further extended concolic testing with Pex
 \cite{tillmann_pexwhite_2008} in 2008, adding heuristics to improve
 path-selection, modeling of interactions with the environment, and a richer
 constraint language.
@@ -429,9 +429,51 @@ choice accordingly.
 
 **** Modeling the environment
 * Tests from Counterexamples
-- /Filtered/ enumeration of code paths, symbolically discarding
-uninteresting paths
+In the previous section we discussed approaches whose aim was to achieve high
+program coverage, i.e. to execute as many instructions as possible in a short
+period. However even this may seem wasteful in the presence of tools that can
+/prove/ a program correct. 
+
+Program verification is the process of analyzing a program and constructing a
+formal proof that it satisfies some correctness condition. As before we will use
+crash-freedom as our correctness condition, as high-level safety properties can
+be rewritten in terms of crash-freedom. A verifier is considered /sound/ if it
+never reports a false positive, i.e. if the verifier claims your program is
+bug-free, it truly is. The converse does not generally hold; even if your
+program is bug-free the verifier may still report a possible bug, as it often
+has to /over-approximate/ program behavior in order to achieve soundness. For
+instance, many verifiers struggle with non-linear arithmetic, i.e. they would be
+unable to verify
+
+#+BEGIN_SRC c
+int f (int x, int y) {
+  if (x > 0 && y > 0) {
+    return 1 / (x * y);
+  }
+}
+#+END_SRC
+
+because the underlying theorem prover cannot handle multiplication of two
+variables. Thus, when a verifier reports a potential bug, the programmer must
+still manually inspect the verifier's output to determine if the bug is genuine
+or fictitious. Luckily, many theorem provers produce a counterexample when
+verification fails. The insight of the tools we discuss in this section is that
+these counterexamples can be transformed into concrete test cases designed to
+trigger the erroneous behavior. Thus, one only need test the paths that cannot
+be statically proven safe.
+
+# - /Filtered/ enumeration of code paths, symbolically discarding
+# uninteresting paths
 ** Check'n'Crash
+Check'n'Crash \cite{csallner_check_2005} builds on top of JCrasher and the
+ESC/Java contract checker \cite{flanagan_extended_2002}. It runs ESC/Java on the
+supplied program and then solves the constraint system arising from a
+counterexample for concrete program input. Check'n'Crash can solve constraints
+involving integer arithmetic, object aliases, and multidimensional arrays, and
+can always fallback to the purely random testing of JCrasher if it cannot solve
+the constraint system. It then uses JCrasher to automatically generate test
+methods from the solutions. Note that a counterexample may have multiple
+solutions; Check'n'Crash must enumerate them all to be sure the bug does not exist.
 ** BLAST
 * Type-Targeted Testing
 - /Filtered/ enumeration of inputs
