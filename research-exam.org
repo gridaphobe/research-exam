@@ -84,23 +84,22 @@ gain a large degree of confidence in our program.
   - or fall back to generate-and-filter approach
   - can be mitigated to some extent by lazy construction of inputs
 * Enumerating Code Paths
-The drawback to explicit enumeration of input vectors is that many
-inputs will trigger similar behavior in the program under test. Indeed
-unit testing texts often advise programmers to first partition program
-inputs into /equivalence classes/, and then test a single input vector
-from each equivalence class, thereby minimizing the number of
-handwritten tests required (*CITE*). So instead of enumerating inputs,
-perhaps we should enumerate program behaviors, i.e. paths through the
-program. 
+The drawback to explicit enumeration of input vectors is that many inputs will
+trigger similar behavior in the program under test. Indeed unit testing texts
+often advise programmers to first partition program inputs into /equivalence
+classes/, and then test a single input vector from each equivalence class,
+thereby minimizing the number of handwritten tests required
+\cite{burnstein_practical_2003}. So instead of enumerating inputs, perhaps we
+should enumerate program behaviors, i.e. paths through the program.
 
 Tools that take this approach typically use /dynamic-symbolic execution/, which
 combines traditional symbolic execution with concrete execution, to quickly
 explore different paths through the program. The two main categories of
 dynamic-symbolic execution-based testing tools are concolic testing and
-execution-generated testing both introduced independently in 2005
+execution-generated testing, both introduced independently in 2005
 \cite{godefroid_dart:_2005,cadar_execution_2005}.
 
-** Overview of Symbolic Execution?
+** Symbolic Execution
 Symbolic execution as a method of testing programs is not a new idea, it was
 introduced in 1976 by King \cite{king_symbolic_1976}. The key difference in
 between symbolic and concrete execution is that instead of mapping program
@@ -113,8 +112,8 @@ int f (int x, int y) {
 }
 #+END_SRC
 
-a concrete execution with input vector $\{x \mapsto 1, y \mapsto 2\}$ will
-return $6$. A symbolic execution will begin with an input vector
+a concrete execution may begin with input vector $\{x \mapsto 1, y \mapsto 2\}$
+and return $6$. A symbolic execution, however, will begin with an input vector
 $\{x \mapsto \alpha_1, y \mapsto \alpha_2\}$ -- where $\alpha_i$ are symbolic
 variables -- and return $2 * (\alpha_1 + \alpha_2)$, thereby precisely
 describing /all/ possible executions of ~f~.
@@ -148,7 +147,7 @@ feasible. For example, upon reaching the inner conditional above, the symbolic
 executor will check whether $\alpha_1 = 0$ is consistent with the path condition
 $\langle \alpha_1 > 0 \rangle$, i.e. is the formula $\alpha_1 = 0\ \land\ \alpha_1
 > 0$ satisfiable? As the formula is clearly unsatisfiable, the symbolic executor
-decides that the "true" branch is /unreachable/, and continues by only pursuing
+will decide that the "true" branch is /unreachable/, and continue by only pursuing
 the "false" branch. Thus, a symbolic executor can statically determine that the
 ~abort()~ call above can /never/ be executed.
 
@@ -157,6 +156,7 @@ theorem prover to solve the symbolic expressions it creates, and as such it went
 relatively unused until recent advances in constraint solving technology.
 
 ** Concolic Testing
+
 *** DART
 In 2005 Godefroid et al. introduced the notion of /concolic testing/, which
 combines symbolic and concrete execution, with DART 
@@ -414,6 +414,13 @@ execution. This favors broad and shallow coverage, while still allowing for deep
 paths to be chosen. /Coverage-optimized search/ weights each process according
 to some heuristics, e.g. distance to an unexecuted instruction, and biases the
 choice accordingly.
+**** Environment modeling
+KLEE models the environment at the level of system calls, by replacing the
+actual system call with a simplified C implementation. Thus there is no
+"foreign" code and the developers can model interactions with the external world
+with as much precision as they desire. The drawback is that KLEE must now
+additionally reason about the mock system calls (as well as any library code
+leading up to them).
 
 **** KLEE Notes                                                    :noexport:
 - rewrite of EXE with enhancements
@@ -423,7 +430,7 @@ choice accordingly.
 - models system calls with simple C implementations (sounds like an
   under-approximation)
 ** CREST? :noexport:
-** Limitations
+** Limitations :noexport:
 
 **** Path explosion
 
@@ -462,9 +469,7 @@ these counterexamples can be transformed into concrete test cases designed to
 trigger the erroneous behavior. Thus, one only need test the paths that cannot
 be statically proven safe.
 
-# - /Filtered/ enumeration of code paths, symbolically discarding
-# uninteresting paths
-** Check'n'Crash
+** Check'n'Crash :ignoreheading:
 Check'n'Crash \cite{csallner_check_2005} builds on top of JCrasher and the
 ESC/Java contract checker \cite{flanagan_extended_2002}. It runs ESC/Java on the
 supplied program and then solves the constraint system arising from a
@@ -472,12 +477,60 @@ counterexample for concrete program input. Check'n'Crash can solve constraints
 involving integer arithmetic, object aliases, and multidimensional arrays, and
 can always fallback to the purely random testing of JCrasher if it cannot solve
 the constraint system. It then uses JCrasher to automatically generate test
-methods from the solutions. Note that a counterexample may have multiple
-solutions; Check'n'Crash must enumerate them all to be sure the bug does not exist.
-** BLAST
+methods from the solutions. Note that a counterexample may assign program
+variables to symbolic expressions instead of concrete values, e.g. in the above
+the counter example would be $x > 0 \land y > 0$, thus Check'n'Crash must
+enumerate all possible solutions to the counterexample to be sure the bug does
+not exist.
+
+** DSD-Crasher :ignoreheading:
+DSD-Crasher \cite{csallner_dsd-crasher:_2008} extends Check'n'Crash by first
+running the Daikon \cite{ernst_dynamically_2001} invariant detection tool on the
+program. The inferred invariants are translated into JML specifications so that
+ESC/Java can digest them and avoid paths that would be triggered by invalid
+inputs. Thus, DSD-Crasher is able to generate test-suites with fewer false
+positives than Check'n'Crash, as it infers the programmer's intent. The
+drawback, however, is that Daikon requires a sizeable test-suite to infer
+precise invariants, so the prospective user of DSD-Crasher is left with
+something of a chicken-and-egg problem. 
+
+**** Notes :noexport:
+- integrates Daikon as a first step in the check'n'crash formula to infer likely
+  invariants and improve precision of esc/java
+
+** BLAST :ignoreheading:
+Beyer et al. \cite{beyer_generating_2004} take a slightly different approach,
+using the BLAST \cite{beyer_software_2007} model-checker to generate test
+vectors that drive execution to each location where a user-supplied predicate
+$p$ holds. They use BLAST to translate a C program into a control-flow
+automaton, which it then traverses to generate all traces that satisfy $p$ at
+the final location. These traces are sequences of assignments and assumptions
+about the program state (e.g. from taking a specific direction of a branch), and
+must be converted into concrete test vectors before they can be executed. BLAST
+then translates these traces into logical formulae encoding constraints on the
+program variables and queries a theorem prover for a satisfying assignment,
+which finally represents a concrete test vector.
+
+An advantage of this approach over the Check'n'Crash approach is that the user
+can supply any predicate they wish and BLAST will find states that satisfy it,
+whereas Check'n'Crash will only find states that ESC/Java deems unsafe. (One
+could insert explicitly failing assertions in specific locations to guide
+Check'n'Crash, but this is more work for the user.)
+**** Notes :noexport:
+
 * Type-Targeted Testing
 - /Filtered/ enumeration of inputs
 
 
 #+LATEX: \bibliographystyle{plain}
 #+LATEX: \bibliography{bibliography}
+* Future Work?                                                     :noexport:
+- modeling environment still a problem
+- many tools to /detect/ bugs, what about fixing them?
+  - see Weimer
+- or understanding them?
+  - counterexamples reported by verifiers are pretty painful to work with
+  - concrete test vector helps, but path from input vector to bug may be complex
+    - perhaps combine test-from-counterexample with program-slicing to highlight
+      relevant path?
+    - see jhala path-slicing

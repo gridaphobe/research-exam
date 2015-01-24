@@ -19,6 +19,24 @@
 	file = {Christiansen and Fischer - 2008 - EasyCheck — Test Data for Free.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/NZPXB44S/Christiansen and Fischer - 2008 - EasyCheck — Test Data for Free.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/VZDTRF3G/978-3-540-78969-7_23.html:text/html}
 }
 
+@inproceedings{jhala_path_2005,
+	address = {New York, {NY}, {USA}},
+	series = {{PLDI} '05},
+	title = {Path Slicing},
+	isbn = {1-59593-056-6},
+	url = {http://doi.acm.org/10.1145/1065010.1065016},
+	doi = {10.1145/1065010.1065016},
+	abstract = {We present a new technique, path slicing, that takes as input a possibly infeasible path to a target location, and eliminates all the operations that are irrelevant towards the reachability of the target location. A path slice is a subsequence of the original path whose infeasibility guarantees the infeasibility of the original path, and whose feasibility guarantees the existence of some feasible variant of the given path that reaches the target location even though the given path may itself be infeasible. Our method combines the ability of program slicing to look at several program paths, with the precision that dynamic slicing enjoys by focusing on a single path. We have implemented Path Slicing to analyze possible counterexamples returned by the software model checker Blast. We show its effectiveness in drastically reducing the size of the counterexamples to less than 1\% of their original size. This enables the precise verification of application programs (upto 100KLOC), by allowing the analysis to focus on the part of the counterexample that is relevant to the property being checked.},
+	urldate = {2015-01-24},
+	booktitle = {Proceedings of the 2005 {ACM} {SIGPLAN} Conference on Programming Language Design and Implementation},
+	publisher = {{ACM}},
+	author = {Jhala, Ranjit and Majumdar, Rupak},
+	year = {2005},
+	keywords = {counterexample analysis, program slicing},
+	pages = {38--47},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/VP8QFA53/Jhala and Majumdar - 2005 - Path Slicing.pdf:application/pdf}
+}
+
 @inproceedings{visser_test_2004,
 	address = {New York, {NY}, {USA}},
 	series = {{ISSTA} '04},
@@ -237,6 +255,24 @@
 	file = {Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/GF9MUEC2/Beyer et al. - 2007 - The software model checker Blast.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/6XV7T3IJ/s10009-007-0044-z.html:text/html}
 }
 
+@inproceedings{tomb_variably_2007,
+	address = {New York, {NY}, {USA}},
+	series = {{ISSTA} '07},
+	title = {Variably Interprocedural Program Analysis for Runtime Error Detection},
+	isbn = {978-1-59593-734-6},
+	url = {http://doi.acm.org/10.1145/1273463.1273478},
+	doi = {10.1145/1273463.1273478},
+	abstract = {This paper describes an analysis approach based on a of static and dynamic techniques to ?nd run-time errors in Java code. It uses symbolic execution to ?nd constraints under which an error (e.g. a null pointer dereference, array out of bounds access, or assertion violation) may occur and then solves these constraints to ?nd test inputs that may expose the error. It only alerts the user to the possibility of a real error when it detects the expected exception during a program run. The analysis is customizable in two important ways. First, we can adjust how deeply to follow calls from each top-level method. Second, we can adjust the path termination tion for the symbolic execution engine to be either a bound on the path condition length or a bound on the number of times each instruction can be revisited. We evaluated the tool on a set of benchmarks from the literature as well as a number of real-world systems that range in size from a few thousand to 50,000 lines of code. The tool discovered all known errors in the benchmarks (as well as some not previously known) and reported on average 8 errors per 1000 lines of code for the industrial examples. In both cases the interprocedural call depth played little role in the error detection. That is, an intraprocedural analysis seems adequate for the class of errors we detect.},
+	urldate = {2015-01-24},
+	booktitle = {Proceedings of the 2007 International Symposium on Software Testing and Analysis},
+	publisher = {{ACM}},
+	author = {Tomb, Aaron and Brat, Guillaume and Visser, Willem},
+	year = {2007},
+	keywords = {can-test, defect detection, generation, symbolic execution},
+	pages = {97--107},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/INQTJAQ9/Tomb et al. - 2007 - Variably Interprocedural Program Analysis for Runt.pdf:application/pdf}
+}
+
 @article{jhala_software_2009,
 	title = {Software Model Checking},
 	volume = {41},
@@ -253,6 +289,35 @@
 	keywords = {abstraction, counterexample-guided refinement, enumerative and symbolic model checking, liveness, safety, Software model checking},
 	pages = {21:1--21:54},
 	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/FZ2GJ2VS/Jhala and Majumdar - 2009 - Software Model Checking.pdf:application/pdf}
+}
+
+@book{burnstein_practical_2003,
+	title = {Practical Software Testing: A Process-Oriented Approach},
+	isbn = {9780387951317},
+	shorttitle = {Practical Software Testing},
+	abstract = {Based on the needs of the educational community, and the software professional, this book takes a unique approach to teaching software testing. It introduces testing concepts that are managerial, technical, and process oriented, using the Testing Maturity Model ({TMM}) as a guiding framework. The {TMM} levels and goals support a structured presentation of fundamental and advanced test-related concepts to the reader. In this context, the interrelationships between theoretical, technical, and managerial concepts become more apparent. In addition, relationships between the testing process, maturity goals, and such key players as managers, testers and client groups are introduced. Topics and features:- Process/engineering-oriented text- Promotes the growth and value of software testing as a profession- Introduces both technical and managerial aspects of testing in a clear and precise style- Uses the {TMM} framework to introduce testing concepts in a systemmatic, evolutionary way to faciliate understanding- Describes the role of testing tools and measurements, and how to integrate them into the testing process Graduate students and industry professionals will benefit from the book, which is designed for a graduate course in software testing, software quality assurance, or software validation and verification Moreover, the number of universities with graduate courses that cover this material will grow, given the evoluation in software development as an engineering discipline and the creation of degree programs in software engineering.},
+	language = {en},
+	publisher = {Springer Science \& Business Media},
+	author = {Burnstein, Ilene},
+	month = jun,
+	year = {2003},
+	keywords = {Computers / Information Technology, Computers / Programming / General, Computers / Programming Languages / General, Computers / Software Development \& Engineering / General, Computers / Software Development \& Engineering / Systems Analysis \& Design}
+}
+
+@article{ernst_dynamically_2001,
+	title = {Dynamically discovering likely program invariants to support program evolution},
+	volume = {27},
+	issn = {0098-5589},
+	doi = {10.1109/32.908957},
+	abstract = {Explicitly stated program invariants can help programmers by identifying program properties that must be preserved when modifying code. In practice, however, these invariants are usually implicit. An alternative to expecting programmers to fully annotate code with invariants is to automatically infer likely invariants from the program itself. This research focuses on dynamic techniques for discovering invariants from execution traces. This article reports three results. First, it describes techniques for dynamically discovering invariants, along with an implementation, named Daikon, that embodies these techniques. Second, it reports on the application of Daikon to two sets of target programs. In programs from Gries's work (1981) on program derivation, the system rediscovered predefined invariants. In a C program lacking explicit invariants, the system discovered invariants that assisted a software evolution task. These experiments demonstrate that, at least for small programs, invariant inference is both accurate and useful. Third, it analyzes scalability issues, such as invariant detection runtime and accuracy, as functions of test suites and program points instrumented},
+	number = {2},
+	journal = {{IEEE} Transactions on Software Engineering},
+	author = {Ernst, M.D. and Cockrell, J. and Griswold, William G. and Notkin, D.},
+	month = feb,
+	year = {2001},
+	keywords = {Application software, Computer Society, Daikon, Detectors, execution traces, explicitly stated program invariants, Formal specifications, Instruments, invariant inference, likely program invariants, modifying code, Pattern analysis, program derivation, program evolution, Programming profession, program properties, reverse engineering, Runtime, scalability, small programs, software evolution, software maintenance, Testing},
+	pages = {99--123},
+	file = {Ernst et al. - 2001 - Dynamically discovering likely program invariants .pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/XHA2TMCQ/Ernst et al. - 2001 - Dynamically discovering likely program invariants .pdf:application/pdf;IEEE Xplore Abstract Record:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/PB4WEMGK/abs_all.html:text/html}
 }
 
 @inproceedings{zhang_toward_2014,
@@ -583,6 +648,26 @@
 	file = {Pottier - 2014 - Hindley-milner Elaboration in Applicative Style F.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/RPXD58MT/Pottier - 2014 - Hindley-milner Elaboration in Applicative Style F.pdf:application/pdf}
 }
 
+@incollection{smaragdakis_combining_2007,
+	series = {Lecture Notes in Computer Science},
+	title = {Combining Static and Dynamic Reasoning for Bug Detection},
+	copyright = {©2007 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-540-73769-8, 978-3-540-73770-4},
+	url = {http://link.springer.com/chapter/10.1007/978-3-540-73770-4_1},
+	abstract = {Many static and dynamic analyses have been developed to improve program quality. Several of them are well known and widely used in practice. It is not entirely clear, however, how to put these analyses together to achieve their combined benefits. This paper reports on our experiences with building a sequence of increasingly more powerful combinations of static and dynamic analyses for bug finding in the tools {JCrasher}, Check ’n’ Crash, and {DSD}-Crasher. We contrast the power and accuracy of the tools using the same example program as input to all three. At the same time, the paper discusses the philosophy behind all three tools. Specifically, we argue that trying to detect program errors (rather than to certify programs for correctness) is well integrated in the development process and a promising approach for both static and dynamic analyses. The emphasis on finding program errors influences many aspects of analysis tools, including the criteria used to evaluate them and the vocabulary of discourse.},
+	language = {en},
+	number = {4454},
+	urldate = {2015-01-24},
+	booktitle = {Tests and Proofs},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Smaragdakis, Yannis and Csallner, Christoph},
+	editor = {Gurevich, Yuri and Meyer, Bertrand},
+	year = {2007},
+	keywords = {Computer Communication Networks, Computers and Society, Logics and Meanings of Programs, Software Engineering, System Performance and Evaluation},
+	pages = {1--16},
+	file = {Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/7IB5RWM8/Smaragdakis and Csallner - 2007 - Combining Static and Dynamic Reasoning for Bug Det.pdf:application/pdf;Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/8MHDGD75/978-3-540-73770-4_1.html:text/html}
+}
+
 @inproceedings{chakravarty_foreign_2014,
 	address = {New York, {NY}, {USA}},
 	series = {Haskell '14},
@@ -724,6 +809,20 @@
 	file = {Breitner et al. - 2014 - Safe Zero-cost Coercions for Haskell.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/N3TFQTJZ/Breitner et al. - 2014 - Safe Zero-cost Coercions for Haskell.pdf:application/pdf}
 }
 
+@inproceedings{jeffrey_bugfix:_2009,
+	title = {{BugFix}: A learning-based tool to assist developers in fixing bugs},
+	shorttitle = {{BugFix}},
+	doi = {10.1109/ICPC.2009.5090029},
+	abstract = {We present a tool called {BugFix} that can assist developers in fixing program bugs. Our tool automatically analyzes the debugging situation at a statement and reports a prioritized list of relevant bug-fix suggestions that are likely to guide the developer to an appropriate fix at that statement. {BugFix} incorporates ideas from machine learning to automatically learn from new debugging situations and bug fixes over time. This enables more effective prediction of the most relevant bug-fix suggestions for newly-encountered debugging situations. The tool takes into account the static structure of a statement, the dynamic values used at that statement by both passing and failing runs, and the interesting value mapping pairs associated with that statement. We present a case study illustrating the efficacy of {BugFix} in helping developers to fix bugs.},
+	booktitle = {{IEEE} 17th International Conference on Program Comprehension, 2009. {ICPC} '09},
+	author = {Jeffrey, D. and Feng, Min and Gupta, N. and Gupta, R.},
+	month = may,
+	year = {2009},
+	keywords = {{BugFix}, Computer bugs, Error correction, Failure analysis, Fault diagnosis, learning (artificial intelligence), learning-based tool, machine learning, program bugs, program debugging, Programming, Robustness, Runtime, Software debugging, Testing},
+	pages = {70--79},
+	file = {IEEE Xplore Abstract Record:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/XFPME3UB/abs_all.html:text/html;Jeffrey et al. - 2009 - BugFix A learning-based tool to assist developers.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/RCBQM8W3/Jeffrey et al. - 2009 - BugFix A learning-based tool to assist developers.pdf:application/pdf}
+}
+
 @inproceedings{adams_indentation-sensitive_2014,
 	address = {New York, {NY}, {USA}},
 	series = {Haskell '14},
@@ -740,6 +839,24 @@
 	keywords = {\_tablet, indentation sensitivity, layout, offside rule, parsec, parsing},
 	pages = {121--132},
 	file = {Adams and Ağacan - 2014 - Indentation-sensitive Parsing for Parsec.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/37Q3MGWG/Adams and Ağacan - 2014 - Indentation-sensitive Parsing for Parsec.pdf:application/pdf}
+}
+
+@inproceedings{tillmann_parameterized_2005,
+	address = {New York, {NY}, {USA}},
+	series = {{ESEC}/{FSE}-13},
+	title = {Parameterized Unit Tests},
+	isbn = {1-59593-014-0},
+	url = {http://doi.acm.org/10.1145/1081706.1081749},
+	doi = {10.1145/1081706.1081749},
+	abstract = {Parameterized unit tests extend the current industry practice of using closed unit tests defined as parameterless methods. Parameterized unit tests separate two concerns: 1) They specify the external behavior of the involved methods for all test arguments. 2) Test cases can be re-obtained as traditional closed unit tests by instantiating the parameterized unit tests. Symbolic execution and constraint solving can be used to automatically choose a minimal set of inputs that exercise a parameterized unit test with respect to possible code paths of the implementation. In addition, parameterized unit tests can be used as symbolic summaries which allows symbolic execution to scale for arbitrary abstraction levels. We have developed a prototype tool which computes test cases from parameterized unit tests. We report on its first use testing parts of the .{NET} base class library.},
+	urldate = {2015-01-24},
+	booktitle = {Proceedings of the 10th European Software Engineering Conference Held Jointly with 13th {ACM} {SIGSOFT} International Symposium on Foundations of Software Engineering},
+	publisher = {{ACM}},
+	author = {Tillmann, Nikolai and Schulte, Wolfram},
+	year = {2005},
+	keywords = {algebraic data types, automatic test input generation, constraint solving, symbolic execution, unit testing},
+	pages = {253--262},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/PCD9MUXQ/Tillmann and Schulte - 2005 - Parameterized Unit Tests.pdf:application/pdf}
 }
 
 @inproceedings{rondon_liquid_2008,
@@ -949,6 +1066,25 @@
 	keywords = {\_tablet, numeric towers, random testing, type environments},
 	pages = {351--356},
 	file = {St-Amour and Toronto - 2013 - Experience Report Applying Random Testing to a Ba.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/R8C6BGAA/St-Amour and Toronto - 2013 - Experience Report Applying Random Testing to a Ba.pdf:application/pdf}
+}
+
+@article{csallner_dsd-crasher:_2008,
+	title = {{DSD}-Crasher: A Hybrid Analysis Tool for Bug Finding},
+	volume = {17},
+	issn = {1049-331X},
+	shorttitle = {{DSD}-Crasher},
+	url = {http://doi.acm.org/10.1145/1348250.1348254},
+	doi = {10.1145/1348250.1348254},
+	abstract = {{DSD}-Crasher is a bug finding tool that follows a three-step approach to program analysis: D. Capture the program's intended execution behavior with dynamic invariant detection. The derived invariants exclude many unwanted values from the program's input domain. S. Statically analyze the program within the restricted input domain to explore many paths. D. Automatically generate test cases that focus on reproducing the predictions of the static analysis. Thereby confirmed results are feasible. This three-step approach yields benefits compared to past two-step combinations in the literature. In our evaluation with third-party applications, we demonstrate higher precision over tools that lack a dynamic step and higher efficiency over tools that lack a static step.},
+	number = {2},
+	urldate = {2015-01-24},
+	journal = {{ACM} Trans. Softw. Eng. Methodol.},
+	author = {Csallner, Christoph and Smaragdakis, Yannis and Xie, Tao},
+	month = may,
+	year = {2008},
+	keywords = {automatic testing, bug finding, dynamic analysis, dynamic invariant detection, extended static checking, false positives, static analysis, test case generation, usability},
+	pages = {8:1--8:37},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/VM436B8S/Csallner et al. - 2008 - DSD-Crasher A Hybrid Analysis Tool for Bug Findin.pdf:application/pdf}
 }
 
 @inproceedings{orchard_embedding_2014,
@@ -1405,6 +1541,24 @@
 	file = {Klein and Findler - 2009 - Randomized testing in PLT Redex.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/WIW2TZBA/Klein and Findler - 2009 - Randomized testing in PLT Redex.pdf:application/pdf}
 }
 
+@article{leavens_preliminary_2006,
+	title = {Preliminary Design of {JML}: A Behavioral Interface Specification Language for Java},
+	volume = {31},
+	issn = {0163-5948},
+	shorttitle = {Preliminary Design of {JML}},
+	url = {http://doi.acm.org/10.1145/1127878.1127884},
+	doi = {10.1145/1127878.1127884},
+	abstract = {{JML} is a behavioral interface specification language tailored to Java({TM}). Besides pre- and postconditions, it also allows assertions to be intermixed with Java code; these aid verification and debugging. {JML} is designed to be used by working software engineers; to do this it follows Eiffel in using Java expressions in assertions. {JML} combines this idea from Eiffel with the model-based approach to specifications, typified by {VDM} and Larch, which results in greater expressiveness. Other expressiveness advantages over Eiffel include quantifiers, specification-only variables, and frame conditions.This paper discusses the goals of {JML}, the overall approach, and describes the basic features of the language through examples. It is intended for readers who have some familiarity with both Java and behavioral specification using pre- and postconditions.},
+	number = {3},
+	urldate = {2015-01-24},
+	journal = {{SIGSOFT} Softw. Eng. Notes},
+	author = {Leavens, Gary T. and Baker, Albert L. and Ruby, Clyde},
+	month = may,
+	year = {2006},
+	pages = {1--38},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/BAW2G29E/Leavens et al. - 2006 - Preliminary Design of JML A Behavioral Interface .pdf:application/pdf}
+}
+
 @inproceedings{chitil_practical_2012,
 	address = {New York, {NY}, {USA}},
 	series = {{ICFP} '12},
@@ -1691,6 +1845,17 @@
 	publisher = {The {MIT} Press},
 	author = {Jackson, Daniel},
 	year = {2006}
+}
+
+@inproceedings{xu_static_2009,
+	title = {Static Contract Checking for Haskell},
+	abstract = {Program errors are hard to detect and are costly both to programmers who spend significant efforts in debugging, and for systems that are guarded by runtime checks. Static verification techniques have been applied to imperative and object-oriented languages, like Java and C\#, but few have been applied to a higher-order lazy functional language, like Haskell. In this paper, we describe a sound and automatic static verification framework for Haskell, that is based on contracts and symbolic execution. Our approach is modular and gives precise blame assignments at compile-time in the presence of higher-order functions and laziness. D.3 [Software]: Program-},
+	booktitle = {In Proceedings of the 36 th Annual {ACM} Symposium on the Principles of Programming Languages},
+	publisher = {{ACM}},
+	author = {Xu, Dana N. and Jones, Simon Peyton and Claessen, Koen},
+	year = {2009},
+	pages = {41--52},
+	file = {Citeseer - Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/ZEQ4UZT4/Xu et al. - 2009 - Static Contract Checking for Haskell.pdf:application/pdf;Citeseer - Snapshot:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/C3G64W9W/summary.html:text/html}
 }
 
 @inproceedings{marinov_testera:_2001,
