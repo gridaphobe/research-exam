@@ -54,12 +54,13 @@ data Tree a
 insert :: Ord a => a -> Tree a -> Tree a
 #+END_SRC
 * Enumerating Inputs
-Perhaps the simplest method of automatically testing a program is to
-enumerate valid inputs and check whether the program behaves correctly
-on these inputs. Of course, enumerating /all/ inputs is generally
-infeasible, so we must find some way of narrowing the search space. The
-two common solutions are enumerating /small/ inputs and random sampling
-of the entire space.
+Perhaps the simplest method of automatically testing a program is to enumerate
+valid inputs based on its external interface -- an instance of /black-box
+testing/ \cite{adrion_validation_1982} -- and check whether the program behaves
+correctly on these inputs. Of course, enumerating /all/ inputs is generally
+infeasible, so we must find some way of narrowing the search space. The two
+common solutions are enumerating /small/ inputs and random sampling of the
+entire space.
 
 ** Enumerating "small" inputs
 The /small-scope hypothesis/ \cite{jackson_software_2006} argues that if
@@ -68,17 +69,104 @@ program contains a bug there is likely a small input that will trigger
 it. Thus, we can restrict our enumeration to "small" inputs and still
 gain a large degree of confidence in our program.
 
-
 *** SmallCheck
+SmallCheck \cite{runciman_smallcheck_2008} is a testing library for Haskell
+programs that does the simplest thing possible. Programmers specify how to
+enumerate input values using Haskell's type-class mechanism
+\cite{wadler_how_1989} and provide a boolean-valued function that describes the
+property they wish to check, and SmallCheck enumerates all possible inputs up to
+some depth, validating the property on each input vector. The input generators
+are expected to produce values in increasing size (indeed, such a generator can
+be automatically derived from a datatype definition), thus SmallCheck is
+guaranteed to find the /minimal/ counterexample if it lies within the
+depth-bound.
 
-*** Korat
+Naturally, such a brute-force enumeration of input vectors is bound to be
+wasteful (i.e. it will produce many inputs that trigger the same code path),
+thus the authors also introduce a /lazy/ variant that takes advantage of
+Haskell's inherent laziness to prune the search space. The key distinction of
+Lazy SmallCheck is that it produces /partially-defined/ values instead of
+fully-defined values, i.e. Lazy SmallCheck will initially set each
+component of a value with $\bot$. Only when a value is demanded (and Haskell's
+runtime throws an exception) will Lazy SmallCheck fill in the "hole" with an
+actual value. Thus, Lazy SmallCheck reduces the search space by dynamically
+discovering which parts of a value are relevant to the property being tested.
+
+Initially, Lazy SmallCheck had several disadvantages compared to SmallCheck. It
+could not generate functional values (commonly used in Haskell), and it could
+not print the partially-defined counterexample, instead it would have to
+concretize the input vector, thus /losing/ information. These were both added
+later as enhancements \cite{reich_advances_2013}.  A remaining concern is that
+programmers must be careful about the order in which they conjoin predicates,
+giving precedence to the lazier predicate. For example, a binary-search tree
+implementation will want to check the ordering invariant before balancedness;
+the former will often fail within the first few nodes whereas the latter will
+force the entire spine.
+
+*** TestEra / Korat
+TestEra \cite{khurshid_testera:_2004,marinov_testera:_2001} provides (bounded)
+exhaustive testing of Java methods against an Alloy
+\cite{jackson_automating_2000} specification. Unlike SmallCheck, which
+enumerates input vectors by unfolding each possible data constructor and
+enumerating its arguments, TestEra begins with a pre-defined universe of atomic
+values (e.g. primitive types and uninitialized objects), and uses the Alloy
+Analyzer \cite{jackson_alcoa:_2000} to enumerate all valid /relations/ between
+the atoms, i.e. setting the pointers appropriately such that the method's
+preconditions are satisfied. Thus, an important optimization that TestEra
+implements is filtering /isomorphic/ inputs. For each symbolic input vector
+produced by Alloy, TestEra /concretizes/ the input to a set of Java objects,
+executes the method, and then /abstracts/ the result back to an Alloy
+value. Finally, it queries the Alloy Analyzer again to determine whether the
+output satisfies the method's postcondition, then proceeding to the next input
+vector. Unlike SmallCheck, TestEra is not guaranteed to find a minimal
+counterexample as the testing order is left up to Alloy.
+
+Korat \cite{boyapati_korat:_2002} is a rewrite of TestEra that uses a custom
+enumeration algorithm instead of calling out to Alloy. Korat enumerates all
+input candidates in lexicographic order, and runs an instrumented version of a
+programmer-supplied =repOk= method (to check class invariants and preconditions)
+that tracks field accesses. If =repOk= returns /true/ Korat immediately outputs
+all (non-isomorphic) input vectors that share the current valuation of the
+/accessed/ fields, as the valuation of the unread fields cannot have affected
+the outcome of =repOk=. More importantly, if =repOk= returns /false/ Korat
+immediately backtracks, skipping all variant candidates that share the current
+valuation of the accessed fields, as /none/ of them can be valid. Thus, Korat
+takes advantage of the inherent laziness of invariant-checking predicates to
+quickly prune the search space of invalid inputs, in a very similar manner to
+Lazy SmallCheck.
+
+# TestEra \cite{khurshid_testera:_2004,marinov_testera:_2001} and Korat
+# \cite{boyapati_korat:_2002} both provide (bounded) exhaustive testing of Java
+# methods. Given a method, a formal specification of the desired behavior, and a
+# universe of atomic values (e.g. primitive values and uninitialized objects),
+# TestEra and Korat begin by enumerating all valid instantiations of the 
 
 ** Random sampling of inputs
+The obvious drawback to the approaches described above is that they will not
+detect bugs that only present on "large" inputs. Thus, a common alternative to
+enumeration of small inputs is random selection of input vectors from the entire
+search space.
 
 *** QuickCheck
+QuickCheck \cite{claessen_quickcheck:_2000} enables randomized testing of
+Haskell programs by providing an embedded domain-specific language for
+generating /arbitrary/ values of a given datatype. As with SmallCheck,
+QuickCheck properties are boolean-valued Haskell functions whose inputs can be
+(randomly) generated. Unlike SmallCheck it is impractical to automatically
+derive QuickCheck generators for datatypes, as one must take care to ensure the
+generator covers a uniform distribution of values. For example, a generator for
+a simple "list" type
+
+#+BEGIN_SRC haskell
+data List a = Nil | Cons a (List a)
+#+END_SRC
+
+that chooses between =Nil= and =Cons= with equal probability is highly unlikely
+to generate lists with more than a handful of elements.
+
 *** JCrasher
 *** Randoop
-** Limitations
+** Limitations :noexport:
 *** Preconditions
 - need for programmer intervention to specify "smart" generators
   - or fall back to generate-and-filter approach
@@ -90,7 +178,10 @@ often advise programmers to first partition program inputs into /equivalence
 classes/, and then test a single input vector from each equivalence class,
 thereby minimizing the number of handwritten tests required
 \cite{burnstein_practical_2003}. So instead of enumerating inputs, perhaps we
-should enumerate program behaviors, i.e. paths through the program.
+should enumerate program behaviors, i.e. paths through the program. This
+necessarily requires knowledge of the internal structure of the program under
+test, thus tools that take this approach will fall in the category of /white-box
+testing/ \cite{adrion_validation_1982}.
 
 Tools that take this approach typically use /dynamic-symbolic execution/, which
 combines traditional symbolic execution with concrete execution, to quickly
@@ -244,7 +335,7 @@ technique by adding support for (dis)equality constraints on pointers, and by
 switching to a /bounded/ depth-first search.
 
 **** Pointer (dis)equality
-Whereas DART maintained a single map of memory locations to symbolic
+Whereas DART maintained a single map of memory locations to symbolic arithmetic
 expressions, CUTE maintains two maps of memory locations: (1) $\mathcal{A}$ to
 arithmetic expressions and (2) $\mathcal{P}$ to pointer expressions. $\mathcal{A}$
 contains the usual linear arithmetic expressions as in DART; however,
@@ -535,6 +626,8 @@ could insert explicitly failing assertions in specific locations to guide
 Check'n'Crash, but this is more work for the user.)
 **** Notes :noexport:
 
+** Reach? :noexport:
+\cite{naylor_finding_2007}
 * Type-Targeted Testing
 - /Filtered/ enumeration of inputs
 
