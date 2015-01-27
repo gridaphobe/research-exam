@@ -87,7 +87,7 @@ thus the authors also introduce a /lazy/ variant that takes advantage of
 Haskell's inherent laziness to prune the search space. The key distinction of
 Lazy SmallCheck is that it produces /partially-defined/ values instead of
 fully-defined values, i.e. Lazy SmallCheck will initially set each
-component of a value with $\bot$. Only when a value is demanded (and Haskell's
+component of a value to $\bot$. Only when a value is demanded (and Haskell's
 runtime throws an exception) will Lazy SmallCheck fill in the "hole" with an
 actual value. Thus, Lazy SmallCheck reduces the search space by dynamically
 discovering which parts of a value are relevant to the property being tested.
@@ -184,22 +184,14 @@ describing a class of counterexamples. For example, Pike shows that SmartCheck
 can reduce a large counterexample like
 
 #+BEGIN_SRC haskell
-StackSet {current = Screen {workspace = Workspace
-{tag = NonNegative {getNonNegative = 0}, layout =
--1, stack = Just (Stack {focus = ‘S’, up ="", down
-= ""})}, screen = 1, screenDetail = 1}, visible =
-[Screen {workspace = Workspace {tag = NonNegative
-{getNonNegative = 2}, layout = -1, stack =
-Nothing}, screen = 2, screenDetail = -1},Screen
-{workspace = Workspace {tag = NonNegative
-{getNonNegative = 3}, layout = -1, stack =
-Nothing}, screen = 0, screenDetail = -1}], hidden
-= [Workspace {tag = NonNegative {getNonNegative =
-1}, layout = -1, stack = Just (Stack {focus =
-‘NUL’, up = "", down = ""})}, Workspace {tag =
-NonNegative {getNonNegative = 4}, layout = -1,
-stack = Just (Stack {focus = ‘I’, up = "", down =
-""})}], floating = fromList []}
+StackSet 
+ (Screen (Workspace 0 (-1) 
+   (Just (Stack 'S' "" ""))) 1 1)
+ [Screen (Workspace 2 (-1) Nothing) 2 (-1),
+  Screen (Workspace 3 (-1) Nothing) 0 (-1)] 
+ [Workspace 1 (-1) (Just (Stack 'NUL' "" "")),
+  Workspace 4 (-1) (Just (Stack 'I' "" ""))]
+ (fromList [])
 #+END_SRC
 
 to a comparatively simple formula
@@ -228,6 +220,7 @@ random indices, but the work has not yet been incorporated into
 QuickCheck.
 
 *** JCrasher
+
 *** Randoop
 ** Limitations :noexport:
 *** Preconditions
@@ -606,22 +599,23 @@ leading up to them).
 **** Path explosion
 
 **** Modeling the environment
-* Tests from Counterexamples
+* /Filtered/ Enumeration of Code Paths
 In the previous section we discussed approaches whose aim was to achieve high
 program coverage, i.e. to execute as many instructions as possible in a short
 period. However even this may seem wasteful in the presence of tools that can
 /prove/ a program correct. 
 
-Program verification is the process of analyzing a program and constructing a
-formal proof that it satisfies some correctness condition. As before we will use
-crash-freedom as our correctness condition, as high-level safety properties can
-be rewritten in terms of crash-freedom. A verifier is considered /sound/ if it
-never reports a false positive, i.e. if the verifier claims your program is
-bug-free, it truly is. The converse does not generally hold; even if your
-program is bug-free the verifier may still report a possible bug, as it often
-has to /over-approximate/ program behavior in order to achieve soundness. For
-instance, many verifiers struggle with non-linear arithmetic, i.e. they would be
-unable to verify
+Program verification is the process of analyzing a program and
+constructing a formal proof that it satisfies some correctness condition
+\cite{nelson_techniques_1980}. As before we will use crash-freedom as
+our correctness condition, as high-level safety properties can be
+rewritten in terms of crash-freedom. A verifier is considered /sound/ if
+it never reports a false positive, i.e. if the verifier claims your
+program is bug-free, it truly is. The converse does not generally hold;
+even if your program is bug-free the verifier may still report a
+possible bug, as it often has to /over-approximate/ program behavior in
+order to achieve soundness. For instance, many verifiers struggle with
+non-linear arithmetic, i.e. they would be unable to verify
 
 #+BEGIN_SRC c
 int f (int x, int y) {
