@@ -148,11 +148,13 @@ enumeration of small inputs is random selection of input vectors from the entire
 search space.
 
 *** QuickCheck
-QuickCheck \cite{claessen_quickcheck:_2000} enables randomized testing of
-Haskell programs by providing an embedded domain-specific language for
-generating /arbitrary/ values of a given datatype. As with SmallCheck,
-QuickCheck properties are boolean-valued Haskell functions whose inputs can be
-(randomly) generated. Unlike SmallCheck it is impractical to automatically
+QuickCheck \cite{claessen_quickcheck:_2000,claessen_testing_2002} enables
+randomized testing of Haskell programs by providing an embedded domain-specific
+language for generating /arbitrary/ values of a given datatype. As with
+SmallCheck, QuickCheck properties are boolean-valued Haskell functions whose
+inputs can be (randomly) generated, and the input-generators (usually) operate
+by unfolding a specific data constructor and generating sub-values for the
+constructor's fields. Unlike SmallCheck it is impractical to automatically
 derive QuickCheck generators for datatypes, as one must take care to ensure the
 generator covers a uniform distribution of values. For example, a generator for
 a simple "list" type
@@ -162,7 +164,68 @@ data List a = Nil | Cons a (List a)
 #+END_SRC
 
 that chooses between =Nil= and =Cons= with equal probability is highly unlikely
-to generate lists with more than a handful of elements.
+to generate lists with more than a handful of elements. A further concern
+arising from random testing is that the returned counterexample may be quite
+large, as demonstrated by Pike \cite{pike_smartcheck:_2014}. Thus, subsequent
+iterations of QuickCheck introduced support for /shrinking/ counterexamples
+\cite{hughes_quickcheck_2006}. Once QuickCheck has found a counterexample it
+will invoke a user-defined =shrink= function on the input vector, which will
+return a list of smaller inputs. QuickCheck will test each small candidate in
+turn and repeat the shrinking process on any new counterexamples, finally
+returning the smallest counterexample it could find. Notably, the shrinking
+process is not guaranteed to find a /minimal/ counterexample.
+
+Pike \cite{pike_smartcheck:_2014} builds on top of QuickCheck with SmartCheck,
+which provides automatically-derivable shrinking definitions that are shown to
+perform favorably compared to handwritten =shrink= functions, and produce
+smaller counterexamples. More interestingly, SmartCheck also introduces
+/counterexample generalization/, which attempts to produce a universal property
+describing a class of counterexamples. For example, Pike shows that SmartCheck
+can reduce a large counterexample like
+
+#+BEGIN_SRC haskell
+StackSet {current = Screen {workspace = Workspace
+{tag = NonNegative {getNonNegative = 0}, layout =
+-1, stack = Just (Stack {focus = ‘S’, up ="", down
+= ""})}, screen = 1, screenDetail = 1}, visible =
+[Screen {workspace = Workspace {tag = NonNegative
+{getNonNegative = 2}, layout = -1, stack =
+Nothing}, screen = 2, screenDetail = -1},Screen
+{workspace = Workspace {tag = NonNegative
+{getNonNegative = 3}, layout = -1, stack =
+Nothing}, screen = 0, screenDetail = -1}], hidden
+= [Workspace {tag = NonNegative {getNonNegative =
+1}, layout = -1, stack = Just (Stack {focus =
+‘NUL’, up = "", down = ""})}, Workspace {tag =
+NonNegative {getNonNegative = 4}, layout = -1,
+stack = Just (Stack {focus = ‘I’, up = "", down =
+""})}], floating = fromList []}
+#+END_SRC
+
+to a comparatively simple formula
+
+#+BEGIN_SRC
+forall values x0 x1 x2 x3:
+  StackSet
+    (Screen (Workspace x0 (-1) (Just x1)) 1 1)
+    x2 x3 (fromList [])
+#+END_SRC
+
+thus abstracting away the irrelevant portions of the counterexample. The
+key insight is that if one can replace a sub-value by another arbitrary
+value without affecting the test outcome, then the sub-value must not
+affect the outcome. Thus, SmartCheck systematically replaces all
+sub-values of the counterexample with other random values and
+generalizes the counterexample accordingly.
+
+QuickCheck does not currently have good support for testing properties
+with preconditions, due to the low probability of randomly generating a
+value that satisfies the precondition. \cite{claessen_generating_2014}
+describes an algorithm for random generation of constrained inputs
+based on \cite{durega_ard_feat:_2012}, by defining a function to index
+into a uniform distribution of constrained values, and then generating
+random indices, but the work has not yet been incorporated into
+QuickCheck.
 
 *** JCrasher
 *** Randoop
