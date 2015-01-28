@@ -36,9 +36,7 @@ generating inputs to highly constrained functions by specifying the expected
 behavior via /refinement types/.
 #+END_ABSTRACT
 
-* Introduction
-*TODO*
-
+* TODO Introduction
 There are two core questions an automatic test-case generator must
 answer:
 1. How do we generate input values?
@@ -216,7 +214,7 @@ QuickCheck does not currently have good support for testing properties
 with preconditions, due to the low probability of randomly generating a
 value that satisfies the precondition. \cite{claessen_generating_2014}
 describes an algorithm for random generation of constrained inputs
-based on \cite{durega_ard_feat:_2012}, by defining a function to index
+based on \cite{duregard_feat:_2012}, by defining a function to index
 into a uniform distribution of constrained values, and then generating
 random indices, but the work has not yet been incorporated into
 QuickCheck.
