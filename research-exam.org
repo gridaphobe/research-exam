@@ -720,12 +720,8 @@ Check'n'Crash, but this is more work for the user.)
 
 ** Reach? :noexport:
 \cite{naylor_finding_2007}
-* Type-Targeted Testing
+* TODO Type-Targeted Testing
 - /Filtered/ enumeration of inputs
-
-
-#+LATEX: \bibliographystyle{plain}
-#+LATEX: \bibliography{bibliography}
 * Future Work?                                                     :noexport:
 - modeling environment still a problem
 - many tools to /detect/ bugs, what about fixing them?
@@ -736,3 +732,7 @@ Check'n'Crash, but this is more work for the user.)
     - perhaps combine test-from-counterexample with program-slicing to highlight
       relevant path?
     - see jhala path-slicing
+* TODO Conclusion
+
+#+LATEX: \bibliographystyle{plain}
+#+LATEX: \bibliography{bibliography}
