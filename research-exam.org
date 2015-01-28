@@ -721,7 +721,33 @@ Check'n'Crash, but this is more work for the user.)
 ** Reach? :noexport:
 \cite{naylor_finding_2007}
 * TODO Type-Targeted Testing
-- /Filtered/ enumeration of inputs
+In this section we describe our own contribution to automatic test-case
+generation, a black-box approach for testing programs with highly-constrained
+input domains. Our approach, which we call /type-targeted testing/ --
+abbreviated to Target -- uses /refinement types/ to describe function contracts
+and then automatically generates all inputs, up to a given depth, that satisfy
+the function's precondition.
+
+** Refinement Types
+A refinement type -- written ={v:T | p}= -- refines a base type =T= with a
+logical predicate =p= that all values =v= of the refined type must satisfy. For
+example, the following types
+
+#+BEGIN_SRC haskell
+type Nat   = {v:Int | 0 <= v}
+type Pos   = {v:Int | 0 <  v}
+type Rng N = {v:Int | 0 <= v && v < N}
+#+END_SRC
+
+describe the set of integers that are non-negative, strictly positive, and in
+the range $[0, N)$ respectively. We can also construct refined collection and
+function types by refining the individual components.
+
+Traditionally, refinement types have been used as a means of program
+verification \cite{xi_eliminating_1998,dunfield_refined_2007,swamy_secure_2011,vazou_liquidhaskell:_2014},
+but we are instead going to use refinement types as a high-level specification
+mechanism for generating exhaustive test-suites.
+
 * Future Work?                                                     :noexport:
 - modeling environment still a problem
 - many tools to /detect/ bugs, what about fixing them?
