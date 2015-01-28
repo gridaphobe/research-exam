@@ -37,6 +37,8 @@ behavior via /refinement types/.
 #+END_ABSTRACT
 
 * Introduction
+*TODO*
+
 There are two core questions an automatic test-case generator must
 answer:
 1. How do we generate input values?
@@ -220,8 +222,43 @@ random indices, but the work has not yet been incorporated into
 QuickCheck.
 
 *** JCrasher
+Instead of constructing input vectors directly, JCrasher
+\cite{csallner_jcrasher:_2004} constructs them indirectly via /method
+chaining/. Given a set of Java classes, JCrasher constructs a parameter
+graph, where the nodes are public methods, constructors, and primitive
+values, and the edges run from method parameters to nodes producing values
+of the needed type. By randomly choosing paths through the graph
+starting from the method under test, JCrasher creates sequences of
+method and constructor calls that should produce valid input
+vectors. JCrasher executes these method chains followed by the target
+method, under the assumption that public methods and constructors should
+not produce inputs that will crash a program.
+
+There is some subtlety in the use of "crash", as Java methods will
+frequently throw exceptions when given invalid input parameters. We
+should not consider precondition violations as "crashes" as the
+responsibility of providing valid inputs rests with the /caller/, not
+the /callee/ \cite{meyer_applying_1992}. Thus, JCrasher includes a
+number of heuristics to determine whether a thrown exception should be
+considered a bug. For example, an =IllegalArgumentException= can be
+considered a bug if it was thrown by a transitively-called method, but
+not if it was thrown directly by the method under test, as that would
+indicate that our test vector was at fault. On the other hand, an
+=ArithmeticException= (e.g. divide-by-zero) can always be classified as
+a bug, as the method under test should have caught and handled it.
 
 *** Randoop
+Randoop \cite{pacheco_feedback-directed_2007} extends the
+method-chaining approach of JCrasher by incorporating feedback from
+previously generated test vectors. The main insight is that if a
+sequence of methods $s$ results in a crash, there is no point in
+checking any sequences that include $s$ as a prefix. Thus, Randoop
+iteratively constructs longer chains of method calls, only extending
+existing chains if they do not cause the program to crash. Furthermore,
+Randoop applies some filters to the generated sequences before testing
+them to further reduce the search space, e.g. by discarding sequences
+that immediately throw an exception or produce a value that equal to the
+result of an existing sequence.
 ** Limitations :noexport:
 *** Preconditions
 - need for programmer intervention to specify "smart" generators
