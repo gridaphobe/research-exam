@@ -8,6 +8,24 @@
 # #+LATEX_HEADER: \usepackage{courier}
 # #+BIBLIOGRAPHY: bibliography plain
 
+#+BEGIN_LATEX
+\newcommand{\ltup}[2]{\mathrm{({#1},{#2})}}
+\newcommand{\lcons}[2]{\mathrm{{#1}:{#2}}}
+\newcommand{\lnil}{\mathrm{[]}}
+\newcommand{\xor}{\oplus}
+\newcommand{\defeq}{\ \doteq\ }
+
+\newcommand\val[1]{\sigma(x)}
+\newcommand\cvar[1]{\mathit{{#1}}}
+\newcommand\clen[1]{\cvar{len}\ {#1}}
+\newcommand\cstr[1]{\mathsf{{#1}}}
+\newcommand\ttrue{\cvar{true}}
+\newcommand\tfalse{\cvar{false}}
+
+\newcommand\meta[1]{[\![#1]\!]}
+\newcommand\reft[3]{\{{#1}:{#2}\ |\ {#3}\}}
+#+END_LATEX
+
 # FOCUS: Automatic test-case generation
 # 1. enumerate inputs
 # 2. enumerate code-paths
@@ -748,7 +766,142 @@ verification \cite{xi_eliminating_1998,dunfield_refined_2007,swamy_secure_2011,v
 but we are instead going to use refinement types as a high-level specification
 mechanism for generating exhaustive test-suites.
 
-* Future Work?                                                     :noexport:
+**** Why test instead of prove?
+Target enables /gradual verification/, which we find has several advantages over
+pure verification. First, we provide an incentive to write formal specifications
+by automatically translating the specifications into exhaustive test-suites,
+thus giving the programmer immediate gratification without the need for hints,
+tactics, or strengthened inductive invariants that verification tools inevitably
+require. This makes Target more suitable for the initial exploratory phase of
+designing a program. Second, even once the design has settled and formal
+verification begins, Target allows the programmer to test functions that are too
+complex to formally verify, without having to resort to a different
+specification mechanism. Thus, functions in the verified portion of the program
+can /assume/ that the tested functions satisfy their specifications. Finally, as
+we explained in the previous section, the concrete counterexamples that Target
+generates can be invaluable for debugging programs rejected by the verifier.
+
+** Synthesizing Tests from Refinement Types
+Our high-level strategy for generating test vectors is to: (1) derive a set of
+logical constraints from the input types and /query/ an SMT solver for a
+satisfying assignment, (2) /decode/ the model into concrete Haskell values, (3)
+/execute/ the function to obtain the output, (4) /check/ that the output
+satisfies the output type, (5) /refute/ the model the generate a different test
+vector, and loop back to step 2 until we have exhausted all inputs of a given
+size. We now describe steps 1, 2, and 4 with a series of examples.
+
+**** Primitive Types
+Let us begin with a simple function that takes a value in a given range and
+/scales/ it to fit in another range. Using the type aliases from Sec
+[[Refinement Types]], we specify and define =rescale= as
+
+#+BEGIN_SRC haskell
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2 
+rescale r1 r2 s = s * (r2 `div` r1)   
+#+END_SRC
+
+We encode preconditions on primitive types directly from the refinement
+predicates, conjoining the constraints for multiple inputs. Thus, we generate
+the following input constraint for =rescale=:
+
+$$
+\cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \cvar{r1} 
+$$
+
+Suppose the SMT solves the above constraint with the model
+$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$, Target will
+then execute =rescale 1 1 0=, which results in output =0=. Next we /validate/
+the output against the postcondition by encoding the conjunction of the output
+type and value as a constraint, and checking validity of
+
+$$\cvar{r2} = 1 \wedge \cvar{v} = 0 \wedge 0 \leq \cvar{v} \wedge \cvar{v} < \cvar{r2}$$
+
+This formula is valid, so Target requests another input vector by conjoining
+$\cstr{C_0}$ with an explicit refutation of the last model:
+
+$$
+\cstr{C_1} \defeq \cstr{C_0} \wedge (\cvar{r1} \not = 1 \vee \cvar{r2} \not = 1 \vee \cvar{s} \not = 0)
+$$
+
+Suppose this time the solver returns
+$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$. Target will
+execute =rescale 1 0 0 = 0=, which does /not/ satisfy the postcondition as 
+$0 < 0$ is not valid. Thus Target will report =1, 0, 0= as a counterexample. An
+easy fix here is to require strictly positive ranges, i.e.
+
+#+BEGIN_SRC haskell
+rescale :: r1:Pos -> r2:Pos -> s:Rng r1 -> Rng r2 
+#+END_SRC
+
+after which Target is assuaged and reports no counterexamples.
+
+**** Containers
+#+BEGIN_SRC haskell
+type Score = Rng 100
+
+average     :: [(Int, Score)] -> Score
+average []  = 0
+average wxs = total `div` n
+  where
+    total   = sum [w * x | (w, x) <- wxs ]
+    n       = sum [w     | (w, _) <- wxs ]
+#+END_SRC
+
+\begin{eqnarray*}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge 
+                          (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) \\
+               & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) \wedge
+                          (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) \\
+               & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) \wedge 
+                          (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) \\
+               & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) \wedge 
+                          (\cvar{c}_{21} \Rightarrow \cvar{c}_{30}) \\
+               & \wedge & (\cvar{c}_{00} \oplus \cvar{c}_{01}) \wedge
+                          (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \wedge
+                          (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\[0.1in]
+\cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\
+               & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
+               & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
+\end{eqnarray*}
+**** Ordered Containers
+#+BEGIN_SRC haskell
+data OrdList a = [] 
+               | (:) { h :: a 
+                     , t :: OrdList {v:a  h <= v}
+                     }
+
+insert :: Ord a => a -> OrdList a -> OrdList a 
+#+END_SRC
+
+\begin{eqnarray*}
+\cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 \leq \cvar{x}_2)
+                \ \wedge\  (\cvar{c}_{21} \Rightarrow \cvar{x}_2 \leq \cvar{x}_3\ \wedge\ \cvar{x}_1 \leq \cvar{x}_3) \\[0.01in]
+\cstr{C_{score}} & \defeq & (\cvar{c}_{01} \Rightarrow 0 \leq \cvar{x}_1 < 100)
+                \ \wedge\  (\cvar{c}_{11} \Rightarrow 0 \leq \cvar{x}_2 < 100) \\
+                & \wedge & (\cvar{c}_{21} \Rightarrow 0 \leq \cvar{x}_3 < 100)
+\end{eqnarray*}
+
+**** Structured Containers
+#+BEGIN_SRC haskell
+measure len :: [a] -> Nat
+len []      = 0
+len (x:xs)  = 1 + len xs
+
+best :: k:Nat -> [Score] -> {v:[Score] | k = len v}
+best k xs = take k $ reverse $ sort xs
+#+END_SRC
+
+\begin{eqnarray*}
+\cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) \wedge 
+                          (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
+               & \wedge & (\cvar{c}_{10} \Rightarrow \clen{\cvar{xs}_{1}} = 0) \wedge 
+                          (\cvar{c}_{11} \Rightarrow \clen{\cvar{xs}_{1}} = 1 + \clen{\cvar{xs}_2}) \\
+               & \wedge & (\cvar{c}_{20} \Rightarrow \clen{\cvar{xs}_{2}} = 0) \wedge 
+                          (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
+               & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0)
+\end{eqnarray*}
+
+* Future Work? :noexport:
 - modeling environment still a problem
 - many tools to /detect/ bugs, what about fixing them?
   - see Weimer
