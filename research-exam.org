@@ -1010,7 +1010,22 @@ thus restricting Target to produce lists with at least $k$ elements.
     - perhaps combine test-from-counterexample with program-slicing to highlight
       relevant path?
     - see jhala path-slicing
-* TODO Conclusion
+* Conclusion
+In this report we presented various techniques for automatically generating test
+vectors. First, we looked at black-box explicit enumeration of inputs, both by
+randomly searching the input domain and by exhaustively searching for "small"
+inputs. The drawback to such systems is that we generate many input vectors that
+trigger equivalent behavior from the system under test. Thus we next looked at
+white-box techniques that enumerate paths through the system, producing
+(ideally) only a single input vector per behavior. Such systems are limited by
+the expressiveness of their underlying constraint solver and by the fact that
+preconditions on the input are often given as code, thereby forcing the system
+to enumerate paths through the precondition. A further drawback is that many
+program paths can be statically proven safe, thus we also investigated
+techniques that use a program verifier to isolate the potentially unsafe paths
+and guide the search further. Finally, we presented type-targeted testing, a
+black-box technique for testing programs with complex preconditions by
+symbolically enumerating valid inputs.
 
 #+LATEX: \bibliographystyle{plain}
 #+LATEX: \bibliography{bibliography}
