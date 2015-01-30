@@ -1,4 +1,4 @@
-#+TITLE: Research Exam
+#+TITLE: Automated Specification-Based Testing
 #+AUTHOR:
 #+DATE:
 #+OPTIONS: toc:nil texht:t ':t H:4
@@ -42,8 +42,8 @@
 # - (Target)
 
 #+BEGIN_ABSTRACT
-Program testing is a crucial yet tedious part of software development. The
-standard /unit-testing/ practice dictates manual specification of input-output
+Program testing is a crucial yet tedious part of software development.
+Standard /unit-testing/ practice dictates manual specification of input-output
 pairs for each expected behavior of a program, which involves large amounts of
 programmer effort and does not scale well with the size of a program. As a
 result, many groups have investigated techniques for automatically generating
@@ -55,7 +55,81 @@ generating inputs to highly constrained functions by specifying the expected
 behavior via /refinement types/.
 #+END_ABSTRACT
 
-* TODO Introduction
+* Introduction
+Software testing is a time-consuming and expensive task. The National Institute
+of Standards & Technology (NIST) reports that an average of 50-70% of
+development time for a software product is spent on testing
+\cite{tassey_economic_2002}. Furthermore, the cost of inadequate testing can be
+severe, NIST estimates the annual economic cost of inadequate software
+testing infrastructure at $22.2 - $59.5 billion. Thus there is a strong
+incentive to develop improved testing methods and tools.
+
+At a high level, software testing can be divided into three levels, based on the
+object being tested \cite{bourque_swebok:_2014}. /Unit testing/ involves testing
+individual components of a system -- often at the level of individual functions
+or modules -- in isolation, and is almost always performed by the programmers
+themselves. /Integration testing/ refers to testing the interactions between
+units of a system. Finally, /system testing/ exercises the entire assembled
+software product, and may be performed by developers or target users. In this
+report we will focus on automating unit testing, though the techniques we
+present could also be applied to the other levels.
+
+Two important questions that an automated test-case generation technique must
+answer are:
+
+1. How shall we determine the success of a test run?
+2. How shall we generate appropriate input vectors?
+
+**** Characterizing correctness
+At the unit testing level, a common practice is to collect a set of input/output
+pairs that characterize the expected behavior of the system, and test that given
+an input the system produces the expected output. However, on its own this does
+not scale well to automatic test-generation (how do we determine /a priori/ the
+expected output?). Thus, the systems we investigate will all use some notion of
+/specification-based testing/ \cite{laycock_theory_1993}. A specification is a
+formal statement of the expected behavior of the system under test, and may
+range from the simple "this program should not crash" to the relatively complex
+"this program takes as input a sorted list $xs$ and an element $x$, and returns
+a new sorted list containing all elements of $xs$ as well as $x$". In fact, a
+complex safety specification can be reduced to crash-freedom by the function
+under scrutiny in another function that dynamically checks the safety condition
+and crashes if it is violated. Thus, in this report we will focus more on the
+method of generating input vectors than the specification mechanism.
+
+**** Input generation
+There are two broad approaches to constructing test vectors for a
+system. /Functional/ or /black-box/ testing treats the system as opaque and
+selects input candidates based solely on the external specification. On the
+other hand, /structural/ or /white-box/ testing uses knowledge of the system's
+internal to select test vectors (e.g. to optimize statement coverage or attempt
+to steer control-flow to a dangerous location). Both categories are widely used,
+and in this report we will investigate techniques that fall into both.
+
+
+** Organization
+The rest of this report is organized as follows. In Sec. [[Enumerating Inputs]] we
+describe black-box techniques that explicitly enumerate input vectors. In Sec.
+[[Enumerating Code Paths]] we investigate white-box techniques that attempt to
+enumerate /paths/ through the system, thus limiting the number of concrete
+test-cases required. In Sec. [[Filtered Enumeration of Code Paths]] we examine
+white-box techniques that make use of a theorem prover to filter out program
+paths that can be statically proven correct. Finally, in Sec. [[Type-Targeted
+Testing]] we present our own contribution to the field, a black-box technique for
+testing programs with highly-constrained input domains.
+
+**** Notes :noexport:
+- testing is a big involved activity
+  - 50-70% of development time spent on testing \cite{tassey_economic_2002}
+- different levels of testing
+  - SWEBOK \cite{bourque_swebok:_2014} defines unit, integration, system testing
+    - unit testing is testing individual components in isolation
+    - integration testing is testing interactions between components
+    - system testing is testing entire system.
+  - we focus on unit testing
+    - white-box vs black-box
+- specification-based testing \cite{laycock_theory_1993}
+  - can rephrase safety specification in terms of crash-freedom
+
 There are two core questions an automatic test-case generator must
 answer:
 1. How do we generate input values?
@@ -64,14 +138,6 @@ answer:
 In general, the answer for (2) involves checking that the execution
 satisfies some property, e.g. crash-freedom. As such, we will primarily
 categorize systems by their answer to (1).
-* A Running Example? :noexport:
-#+BEGIN_SRC haskell
-data Tree a 
-  = Leaf
-  | Node a (Tree a) (Tree a)
-
-insert :: Ord a => a -> Tree a -> Tree a
-#+END_SRC
 * Enumerating Inputs
 Perhaps the simplest method of automatically testing a program is to enumerate
 valid inputs based on its external interface -- an instance of /black-box
@@ -429,7 +495,7 @@ vector that is guaranteed to take the /true/ branch -- indeed the solver
 may return the original input vector -- thus DART suffers a severe loss
 of precision when the path-constraint veers outside the language of the
 constraint solver. In effect, this means DART degenerates to brute-force
-enumeration of inputs, as in Sec [[Enumerating Inputs]].
+enumeration of inputs, as in Sec. [[Enumerating Inputs]].
 
 Furthermore, DART's depth-first enumeration of paths means that it may
 fail to discover all paths when presented with recursive programs,
@@ -669,7 +735,7 @@ paths through preconditions that end with invalid input.
 **** Path explosion
 
 **** Modeling the environment
-* /Filtered/ Enumeration of Code Paths
+* Filtered Enumeration of Code Paths
 In the previous section we discussed approaches whose aim was to achieve high
 program coverage, i.e. to execute as many instructions as possible in a short
 period. However even this may seem wasteful in the presence of tools that can
@@ -809,7 +875,7 @@ size. We now describe steps 1, 2, and 4 with a series of examples.
 
 **** Primitive Types
 Let us begin with a simple function that takes a value in a given range and
-/scales/ it to fit in another range. Using the type aliases from Sec
+/scales/ it to fit in another range. Using the type aliases from Sec.
 [[Refinement Types]], we specify and define =rescale= as
 
 #+BEGIN_SRC haskell
@@ -914,8 +980,8 @@ $$
 which we decode to the Haskell value =(1,2):[]=. When we refute this model, we
 will add a constraint
 $$
-\lnot (\cvar{c_{00}} = \tfalse \land \cvar{c_{01}} = \ttrue \land \cvar{w_1} =
-1 \land \cvar{s_1} = 2 \land \cvar{c_{10}} = \ttrue)
+\cvar{c_{00}} \neq \tfalse \lor \cvar{c_{01}} \neq \ttrue \lor \cvar{w_1} \neq
+1 \lor \cvar{s_1} \neq 2 \lor \cvar{c_{10}} \neq \ttrue)
 $$
 which notably ignores all logical variables that did not contribute to the
 realized value. This is an important optimization, as if we had refuted the
