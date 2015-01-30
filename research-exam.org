@@ -12,6 +12,7 @@
 \newcommand{\ltup}[2]{\mathrm{({#1},{#2})}}
 \newcommand{\lcons}[2]{\mathrm{{#1}:{#2}}}
 \newcommand{\lnil}{\mathrm{[]}}
+\newcommand{\imp}{\Rightarrow}
 \newcommand{\xor}{\oplus}
 \newcommand{\defeq}{\ \doteq\ }
 
@@ -754,7 +755,7 @@ Check'n'Crash, but this is more work for the user.)
 
 ** Reach? :noexport:
 \cite{naylor_finding_2007}
-* TODO Type-Targeted Testing
+* Type-Targeted Testing
 In this section we describe our own contribution to automatic test-case
 generation, a black-box approach for testing programs with highly-constrained
 input domains. Our approach, which we call /type-targeted testing/ --
@@ -819,26 +820,20 @@ rescale r1 r2 s = s * (r2 `div` r1)
 We encode preconditions on primitive types directly from the refinement
 predicates, conjoining the constraints for multiple inputs. Thus, we generate
 the following input constraint for =rescale=:
-
 $$
 \cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \cvar{r1} 
 $$
-
 Suppose the SMT solves the above constraint with the model
 $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$, Target will
 then execute =rescale 1 1 0=, which results in output =0=. Next we /validate/
 the output against the postcondition by encoding the conjunction of the output
 type and value as a constraint, and checking validity of
-
 $$\cvar{r2} = 1 \wedge \cvar{v} = 0 \wedge 0 \leq \cvar{v} \wedge \cvar{v} < \cvar{r2}$$
-
 This formula is valid, so Target requests another input vector by conjoining
 $\cstr{C_0}$ with an explicit refutation of the last model:
-
 $$
 \cstr{C_1} \defeq \cstr{C_0} \wedge (\cvar{r1} \not = 1 \vee \cvar{r2} \not = 1 \vee \cvar{s} \not = 0)
 $$
-
 Suppose this time the solver returns
 $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$. Target will
 execute =rescale 1 0 0 = 0=, which does /not/ satisfy the postcondition as 
@@ -874,7 +869,6 @@ of specific data constructors at each level of the list, enabling us to
 reconstruct a concrete Haskell value. For example, we represent values of type
 =[(Pos,Score)]= -- up to depth 3 -- with the conjunction of $\cstr{C_{list}}$
 and $\cstr{C_{data}}$.
-
 \begin{eqnarray*}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge 
                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) \\
@@ -891,41 +885,104 @@ and $\cstr{C_{data}}$.
                & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
                & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
 \end{eqnarray*}
-
 $\cstr{C_{list}}$ encodes the /structural/ constraints on the input list,
 i.e. that at each level $i$ the solver must choose between "nil"
-($\cvar{c_{i0}}$) and "cons" (\cvar{c_{i1}}). We encode $\lnil$ and $\lcons{ }{ }$
+($\cvar{c_{i0}}$) and "cons" ($\cvar{c_{i1}}$). We encode $\lnil$ and $\lcons{ }{ }$
 as /uninterpreted/ functions in the constraints, enabling efficient analysis by
 SMT solvers. 
 
+At each level we /guard/ the constraints with the choice variables. Thus, if the
+solver picks "cons", i.e. sets $\cvar{c_{i1}}$ to $true$, it must pick precisely
+one of the choice variables at the next level, i.e. 
+$\cvar{c_{i1}} \imp \cvar{c_{(i+1)0}} \xor \cvar{c_{(i+1)1}}$. Furthermore, the
+data constraints at level $i+1$ are only required if the solver chose "cons" at
+level $i$, i.e. we only constrain the values that will be /realized/. This
+restriction is essential to ensure that Target does not miss certain test
+vectors, as we will see in the next example.
+
+When we decode a model of the above constraints, we use the valuation of the
+choice variables to build the list incrementally. A valuation $\cvar{c_{i0}}
+\mapsto\ \ttrue$ results in the empty list =[]=, and a valuation $\cvar{c_{i1}}
+\mapsto\ \ttrue$ means we have to further decode $x_{i+1}$ and $xs_{i+1}$ and
+"cons" the results.
+
+Suppose the solver returns
+$$
+[ \cvar{c_{00}} \mapsto\ \tfalse, \cvar{c_{01}} \mapsto\ \ttrue, \cvar{w_1} \mapsto
+1, \cvar{s_1} \mapsto 2, \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]
+$$
+which we decode to the Haskell value =(1,2):[]=. When we refute this model, we
+will add a constraint
+$$
+\lnot (\cvar{c_{00}} = \tfalse \land \cvar{c_{01}} = \ttrue \land \cvar{w_1} =
+1 \land \cvar{s_1} = 2 \land \cvar{c_{10}} = \ttrue)
+$$
+which notably ignores all logical variables that did not contribute to the
+realized value. This is an important optimization, as if we had refuted the
+/entire/ model, the solver could have just changed the value of,
+e.g., $\cvar{w_3}$, producing a new but equivalent model.
+
 **** Ordered Containers
+Now that we have seen how Target generates test vectors with structured data,
+let us consider an example where the input domain is highly constrained, namely
+the =insert= function from the eponymous sorting algorithm. =insert= requires
+that its input list be already sorted, and guarantees that its output list will
+also be sorted.
 #+BEGIN_SRC haskell
-data OrdList a = [] 
-               | (:) { h :: a 
-                     , t :: OrdList {v:a  h <= v}
-                     }
-
-insert :: Ord a => a -> OrdList a -> OrdList a 
+insert :: Ord a => a -> Sorted a -> Sorted a 
 #+END_SRC
+we capture the ordering invariant with a new list type that recursively requires
+each element of the tail be less than the head.
+#+BEGIN_SRC haskell
+data Sorted a = [] 
+              | (:) { h :: a 
+                    , t :: Sorted {v:a | h < v}
+                    }
+#+END_SRC
+In practice we would use a regular Haskell list with an /abstract refinement/
+\cite{vazou_abstract_2013} to enforce ordering, but for the sake of exposition
+we will just create a new datatype here.
 
+As we unfold the =Sorted= argument, we will generate the same $\cstr{C_{list}}$
+constraints as above, augmented with
 \begin{eqnarray*}
-\cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 \leq \cvar{x}_2)
-                \ \wedge\  (\cvar{c}_{21} \Rightarrow \cvar{x}_2 \leq \cvar{x}_3\ \wedge\ \cvar{x}_1 \leq \cvar{x}_3) \\[0.01in]
-\cstr{C_{score}} & \defeq & (\cvar{c}_{01} \Rightarrow 0 \leq \cvar{x}_1 < 100)
-                \ \wedge\  (\cvar{c}_{11} \Rightarrow 0 \leq \cvar{x}_2 < 100) \\
-                & \wedge & (\cvar{c}_{21} \Rightarrow 0 \leq \cvar{x}_3 < 100)
+\cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2)
+                \ \wedge\  (\cvar{c}_{21} \Rightarrow \cvar{x}_2 < \cvar{x}_3\ \wedge\ \cvar{x}_1 < \cvar{x}_3)
 \end{eqnarray*}
+to enforce the ordering constraint. Now we can see why the guards are necessary
+for completeness, suppose we had instead left them out, producing
+\begin{eqnarray*}
+\cstr{C_{ord'}}   & \defeq & \cvar{x}_1 < \cvar{x}_2
+                \ \wedge\ \cvar{x}_2 < \cvar{x}_3\ \wedge\ \cvar{x}_1 < \cvar{x}_3
+\end{eqnarray*}
+In practice, the constraints will also include conjuncts of the form $-N \leq
+x_i \leq N$ where $N$ is the depth. Thus at depth 3, the solver would never be
+able to produce a model where $\cvar{x_1} \mapsto 3$, i.e. we would never
+generate the test vector $\{\cvar{xs} \mapsto [3]\}$, which would be a valid
+input.
 
 **** Structured Containers
+Finally, let us consider an example with constraints on the /structure/ of the
+input vector. The =best= function returns the $k$ highest scores in the given
+list.
+
+#+BEGIN_SRC haskell
+best :: k:Nat -> {v:[Score] | k <= len v} 
+     -> {v:[Score] | k = len v}
+best k xs = take k $ reverse $ sort xs
+#+END_SRC
+
+We encode the length of the input and output lists using a logical /measure
+function/ \cite{kawaguchi_type-based_2009}.
+
 #+BEGIN_SRC haskell
 measure len :: [a] -> Nat
 len []      = 0
 len (x:xs)  = 1 + len xs
-
-best :: k:Nat -> [Score] -> {v:[Score] | k = len v}
-best k xs = take k $ reverse $ sort xs
 #+END_SRC
 
+Each time we unfold a list constructor we instantiate its measure definition,
+producing a complete constraint that the SMT solver can reason about.
 \begin{eqnarray*}
 \cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) \wedge 
                           (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
@@ -935,6 +992,13 @@ best k xs = take k $ reverse $ sort xs
                           (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
                & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0)
 \end{eqnarray*}
+Inside the logic, $\clen{}$ is just an uninterpreted function, the structural
+properties are spelled out explicitly by the constraints. To search for valid
+inputs, we add the top-level constraints
+$$
+0 \leq \cvar{k} \land \cvar{k} \leq \clen{\cvar{xs_0}}
+$$
+thus restricting Target to produce lists with at least $k$ elements.
 
 * Future Work? :noexport:
 - modeling environment still a problem

@@ -84,6 +84,19 @@
 	file = {IEEE Xplore Abstract Record:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/XMRE98QA/articleDetails.html:text/html;Naylor and Runciman - 2007 - Finding Inputs that Reach a Target Expression.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/K9VTWG5V/Naylor and Runciman - 2007 - Finding Inputs that Reach a Target Expression.pdf:application/pdf}
 }
 
+@inproceedings{saxena_symbolic_2010,
+	title = {A Symbolic Execution Framework for {JavaScript}},
+	doi = {10.1109/SP.2010.38},
+	abstract = {As {AJAX} applications gain popularity, client-side {JavaScript} code is becoming increasingly complex. However, few automated vulnerability analysis tools for {JavaScript} exist. In this paper, we describe the first system for exploring the execution space of {JavaScript} code using symbolic execution. To handle {JavaScript} code’s complex use of string operations, we design a new language of string constraints and implement a solver for it. We build an automatic end-to-end tool, Kudzu, and apply it to the problem of finding client-side code injection vulnerabilities. In experiments on 18 live web applications, Kudzu automatically discovers 2 previously unknown vulnerabilities and 9 more that were previously found only with a manually-constructed test suite.},
+	booktitle = {2010 {IEEE} Symposium on Security and Privacy ({SP})},
+	author = {Saxena, P. and Akhawe, D. and Hanna, S. and Mao, Feng and McCamant, S. and Song, D.},
+	month = may,
+	year = {2010},
+	keywords = {Assembly, Computational modeling, Computer architecture, Digital signal processing, Digital signal processing chips, Java, Large scale integration, Logic, Registers, Telecommunication control},
+	pages = {513--528},
+	file = {IEEE Xplore Abstract Record:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/EZAJECDV/abs_all.html:text/html;IEEE Xplore Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/2M6KNK97/Saxena et al. - 2010 - A Symbolic Execution Framework for JavaScript.pdf:application/pdf}
+}
+
 @inproceedings{aldrich_power_2013,
 	title = {The power of interoperability: why objects are inevitable},
 	url = {http://portal.acm.org/citation.cfm?id=2509578.2514738&coll=DL&dl=ACM&CFID=445811551&CFTOKEN=90926960},
@@ -750,18 +763,6 @@
 	file = {Chakravarty - 2014 - Foreign Inline Code Systems Demonstration.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/JNW7FZ4X/Chakravarty - 2014 - Foreign Inline Code Systems Demonstration.pdf:application/pdf}
 }
 
-@inproceedings{kawaguchi_type-based_2009,
-	title = {Type-based data structure verification},
-	url = {http://portal.acm.org/citation.cfm?id=1542476.1542510&coll=DL&dl=ACM&CFID=445811551&CFTOKEN=90926960},
-	doi = {10.1145/1542476.1542510},
-	booktitle = {{PLDI}},
-	publisher = {{ACM} Request Permissions},
-	author = {Kawaguchi, Ming and Rondon, Patrick M and Jhala, Ranjit},
-	year = {2009},
-	keywords = {\_tablet},
-	file = {Kawaguchi et al. - 2009 - Type-based data structure verification.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/WNHT9G7C/Kawaguchi et al. - 2009 - Type-based data structure verification.pdf:application/pdf}
-}
-
 @incollection{kuncak_executing_2013,
 	series = {Lecture Notes in Computer Science},
 	title = {Executing Specifications Using Synthesis and Constraint Solving},
@@ -813,6 +814,22 @@
 	keywords = {\_tablet},
 	pages = {1--8},
 	file = {Seidel et al. - 2010 - Simplifying complex software assembly.pdf:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/9M9WBBC4/Seidel et al. - 2010 - Simplifying complex software assembly.pdf:application/pdf}
+}
+
+@inproceedings{vazou_abstract_2013,
+	address = {Berlin, Heidelberg},
+	series = {{ESOP}'13},
+	title = {Abstract Refinement Types},
+	isbn = {978-3-642-37035-9},
+	url = {http://dx.doi.org/10.1007/978-3-642-37036-6_13},
+	doi = {10.1007/978-3-642-37036-6_13},
+	abstract = {We present abstract refinement types which enable quantification over the refinements of data- and function-types. Our key insight is that we can avail of quantification while preserving {SMT}-based decidability, simply by encoding refinement parameters as uninterpreted propositions within the refinement logic. We illustrate how this mechanism yields a variety of sophisticated means for reasoning about programs, including: parametric refinements for reasoning with type classes, index-dependent refinements for reasoning about key-value maps, recursive refinements for reasoning about recursive data types, and inductive refinements for reasoning about higher-order traversal routines. We have implemented our approach in a refinement type checker for Haskell and present experiments using our tool to verify correctness invariants of various programs.},
+	urldate = {2015-01-30},
+	booktitle = {Proceedings of the 22Nd European Conference on Programming Languages and Systems},
+	publisher = {Springer-Verlag},
+	author = {Vazou, Niki and Rondon, Patrick M. and Jhala, Ranjit},
+	year = {2013},
+	pages = {209--228}
 }
 
 @incollection{reich_advances_2013,
@@ -1121,6 +1138,24 @@
 	publisher = {John Wiley \&amp; Sons, Inc.},
 	author = {Beizer, Boris},
 	year = {1995}
+}
+
+@inproceedings{kawaguchi_type-based_2009,
+	address = {New York, {NY}, {USA}},
+	series = {{PLDI} '09},
+	title = {Type-based Data Structure Verification},
+	isbn = {978-1-60558-392-1},
+	url = {http://doi.acm.org/10.1145/1542476.1542510},
+	doi = {10.1145/1542476.1542510},
+	abstract = {We present a refinement type-based approach for the static verification of complex data structure invariants. Our approach is based on the observation that complex data structures are typically fashioned from two elements: recursion (e.g., lists and trees), and maps (e.g., arrays and hash tables). We introduce two novel type-based mechanisms targeted towards these elements: recursive refinements and polymorphic refinements. These mechanisms automate the challenging work of generalizing and instantiating rich universal invariants by piggybacking simple refinement predicates on top of types, and carefully dividing the labor of analysis between the type system and an {SMT} solver. Further, the mechanisms permit the use of the abstract interpretation framework of liquid type inference to automatically synthesize complex invariants from simple logical qualifiers, thereby almost completely automating the verification. We have implemented our approach in dsolve, which uses liquid types to verify ocaml programs. We present experiments that show that our type-based approach reduces the manual annotation required to verify complex properties like sortedness, balancedness, binary-search-ordering, and acyclicity by more than an order of magnitude.},
+	urldate = {2015-01-30},
+	booktitle = {Proceedings of the 2009 {ACM} {SIGPLAN} Conference on Programming Language Design and Implementation},
+	publisher = {{ACM}},
+	author = {Kawaguchi, Ming and Rondon, Patrick and Jhala, Ranjit},
+	year = {2009},
+	keywords = {dependent types, hindley-milner, predicate abstraction, type inference},
+	pages = {304--315},
+	file = {ACM Full Text PDF:/Users/gridaphobe/Library/Application Support/Zotero/Profiles/s3pkbp8i.default/zotero/storage/JS4AX98K/Kawaguchi et al. - 2009 - Type-based Data Structure Verification.pdf:application/pdf}
 }
 
 @inproceedings{st-amour_experience_2013,
