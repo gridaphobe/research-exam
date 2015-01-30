@@ -649,6 +649,22 @@ leading up to them).
 ** CREST? :noexport:
 ** Limitations :noexport:
 
+**** Preconditions
+Functions with complex preconditions (particularly recursive invariants)
+cause trouble as the preconditions are expressed in the code itself.
+
+   entry-point
+    /  |  \    <-- precondition checking
+   /| /|\ |\
+  bad  |   bad
+       |       <-- actual entry point
+      /|\
+
+Symbolic execution engine needs to find specific path through precondition
+checks to reach /actual/ program logic. With recursive invariants (e.g.
+balancedness or ordering on binary trees), there is an unbounded number of
+paths through preconditions that end with invalid input.
+
 **** Path explosion
 
 **** Modeling the environment
@@ -836,16 +852,28 @@ rescale :: r1:Pos -> r2:Pos -> s:Rng r1 -> Rng r2
 after which Target is assuaged and reports no counterexamples.
 
 **** Containers
+Next, consider a function that computes a weighted average of some scores. 
+
 #+BEGIN_SRC haskell
 type Score = Rng 100
 
-average     :: [(Int, Score)] -> Score
+average :: [(Pos, Score)] -> Score
 average []  = 0
 average wxs = total `div` n
   where
     total   = sum [w * x | (w, x) <- wxs ]
     n       = sum [w     | (w, _) <- wxs ]
 #+END_SRC
+
+Now Target must generate lists of constrained values. A list is either "nil" or
+an element "cons"ed onto another list, so we generate constraints that represent
+/all/ lists up to the given depth using /choice variables/ to encode the choice
+between alternative constructors in the solver's logic. Each model returned by
+the solver will contain both concrete values for primitive types /and/ choices
+of specific data constructors at each level of the list, enabling us to
+reconstruct a concrete Haskell value. For example, we represent values of type
+=[(Pos,Score)]= -- up to depth 3 -- with the conjunction of $\cstr{C_{list}}$
+and $\cstr{C_{data}}$.
 
 \begin{eqnarray*}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge 
@@ -863,6 +891,13 @@ average wxs = total `div` n
                & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
                & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
 \end{eqnarray*}
+
+$\cstr{C_{list}}$ encodes the /structural/ constraints on the input list,
+i.e. that at each level $i$ the solver must choose between "nil"
+($\cvar{c_{i0}}$) and "cons" (\cvar{c_{i1}}). We encode $\lnil$ and $\lcons{ }{ }$
+as /uninterpreted/ functions in the constraints, enabling efficient analysis by
+SMT solvers. 
+
 **** Ordered Containers
 #+BEGIN_SRC haskell
 data OrdList a = [] 
