@@ -132,7 +132,7 @@ data Sorted a = []
 
 $\begin{aligned}
 \cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2)
-                \ \wedge\  (\cvar{c}_{21} \Rightarrow \cvar{x}_2 < \cvar{x}_3\ \wedge\ \cvar{x}_1 < \cvar{x}_3)
+                   \wedge   (\cvar{c}_{21} \Rightarrow \cvar{x}_2 < \cvar{x}_3\ \wedge\ \cvar{x}_1 < \cvar{x}_3)
 \end{aligned}$
 
 # Structured Containers
@@ -149,12 +149,12 @@ len (x:xs)  = 1 + len xs
 
 $\begin{aligned}
 \cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) \wedge 
-                          (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
-               & \wedge & (\cvar{c}_{10} \Rightarrow \clen{\cvar{xs}_{1}} = 0) \wedge 
-                          (\cvar{c}_{11} \Rightarrow \clen{\cvar{xs}_{1}} = 1 + \clen{\cvar{xs}_2}) \\
-               & \wedge & (\cvar{c}_{20} \Rightarrow \clen{\cvar{xs}_{2}} = 0) \wedge 
-                          (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
-               & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0)
+                           (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \clen{\cvar{xs}_{1}} = 0) \wedge 
+                           (\cvar{c}_{11} \Rightarrow \clen{\cvar{xs}_{1}} = 1 + \clen{\cvar{xs}_2}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \clen{\cvar{xs}_{2}} = 0) \wedge 
+                           (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0)
 \end{aligned}$
 
 # Evaluation
@@ -176,6 +176,6 @@ $\begin{aligned}
 <img height=500px src="benchmarks.png">
 
 # Takeaway
-- QuickCheck **requires** custom generators for functions with complex preconditions
 - Target can explore larger inputs than Lazy SmallCheck
-- furthermore, Target specs are amenable to future formal verification
+- Target specs are amenable to future formal verification
+- QuickCheck **requires** custom generators for functions with complex preconditions
