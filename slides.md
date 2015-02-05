@@ -172,9 +172,10 @@ $\begin{aligned}
 - `XMonad.StackSet`
     - checked uniqueness of windows
 
-- \<insert graphs\>
+# Evaluation
+<img height=500px src="benchmarks.png">
 
-- takeaway
-    - QuickCheck **requires** custom generators for functions with complex preconditions
-    - Target can explore larger inputs than Lazy SmallCheck
-    - furthermore, Target specs are amenable to future formal verification
+# Takeaway
+- QuickCheck **requires** custom generators for functions with complex preconditions
+- Target can explore larger inputs than Lazy SmallCheck
+- furthermore, Target specs are amenable to future formal verification
