@@ -14,8 +14,8 @@
 \newcommand\cvar[1]{\mathit{{#1}}}
 \newcommand\clen[1]{\cstr{len}\ {#1}}
 \newcommand\cstr[1]{\mathsf{{#1}}}
-\newcommand\ttrue{\cvar{true}}
-\newcommand\tfalse{\cvar{false}}
+\newcommand\ttrue{\cstr{true}}
+\newcommand\tfalse{\cstr{false}}
 
 \newcommand\meta[1]{[\![#1]\!]}
 \newcommand\reft[3]{\{{#1}:{#2}\ |\ {#3}\}}
@@ -146,7 +146,7 @@ How to encode structured data in SMT formula?
 
 # Choice Variables
 
-Propositional variables that guard other constraints
+Propositional variables that *guard* other constraints
 
 $(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1})$
 
@@ -175,6 +175,22 @@ $\begin{aligned}
                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
 \end{aligned}$
+
+# Containers: Decode
+
+To build a list from a model
+
+$[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
+1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
+
+follow the choice variables.
+
+- $\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil$ 
+- $\cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
+
+```haskell
+[(1,2)]
+```
 
 # Ordered Containers
 
