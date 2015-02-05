@@ -22,8 +22,11 @@
 
 # Refinement Types
 
-- `{v:t | p}`
-    - the set of values `v` of type `t` satisfying a predicate `p`
+## `{v:t | p}`
+
+> the set of values `v` of type `t` satisfying a predicate `p`
+
+# Simple Refinement Types
 
 ```haskell
 type Nat   = {v:Int | v >= 0}
@@ -31,22 +34,29 @@ type Pos   = {v:Int | v >  0}
 type Rng N = {v:Int | v >= 0 && v < N}
 ```
 
-- construct refinement types for containers and functions by refining type parameters
+# Compound Refinement Types
 
+Describe properties of containers and function contracts by refining component types
+
+#### Lists that contain no zeros
 ```haskell
-f :: x:Nat -> {v:Nat | v = x + 1}
+[{v:Int | v /= 0}]
 ```
 
-- type of functions that take a natural number and increment it by one
+#### Functions that take a natural number and increment it by one
+```haskell
+x:Nat -> {v:Nat | v = x + 1}
+```
 
 # Refinement Types
 
-- traditionally used for program verification
-- we show that refinement types *can also be viewed as exhaustive test-suite*
-- allows for *gradual verification*
-    1. write high-level spec as refinement type
-    2. immediate gratification from comprehensive test-suite
-    3. once design has settled, add hints / inductive invariants to allow verification
+- Traditionally used for program verification
+- We show that refinement types can also be viewed as *exhaustive test-suite*
+- Allows for *gradual verification*
+
+1. write high-level spec as refinement type
+2. immediate gratification from comprehensive test-suite
+3. once design has settled, add hints / inductive invariants to allow verification
 
 # Target
 
