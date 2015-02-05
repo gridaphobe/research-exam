@@ -1,11 +1,47 @@
 % Type-Targeted Testing
 % Eric Seidel
+% eseidel@cs.ucsd.edu
+
+\newcommand{\ltup}[2]{\mathrm{({#1},{#2})}}
+\newcommand{\lcons}[2]{\mathrm{{#1}:{#2}}}
+\newcommand{\lnil}{\mathrm{[]}}
+\newcommand{\imp}{\Rightarrow}
+\newcommand{\xor}{\oplus}
+\newcommand{\defeq}{\doteq}
+
+\newcommand\val[1]{\sigma(x)}
+\newcommand\cvar[1]{\mathit{{#1}}}
+\newcommand\clen[1]{\cstr{len}\ {#1}}
+\newcommand\cstr[1]{\mathsf{{#1}}}
+\newcommand\ttrue{\cvar{true}}
+\newcommand\tfalse{\cvar{false}}
+
+\newcommand\meta[1]{[\![#1]\!]}
+\newcommand\reft[3]{\{{#1}:{#2}\ |\ {#3}\}}
 
 # Refinement Types
 
-- `{v:T | p}`
+- `{v:t | p}`
+    - the set of values `v` of type `t` satisfying a predicate `p`
+
+```haskell
+type Nat   = {v:Int | v >= 0}
+type Pos   = {v:Int | v >  0}
+type Rng N = {v:Int | v >= 0 && v < N}
+```
+
+- construct refinement types for containers and functions by refining type parameters
+
+```haskell
+f :: x:Nat -> {v:Nat | v = x + 1}
+```
+
+- type of functions that take a natural number and increment it by one
+
+# Refinement Types
+
 - traditionally used for program verification
-- we show that refinement types can also be viewed as exhaustive test-suite
+- we show that refinement types *can also be viewed as exhaustive test-suite*
 - allows for *gradual verification*
     1. write high-level spec as refinement type
     2. immediate gratification from comprehensive test-suite
@@ -30,11 +66,11 @@ rescale r1 r2 s = s * (r2 `div` r1)
 
 - input constraint
 
-$C_0 = 0 \leq r1 \wedge 0 \leq r2 \wedge 0 \leq s < r1$
+$\cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \cvar{r1}$
 
 - model
 
-$[r1 \mapsto 1, r2 \mapsto 0, s \mapsto 0]$
+$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$
 
 - concrete input:
 
@@ -62,6 +98,26 @@ average wxs = total `div` n
     n       = sum [w     | (w, _) <- wxs ]
 ```
 
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge 
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) \wedge
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) \wedge 
+                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \cvar{c}_{30})
+\end{aligned}$
+
+$\begin{aligned}
+\cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\
+                & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
+                & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
+\end{aligned}$
+
 # Ordered Containers
 
 ```haskell
@@ -72,6 +128,11 @@ data Sorted a = []
                     , t :: Sorted {v:a | h < v}
                     }
 ```
+
+$\begin{aligned}
+\cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2)
+                \ \wedge\  (\cvar{c}_{21} \Rightarrow \cvar{x}_2 < \cvar{x}_3\ \wedge\ \cvar{x}_1 < \cvar{x}_3)
+\end{aligned}$
 
 # Structured Containers
 
@@ -84,6 +145,16 @@ measure len :: [a] -> Nat
 len []      = 0
 len (x:xs)  = 1 + len xs
 ```
+
+$\begin{aligned}
+\cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) \wedge 
+                          (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
+               & \wedge & (\cvar{c}_{10} \Rightarrow \clen{\cvar{xs}_{1}} = 0) \wedge 
+                          (\cvar{c}_{11} \Rightarrow \clen{\cvar{xs}_{1}} = 1 + \clen{\cvar{xs}_2}) \\
+               & \wedge & (\cvar{c}_{20} \Rightarrow \clen{\cvar{xs}_{2}} = 0) \wedge 
+                          (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
+               & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0)
+\end{aligned}$
 
 # Evaluation
 
