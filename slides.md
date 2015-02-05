@@ -91,6 +91,15 @@ len (x:xs)  = 1 + len xs
     - `Data.Map`, `RBTree`, `XMonad.StackSet`
     - no custom generators
 
+- `Data.Map`
+    - checked balancing and ordering invariants
+
+- `RBTree`
+    - checked red-black and ordering invariants
+
+- `XMonad.StackSet`
+    - checked uniqueness of windows
+
 - \<insert graphs\>
 
 - takeaway
