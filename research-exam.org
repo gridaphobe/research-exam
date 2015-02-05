@@ -898,7 +898,7 @@ $$\cvar{r2} = 1 \wedge \cvar{v} = 0 \wedge 0 \leq \cvar{v} \wedge \cvar{v} < \cv
 This formula is valid, so Target requests another input vector by conjoining
 $\cstr{C_0}$ with an explicit refutation of the last model:
 $$
-\cstr{C_1} \defeq \cstr{C_0} \wedge (\cvar{r1} \not = 1 \vee \cvar{r2} \not = 1 \vee \cvar{s} \not = 0)
+\cstr{C_1} \defeq \cstr{C_0} \wedge (\cvar{r1} \neq 1 \vee \cvar{r2} \neq 1 \vee \cvar{s} \neq 0)
 $$
 Suppose this time the solver returns
 $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$. Target will

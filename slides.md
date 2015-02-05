@@ -88,19 +88,37 @@ $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
-rescale 1 0 0
+rescale 1 1 0
 ```
 
 # Primitive Types: Check
 
 ```haskell
-rescale 1 0 0 == 0
+rescale 1 1 0 == 0
 ```
 
 Postcondition is
 
 - `{v:Int | v >= 0 && v < r2}`
-- $0 \geq 0 \wedge 0 < 0$
+- $0 \geq 0 \wedge 0 < 1$
+
+**VALID**
+
+Request another model by *refuting* previous with
+
+$\cstr{C_1} \defeq \cstr{C_0} \wedge (\cvar{r1} \neq 1 \vee \cvar{r2} \neq 1 \vee \cvar{s} \neq 0)$
+
+# Primitive Types: Next model
+
+$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$
+
+becomes
+
+```haskell
+rescale 1 0 0 == 0
+```
+
+$0 \geq 0 \wedge 0 < 1$
 
 **INVALID**
 

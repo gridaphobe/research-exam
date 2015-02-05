@@ -172,16 +172,26 @@ rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span 
 <p>A model</p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>1</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>2</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="italic"><mi>𝑠</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathit{{r1}}} \mapsto 1, {\mathit{{r2}}} \mapsto 1, {\mathit{{s}}} \mapsto 0]</annotation></semantics></math></p>
 <p>maps to a concrete test case</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span></code></pre>
 </div>
 <div id="primitive-types-check" class="slide section level1">
 <h1>Primitive Types: Check</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
 <p>Postcondition is</p>
 <ul>
 <li><code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></li>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 0</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 1</annotation></semantics></math></li>
 </ul>
+<p><strong>VALID</strong></p>
+<p>Request another model by <em>refuting</em> previous with</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>1</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>0</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mo stretchy="false" form="prefix">(</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>1</mn></mstyle><mo>≠</mo><mn>1</mn><mo>∨</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>2</mn></mstyle><mo>≠</mo><mn>1</mn><mo>∨</mo><mstyle mathvariant="italic"><mi>𝑠</mi></mstyle><mo>≠</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">{\mathsf{{C_1}}} {\ \doteq\ }{\mathsf{{C_0}}} {\ \land\ }({\mathit{{r1}}} \neq 1 \vee {\mathit{{r2}}} \neq 1 \vee {\mathit{{s}}} \neq 0)</annotation></semantics></math></p>
+</div>
+<div id="primitive-types-next-model" class="slide section level1">
+<h1>Primitive Types: Next model</h1>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>1</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>2</mn></mstyle><mo accent="false">↦</mo><mn>0</mn><mo>,</mo><mstyle mathvariant="italic"><mi>𝑠</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathit{{r1}}} \mapsto 1, {\mathit{{r2}}} \mapsto 0, {\mathit{{s}}} \mapsto 0]</annotation></semantics></math></p>
+<p>becomes</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 1</annotation></semantics></math></p>
 <p><strong>INVALID</strong></p>
 <p><code>rescale 1 0 0</code> is a counterexample!</p>
 <!-- ```haskell -->
