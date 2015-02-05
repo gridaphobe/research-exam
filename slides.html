@@ -191,7 +191,7 @@ rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span 
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>1</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="italic"><mi>𝑟</mi><mn>2</mn></mstyle><mo accent="false">↦</mo><mn>0</mn><mo>,</mo><mstyle mathvariant="italic"><mi>𝑠</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathit{{r1}}} \mapsto 1, {\mathit{{r2}}} \mapsto 0, {\mathit{{s}}} \mapsto 0]</annotation></semantics></math></p>
 <p>becomes</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 1</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 0</annotation></semantics></math></p>
 <p><strong>INVALID</strong></p>
 <p><code>rescale 1 0 0</code> is a counterexample!</p>
 <!-- ```haskell -->

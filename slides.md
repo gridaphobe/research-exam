@@ -118,7 +118,7 @@ becomes
 rescale 1 0 0 == 0
 ```
 
-$0 \geq 0 \wedge 0 < 1$
+$0 \geq 0 \wedge 0 < 0$
 
 **INVALID**
 
