@@ -1,4 +1,4 @@
-% Type-Targeted Testing
+% Automated Specification-Based Testing
 % Eric Seidel
 % eseidel@cs.ucsd.edu
 
@@ -68,33 +68,48 @@ x:Nat -> {v:Nat | v = x + 1}
 
 - exhaustively checks all inputs up to a given depth-bound
 
-# Primitive Types
+# Primitive Types: Query
 
 ```haskell
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-- input constraint
+Embed primitive constraints directly in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \cvar{r1}$
 
-- model
+# Primitive Types: Decode
+
+A model
 
 $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$
 
-- concrete input:
-
-`rescale 1 0 0 == 0`
-
-- fails postcondition check
-
-$0 < 0$ ??
+maps to a concrete test case
 
 ```haskell
-rescale :: r1:Pos -> r2:Pos -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
+rescale 1 0 0
 ```
+
+# Primitive Types: Check
+
+```haskell
+rescale 1 0 0 == 0
+```
+
+Postcondition is
+
+- `{v:Int | v >= 0 && v < r2}`
+- $0 \geq 0 \wedge 0 < 0$
+
+**INVALID**
+
+`rescale 1 0 0` is a counterexample!
+
+<!-- ```haskell -->
+<!-- rescale :: r1:Pos -> r2:Pos -> s:Rng r1 -> Rng r2 -->
+<!-- rescale r1 r2 s = s * (r2 `div` r1) -->
+<!-- ``` -->
 
 # Containers
 
@@ -108,6 +123,20 @@ average wxs = total `div` n
     total   = sum [w * x | (w, x) <- wxs ]
     n       = sum [w     | (w, _) <- wxs ]
 ```
+
+How to encode structured data in SMT formula?
+
+# Choice Variables
+
+Propositional variables that guard other constraints
+
+$(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1})$
+
+Force solver to choose one
+
+$\cvar{c}_{00} \oplus \cvar{c}_{01}$
+
+# Encoding Lists of Depth 3
 
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge 
@@ -132,10 +161,10 @@ $\begin{aligned}
 # Ordered Containers
 
 ```haskell
-insert :: Ord a => a -> Sorted a -> Sorted a 
+insert :: Ord a => a -> Sorted a -> Sorted a
 
-data Sorted a = [] 
-              | (:) { h :: a 
+data Sorted a = []
+              | (:) { h :: a
                     , t :: Sorted {v:a | h < v}
                     }
 ```
