@@ -7,7 +7,8 @@
 \newcommand{\lnil}{\mathrm{[]}}
 \newcommand{\imp}{\Rightarrow}
 \newcommand{\xor}{\oplus}
-\newcommand{\defeq}{\doteq}
+\newcommand{\defeq}{\ \doteq\ }
+\newcommand{\wedge}{\ \land\ }
 
 \newcommand\val[1]{\sigma(x)}
 \newcommand\cvar[1]{\mathit{{#1}}}
