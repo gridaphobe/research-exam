@@ -1,0 +1,16 @@
+digraph G {
+  nil0[label="xs0 = []"];
+  nil1[label="xs1 = []"];
+  nil2[label="xs2 = []"];
+  nil3[label="xs3 = []"];
+  cons0[label="xs0 = x1 : xs1"];
+  cons1[label="xs1 = x2 : xs2"];
+  cons2[label="xs2 = x3 : xs3"];
+  xs0 -> nil0;
+  xs0 -> cons0;
+  cons0 -> nil1;
+  cons0 -> cons1;
+  cons1 -> nil2;
+  cons1 -> cons2;
+  cons2 -> nil3;
+}

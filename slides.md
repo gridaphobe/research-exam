@@ -148,7 +148,7 @@ How to encode structured data in SMT formula?
 
 Generate constraints describing *all possible* inputs.
 
-<img height=300px src="skeleton.png">
+<img height=400px src="skeleton.png">
 
 Let solver choose path through skeleton.
 
