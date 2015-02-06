@@ -114,6 +114,66 @@ Eric Seidel
   </p>
   <p class="date">eseidel@cs.ucsd.edu</p>
 </div>
+<div id="insertion-sort" class="slide section level1">
+<h1>Insertion Sort</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">sort<span class="ot">   ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> [a]
+<span class="ot">insert ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</code></pre>
+<p>Crucially, <code>insert</code> must maintain sortedness of the list</p>
+</div>
+<div id="testing-insert-manually" class="slide section level1">
+<h1>Testing <code>insert</code>: Manually</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">insert <span class="dv">1</span> []    <span class="fu">==</span> [<span class="dv">1</span>]
+insert <span class="dv">1</span> [<span class="dv">0</span>,<span class="dv">2</span>] <span class="fu">==</span> [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>]</code></pre>
+<p>Tedious and error-prone!</p>
+</div>
+<div id="testing-insert-specifications" class="slide section level1">
+<h1>Testing <code>insert</code>: Specifications</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_elem x xs <span class="fu">=</span> x <span class="ot">`elem`</span> insert x xs
+prop_insert_sort x xs <span class="fu">=</span> sorted <span class="fu">$</span> insert x xs</code></pre>
+<ul>
+<li>Boolean-valued function describes property</li>
+<li>Test harness like QuickCheck enumerates inputs</li>
+</ul>
+</div>
+<div id="testing-insert-specifications-1" class="slide section level1">
+<h1>Testing <code>insert</code>: Specifications</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_sort
+<span class="fu">***</span> <span class="dt">Failed</span><span class="fu">!</span> <span class="dt">Falsifiable</span><span class="fu">:</span>
+<span class="dv">0</span>
+[<span class="dv">2</span>,<span class="dv">2</span>]</code></pre>
+<p><code>insert</code> doesn't accept just <em>any</em> list</p>
+</div>
+<div id="testing-insert-preconditions" class="slide section level1">
+<h1>Testing <code>insert</code>: Preconditions</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_sort x xs
+  <span class="fu">=</span> sorted xs <span class="fu">==&gt;</span> sorted (insert x xs)</code></pre>
+<div class="incremental">
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_sort
+<span class="fu">***</span> <span class="dt">Gave</span> up<span class="fu">!</span> <span class="dt">Passed</span> only <span class="dv">3</span> tests<span class="fu">.</span></code></pre>
+</div>
+<div class="incremental">
+<p>Very low probability of generating sorted lists at random!</p>
+</div>
+</div>
+<div id="testing-insert-custom-generators" class="slide section level1">
+<h1>Testing <code>insert</code>: Custom Generators</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Sorted</span> a <span class="fu">=</span> [a]
+
+<span class="kw">instance</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">Sorted</span> a) <span class="kw">where</span>
+  arbitrary <span class="fu">=</span> <span class="dt">Sorted</span> <span class="fu">.</span> sort <span class="fu">.</span> arbitrary
+
+prop_insert_sort x (<span class="dt">Sorted</span> xs)
+  <span class="fu">=</span> sorted (insert x xs)</code></pre>
+<div class="incremental">
+<p>Must define a new type/generator for <em>each</em> precondition!</p>
+</div>
+</div>
+<div id="what-we-want" class="slide section level1">
+<h1>What We Want</h1>
+<blockquote>
+<p>Write a single generator per type, that can generate values satisfying different predicates.</p>
+</blockquote>
+</div>
 <div id="refinement-types" class="slide section level1">
 <h1>Refinement Types</h1>
 <h2 id="vt-p"><code>{v:t | p}</code></h2>
@@ -135,18 +195,20 @@ Eric Seidel
 <h4 id="functions-that-take-a-natural-number-and-increment-it-by-one">Functions that take a natural number and increment it by one</h4>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">x<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> {v<span class="fu">:</span><span class="dt">Nat</span> <span class="fu">|</span> v <span class="fu">=</span> x <span class="fu">+</span> <span class="dv">1</span>}</code></pre>
 </div>
-<div id="refinement-types-1" class="slide section level1">
-<h1>Refinement Types</h1>
-<ul>
+<div id="refinement-types-applications" class="slide section level1">
+<h1>Refinement Types: Applications</h1>
+<ul class="incremental">
 <li>Traditionally used for program verification</li>
 <li>We show that refinement types can also be viewed as <em>exhaustive test-suite</em></li>
-<li>Allows for <em>gradual verification</em></li>
 </ul>
+<div class="incremental">
+<h2 id="enables-gradual-verification">Enables <em>gradual verification</em></h2>
 <ol style="list-style-type: decimal">
 <li>write high-level spec as refinement type</li>
 <li>immediate gratification from comprehensive test-suite</li>
 <li>once design has settled, add hints / inductive invariants to allow verification</li>
 </ol>
+</div>
 </div>
 <div id="target" class="slide section level1">
 <h1>Target</h1>
@@ -319,9 +381,9 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 <div id="takeaway" class="slide section level1">
 <h1>Takeaway</h1>
 <ul>
-<li>Target can explore larger inputs than Lazy SmallCheck</li>
-<li>Target specs are amenable to future formal verification</li>
+<li>Target can explore larger input spaces than (Lazy) SmallCheck</li>
 <li>QuickCheck <strong>requires</strong> custom generators for functions with complex preconditions</li>
+<li>Target specs are amenable to future formal verification</li>
 </ul>
 </div>
 </body>

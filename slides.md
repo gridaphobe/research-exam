@@ -20,6 +20,83 @@
 \newcommand\meta[1]{[\![#1]\!]}
 \newcommand\reft[3]{\{{#1}:{#2}\ |\ {#3}\}}
 
+# Insertion Sort
+
+```haskell
+sort   :: Ord a => [a] -> [a]
+insert :: Ord a => a -> [a] -> [a]
+```
+
+Crucially, `insert` must maintain sortedness of the list
+
+# Testing `insert`: Manually
+
+```haskell
+insert 1 []    == [1]
+insert 1 [0,2] == [0,1,2]
+```
+
+Tedious and error-prone!
+
+# Testing `insert`: Specifications
+
+```haskell
+prop_insert_elem x xs = x `elem` insert x xs
+prop_insert_sort x xs = sorted $ insert x xs
+```
+
+- Boolean-valued function describes property
+- Test harness like QuickCheck enumerates inputs
+
+# Testing `insert`: Specifications
+
+```haskell
+ghci> quickCheck prop_insert_sort
+*** Failed! Falsifiable:
+0
+[2,2]
+```
+
+`insert` doesn't accept just *any* list
+
+# Testing `insert`: Preconditions
+
+```haskell
+prop_insert_sort x xs
+  = sorted xs ==> sorted (insert x xs)
+```
+
+. . .
+
+```haskell
+ghci> quickCheck prop_insert_sort
+*** Gave up! Passed only 3 tests.
+```
+
+. . .
+
+Very low probability of generating sorted lists at random!
+
+# Testing `insert`: Custom Generators
+
+```haskell
+newtype Sorted a = [a]
+
+instance Ord a => Arbitrary (Sorted a) where
+  arbitrary = Sorted . sort . arbitrary
+
+prop_insert_sort x (Sorted xs)
+  = sorted (insert x xs)
+```
+
+. . .
+
+Must define a new type/generator for *each* precondition!
+
+# What We Want
+
+> Write a single generator per type, that can generate values satisfying different predicates.
+
 # Refinement Types
 
 ## `{v:t | p}`
@@ -48,12 +125,14 @@ Describe properties of containers and function contracts by refining component t
 x:Nat -> {v:Nat | v = x + 1}
 ```
 
-# Refinement Types
+# Refinement Types: Applications
 
-- Traditionally used for program verification
-- We show that refinement types can also be viewed as *exhaustive test-suite*
-- Allows for *gradual verification*
+> - Traditionally used for program verification
+> - We show that refinement types can also be viewed as *exhaustive test-suite*
 
+. . .
+
+## Enables *gradual verification*
 1. write high-level spec as refinement type
 2. immediate gratification from comprehensive test-suite
 3. once design has settled, add hints / inductive invariants to allow verification
@@ -296,6 +375,6 @@ $\begin{aligned}
 <img height=500px src="benchmarks.png">
 
 # Takeaway
-- Target can explore larger inputs than Lazy SmallCheck
-- Target specs are amenable to future formal verification
+- Target can explore larger input spaces than (Lazy) SmallCheck
 - QuickCheck **requires** custom generators for functions with complex preconditions
+- Target specs are amenable to future formal verification
