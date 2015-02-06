@@ -981,7 +981,7 @@ which we decode to the Haskell value =(1,2):[]=. When we refute this model, we
 will add a constraint
 $$
 \cvar{c_{00}} \neq \tfalse \lor \cvar{c_{01}} \neq \ttrue \lor \cvar{w_1} \neq
-1 \lor \cvar{s_1} \neq 2 \lor \cvar{c_{10}} \neq \ttrue)
+1 \lor \cvar{s_1} \neq 2 \lor \cvar{c_{10}} \neq \ttrue
 $$
 which notably ignores all logical variables that did not contribute to the
 realized value. This is an important optimization, as if we had refuted the
@@ -1019,7 +1019,7 @@ to enforce the ordering constraint. Now we can see why the guards are necessary
 for completeness, suppose we had instead left them out, producing
 \begin{eqnarray*}
 \cstr{C_{ord'}}   & \defeq & \cvar{x}_1 < \cvar{x}_2
-                \ \wedge\ \cvar{x}_2 < \cvar{x}_3\ \wedge\ \cvar{x}_1 < \cvar{x}_3
+                \ \wedge\ \cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3
 \end{eqnarray*}
 In practice, the constraints will also include conjuncts of the form $-N \leq
 x_i \leq N$ where $N$ is the depth. Thus at depth 3, the solver would never be

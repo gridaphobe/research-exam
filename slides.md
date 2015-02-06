@@ -144,6 +144,14 @@ average wxs = total `div` n
 
 How to encode structured data in SMT formula?
 
+# Containers: Query
+
+Generate constraints describing *all possible* inputs.
+
+<img height=300px src="skeleton.png">
+
+Let solver choose path through skeleton.
+
 # Choice Variables
 
 Propositional variables that *guard* other constraints
@@ -154,20 +162,21 @@ Force solver to choose one
 
 $\cvar{c}_{00} \oplus \cvar{c}_{01}$
 
+
 # Encoding Lists of Depth 3
 
 $\begin{aligned}
-\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge 
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
-                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) \wedge
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
-                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) \wedge 
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
-                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & \wedge &
-                           (\cvar{c}_{21} \Rightarrow \cvar{c}_{30})
+                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
 \end{aligned}$
 
 $\begin{aligned}
@@ -192,6 +201,20 @@ follow the choice variables.
 [(1,2)]
 ```
 
+# Refuting Containers
+
+Key optimization
+
+- refute only constraints that contribute to *realized* value
+
+$[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
+1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
+
+is refuted by
+
+$\cvar{c_{00}} \neq \tfalse \lor \cvar{c_{01}} \neq \ttrue \lor \cvar{w_1} \neq
+1 \lor \cvar{s_1} \neq 2 \lor \cvar{c_{10}} \neq \ttrue$
+
 # Ordered Containers
 
 ```haskell
@@ -203,10 +226,30 @@ data Sorted a = []
                     }
 ```
 
+Recursive refinement relates the `head` with *each* element of the `tail`.
+
+# Ordered Containers: Query
+
+Instantiate recursive refinement each time we unfold `(:)`
+
+- Level 2: `x1 < x2`
+- Level 3: `x1 < x3 && x2 < x3`
+
 $\begin{aligned}
 \cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2)
-                   \wedge   (\cvar{c}_{21} \Rightarrow \cvar{x}_2 < \cvar{x}_3\ \wedge\ \cvar{x}_1 < \cvar{x}_3)
+                   \wedge   (\cvar{c}_{21} \Rightarrow \cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3)
 \end{aligned}$
+
+# Aside: The Importance of Guards
+
+$\begin{aligned}
+\cstr{C_{ord'}}   & \defeq & (\cvar{x}_1 < \cvar{x}_2)
+                    \wedge   (\cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3)
+\end{aligned}$
+
+forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ *regardless* of which are in the realized model!
+
+Prohibits generation of valid inputs, e.g. `[2,3]`
 
 # Structured Containers
 
@@ -220,14 +263,18 @@ len []      = 0
 len (x:xs)  = 1 + len xs
 ```
 
+# Structured Containers: Query
+
+Instantiate measure definition each time we unfold `[]` or `(:)`
+
 $\begin{aligned}
-\cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) \wedge 
+\cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
-                & \wedge & (\cvar{c}_{10} \Rightarrow \clen{\cvar{xs}_{1}} = 0) \wedge 
+                & \wedge & (\cvar{c}_{10} \Rightarrow \clen{\cvar{xs}_{1}} = 0) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \clen{\cvar{xs}_{1}} = 1 + \clen{\cvar{xs}_2}) \\
-                & \wedge & (\cvar{c}_{20} \Rightarrow \clen{\cvar{xs}_{2}} = 0) \wedge 
+                & \wedge & (\cvar{c}_{20} \Rightarrow \clen{\cvar{xs}_{2}} = 0) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
-                & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0)
+                & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0) &        &
 \end{aligned}$
 
 # Evaluation
