@@ -114,22 +114,42 @@ Eric Seidel
   </p>
   <p class="date">eseidel@cs.ucsd.edu</p>
 </div>
-<div id="insertion-sort" class="slide section level1">
-<h1>Insertion Sort</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">sort<span class="ot">   ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> [a] <span class="ot">-&gt;</span> [a]
-<span class="ot">insert ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</code></pre>
-<p>Crucially, <code>insert</code> must maintain sortedness of the list</p>
+<div id="balanced-trees" class="slide section level1">
+<h1>Balanced Trees</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span> a
+  <span class="fu">=</span> <span class="dt">Leaf</span>
+  <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> a (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">height ::</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Int</span>
+
+balanced t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+  <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
+  <span class="dt">Node</span> _ _ l r <span class="ot">-&gt;</span> abs (height l <span class="fu">-</span> height r) <span class="fu">&lt;=</span> <span class="dv">1</span>
+               <span class="fu">&amp;&amp;</span> balanced l <span class="fu">&amp;&amp;</span> balanced r</code></pre>
+</div>
+<div id="balanced-trees-inserting" class="slide section level1">
+<h1>Balanced Trees: Inserting</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">insert x t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+  <span class="dt">Leaf</span> <span class="ot">-&gt;</span> singleton x
+  <span class="dt">Node</span> _ y l r <span class="ot">-&gt;</span> <span class="kw">case</span> compare x y <span class="kw">of</span>
+    <span class="dt">LT</span> <span class="ot">-&gt;</span> bal y (insert x l) r
+    <span class="dt">GT</span> <span class="ot">-&gt;</span> bal y l (insert x r)
+    <span class="dt">EQ</span> <span class="ot">-&gt;</span> t
+
+<span class="ot">bal ::</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> a</code></pre>
 </div>
 <div id="testing-insert-manually" class="slide section level1">
 <h1>Testing <code>insert</code>: Manually</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">insert <span class="dv">1</span> []    <span class="fu">==</span> [<span class="dv">1</span>]
-insert <span class="dv">1</span> [<span class="dv">0</span>,<span class="dv">2</span>] <span class="fu">==</span> [<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>]</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">insert <span class="ch">&#39;a&#39;</span> <span class="dt">Leaf</span>
+  <span class="fu">==</span> <span class="dt">Node</span> <span class="dv">1</span> <span class="ch">&#39;a&#39;</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>
+
+insert <span class="ch">&#39;a&#39;</span> (<span class="dt">Node</span> <span class="dv">1</span> <span class="ch">&#39;b&#39;</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)
+  <span class="fu">==</span> <span class="dt">Node</span> <span class="dv">2</span> <span class="ch">&#39;a&#39;</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">1</span> <span class="ch">&#39;b&#39;</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)</code></pre>
 <p>Tedious and error-prone!</p>
 </div>
 <div id="testing-insert-specifications" class="slide section level1">
 <h1>Testing <code>insert</code>: Specifications</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_elem x xs <span class="fu">=</span> x <span class="ot">`elem`</span> insert x xs
-prop_insert_sort x xs <span class="fu">=</span> sorted <span class="fu">$</span> insert x xs</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_elem x t <span class="fu">=</span> x <span class="ot">`elem`</span> insert x t
+prop_insert_bal  x t <span class="fu">=</span> balanced <span class="fu">$</span> insert x t</code></pre>
 <ul>
 <li>Boolean-valued function describes property</li>
 <li>Test harness like QuickCheck enumerates inputs</li>
@@ -137,35 +157,60 @@ prop_insert_sort x xs <span class="fu">=</span> sorted <span class="fu">$</span>
 </div>
 <div id="testing-insert-specifications-1" class="slide section level1">
 <h1>Testing <code>insert</code>: Specifications</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_sort
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bal
 <span class="fu">***</span> <span class="dt">Failed</span><span class="fu">!</span> <span class="dt">Falsifiable</span><span class="fu">:</span>
-<span class="dv">0</span>
-[<span class="dv">2</span>,<span class="dv">2</span>]</code></pre>
-<p><code>insert</code> doesn't accept just <em>any</em> list</p>
+<span class="ch">&#39;c&#39;</span>
+<span class="dt">Node</span> <span class="dv">2</span> <span class="ch">&#39;a&#39;</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">1</span> <span class="ch">&#39;b&#39;</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)</code></pre>
+<p><code>insert</code> doesn't accept just <em>any</em> tree</p>
 </div>
 <div id="testing-insert-preconditions" class="slide section level1">
 <h1>Testing <code>insert</code>: Preconditions</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_sort x xs
-  <span class="fu">=</span> sorted xs <span class="fu">==&gt;</span> sorted (insert x xs)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bal x t
+  <span class="fu">=</span> balanced t <span class="fu">==&gt;</span> balanced (insert x t)</code></pre>
 <div class="incremental">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_sort
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bal
 <span class="fu">***</span> <span class="dt">Gave</span> up<span class="fu">!</span> <span class="dt">Passed</span> only <span class="dv">3</span> tests<span class="fu">.</span></code></pre>
 </div>
 <div class="incremental">
-<p>Very low probability of generating sorted lists at random!</p>
+<p>Very low probability of generating balanced trees at random!</p>
 </div>
 </div>
 <div id="testing-insert-custom-generators" class="slide section level1">
 <h1>Testing <code>insert</code>: Custom Generators</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Sorted</span> a <span class="fu">=</span> [a]
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Balanced</span> a <span class="fu">=</span> <span class="dt">Tree</span> a
 
-<span class="kw">instance</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">Sorted</span> a) <span class="kw">where</span>
-  arbitrary <span class="fu">=</span> <span class="dt">Sorted</span> <span class="fu">.</span> sort <span class="fu">.</span> arbitrary
+<span class="kw">instance</span> <span class="dt">Arbitrary</span> (<span class="dt">Balanced</span> a) <span class="kw">where</span>
+  arbitrary <span class="fu">=</span> <span class="fu">...</span>
 
-prop_insert_sort x (<span class="dt">Sorted</span> xs)
-  <span class="fu">=</span> sorted (insert x xs)</code></pre>
+prop_insert_bal x (<span class="dt">Balanced</span> xs)
+  <span class="fu">=</span> balanced (insert x xs)</code></pre>
 <div class="incremental">
 <p>Must define a new type/generator for <em>each</em> precondition!</p>
+</div>
+</div>
+<div id="alternative-enumerate-small-inputs" class="slide section level1">
+<h1>Alternative: Enumerate Small Inputs</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Serial</span> (<span class="dt">Tree</span> a) <span class="kw">where</span>
+  series <span class="fu">=</span> <span class="fu">...</span></code></pre>
+<div class="incremental">
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bal
+<span class="dt">Completed</span> <span class="dv">2944</span> tests without failure<span class="fu">.</span>
+<span class="dt">But</span> <span class="dv">480</span> did not meet <span class="fu">==&gt;</span> condition<span class="fu">.</span></code></pre>
+</div>
+<div class="incremental">
+<p>&quot;Small-scope hypothesis&quot;</p>
+<blockquote>
+<p>if a counterexample exists, a &quot;small&quot; counterexample probably exists too</p>
+</blockquote>
+</div>
+</div>
+<div id="how-small" class="slide section level1">
+<h1>How small?</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">4</span> prop_insert_bal
+<span class="fu">............</span></code></pre>
+<div class="incremental">
+<p>Exponential blowup in input space confines search to <em>very small</em> inputs!</p>
+<p>(Again, custom generators are a standard solution to increase feasible search depth)</p>
 </div>
 </div>
 <div id="what-we-want" class="slide section level1">

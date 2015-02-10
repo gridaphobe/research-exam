@@ -53,7 +53,9 @@ bal :: a -> Tree a -> Tree a -> Tree a
 # Testing `insert`: Manually
 
 ```haskell
-insert 'a' Leaf  == Node 1 'a' Leaf Leaf
+insert 'a' Leaf
+  == Node 1 'a' Leaf Leaf
+
 insert 'a' (Node 1 'b' Leaf Leaf)
   == Node 2 'a' Leaf (Node 1 'b' Leaf Leaf)
 ```
@@ -114,6 +116,40 @@ prop_insert_bal x (Balanced xs)
 . . .
 
 Must define a new type/generator for *each* precondition!
+
+# Alternative: Enumerate Small Inputs
+
+```haskell
+instance Serial (Tree a) where
+  series = ...
+```
+
+. . .
+
+```haskell
+ghci> smallCheck 3 prop_insert_bal
+Completed 2944 tests without failure.
+But 480 did not meet ==> condition.
+```
+
+. . .
+
+"Small-scope hypothesis"
+
+> if a counterexample exists, a "small" counterexample probably exists too
+
+# How small?
+
+```haskell
+ghci> smallCheck 4 prop_insert_bal
+............
+```
+
+. . .
+
+Exponential blowup in input space confines search to *very small* inputs!
+
+(Again, custom generators are a standard solution to increase feasible search depth)
 
 # What We Want
 
