@@ -151,9 +151,98 @@ Exponential blowup in input space confines search to *very small* inputs!
 
 (Again, custom generators are a standard solution to increase feasible search depth)
 
+# Dynamic-Symbolic Testing
+
+- introduced by Godefroid et al and Cadar et al in 2005
+
+- combines symbolic execution to enumerate code paths with concrete execution to trigger bugs
+
+- search for inputs that make the program crash
+
+# Symbolic Execution
+
+- map variables to symbolic expressions instead of concrete values
+- construct *path condition* describing constraints to trigger current path
+
+```haskell
+f x y = let z = y + 1
+        in if z > 0
+           then x / z
+           else x
+```
+
+- $G_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}$
+- $G_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (y + 1)\}$
+- $P_1 = \langle z > 0 \rangle$
+
+# Concolic Testing
+
+- execute symbolically and dynamically in tandem
+- DART (2005), CUTE (2006), PEX (2008)
+- start with random inputs, e.g. $\{x \mapsto \cstr{'a'}, t \mapsto \cstr{Node}\ 1 \cstr{'b'} \cstr{Leaf}\ \cstr{Leaf}\}$
+
+```haskell
+insert x t = case t of
+  Leaf -> singleton x
+  Node h y l r -> case compare x y of
+    LT -> bal y (insert x l) r
+    GT -> bal y l (insert x r)
+    EQ -> t
+```
+
+- at `LT` branch, we have $P_{LT} = \langle t = \cstr{Node}\ h\ y\ l\ r, x < y \rangle$
+- choose new path by negating path condition and solving for new inputs, e.g.
+    - $t = \cstr{Node}\ h\ y\ l\ r \land \lnot (x < y)$
+
+# Concolic Testing: Specifications
+
+- `insert` will never crash on its own, need to check specification
+
+```haskell
+prop_insert_bal x t = do
+  assume (balanced t)
+  let t' = insert x t
+  assert (balanced t')
+```
+
+. . .
+
+**PROBLEM**: paths must pass through `balanced` before reaching `insert`!
+
+# Concolic Testing: Preconditions
+
+```haskell
+balanced t = case t of
+  Leaf -> True
+  Node h y l r -> abs (height l - height r) <= 1
+               && balanced l && balanced r
+```
+
+# Concolic Testing: Preconditions
+
+```haskell
+balanced t = case t of
+  Leaf -> True
+  Node h y l r ->
+    | not (abs (height l - height r) <= 1) -> False
+    | not (balanced l)                     -> False
+    | not (balanced r)                     -> False
+    | otherwise                            -> True
+```
+
+- 3 possible paths for *invalid* node, only 1 for *valid* node
+    - compounds as execution unfolds recursive datatype
+
+. . .
+
+> executable specification causes solver to enumerate paths through **precondition** instead of function
+
+
 # What We Want
 
-> Write a single generator per type, that can generate values satisfying different predicates.
+<!-- > Write a single generator per type, that can generate values satisfying different predicates. -->
+
+> Declarative specification language, enabling efficient analysis by constraint solvers
 
 # Refinement Types
 

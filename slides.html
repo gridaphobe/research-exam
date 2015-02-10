@@ -213,10 +213,97 @@ prop_insert_bal x (<span class="dt">Balanced</span> xs)
 <p>(Again, custom generators are a standard solution to increase feasible search depth)</p>
 </div>
 </div>
+<div id="dynamic-symbolic-testing" class="slide section level1">
+<h1>Dynamic-Symbolic Testing</h1>
+<ul>
+<li><p>introduced by Godefroid et al and Cadar et al in 2005</p></li>
+<li><p>combines symbolic execution to enumerate code paths with concrete execution to trigger bugs</p></li>
+<li><p>search for inputs that make the program crash</p></li>
+</ul>
+</div>
+<div id="symbolic-execution" class="slide section level1">
+<h1>Symbolic Execution</h1>
+<ul>
+<li>map variables to symbolic expressions instead of concrete values</li>
+<li>construct <em>path condition</em> describing constraints to trigger current path</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>
+        <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
+           <span class="kw">then</span> x <span class="fu">/</span> z
+           <span class="kw">else</span> x</code></pre>
+<ul>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">G_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">G_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (y + 1)\}</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_1 = \langle z &gt; 0 \rangle</annotation></semantics></math></li>
+</ul>
+</div>
+<div id="concolic-testing" class="slide section level1">
+<h1>Concolic Testing</h1>
+<ul>
+<li>execute symbolically and dynamically in tandem</li>
+<li>DART (2005), CUTE (2006), PEX (2008)</li>
+<li>start with random inputs, e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><mstyle mathvariant="sans-serif"><mo>′</mo><mi>𝖺</mi><mo>′</mo></mstyle><mo>,</mo><mi>t</mi><mo accent="false">↦</mo><mstyle mathvariant="sans-serif"><mi>𝖭</mi><mi>𝗈</mi><mi>𝖽</mi><mi>𝖾</mi></mstyle><mspace width="0.222em"></mspace><mn>1</mn><mstyle mathvariant="sans-serif"><mo>′</mo><mi>𝖻</mi><mo>′</mo></mstyle><mstyle mathvariant="sans-serif"><mi>𝖫</mi><mi>𝖾</mi><mi>𝖺</mi><mi>𝖿</mi></mstyle><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝖫</mi><mi>𝖾</mi><mi>𝖺</mi><mi>𝖿</mi></mstyle><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{x \mapsto {\mathsf{{&#39;a&#39;}}}, t \mapsto {\mathsf{{Node}}}\ 1 {\mathsf{{&#39;b&#39;}}} {\mathsf{{Leaf}}}\ {\mathsf{{Leaf}}}\}</annotation></semantics></math></li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">insert x t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+  <span class="dt">Leaf</span> <span class="ot">-&gt;</span> singleton x
+  <span class="dt">Node</span> h y l r <span class="ot">-&gt;</span> <span class="kw">case</span> compare x y <span class="kw">of</span>
+    <span class="dt">LT</span> <span class="ot">-&gt;</span> bal y (insert x l) r
+    <span class="dt">GT</span> <span class="ot">-&gt;</span> bal y l (insert x r)
+    <span class="dt">EQ</span> <span class="ot">-&gt;</span> t</code></pre>
+<ul>
+<li>at <code>LT</code> branch, we have <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mrow><mi>L</mi><mi>T</mi></mrow></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>t</mi><mo>=</mo><mstyle mathvariant="sans-serif"><mi>𝖭</mi><mi>𝗈</mi><mi>𝖽</mi><mi>𝖾</mi></mstyle><mspace width="0.222em"></mspace><mi>h</mi><mspace width="0.222em"></mspace><mi>y</mi><mspace width="0.222em"></mspace><mi>l</mi><mspace width="0.222em"></mspace><mi>r</mi><mo>,</mo><mi>x</mi><mo>&lt;</mo><mi>y</mi><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_{LT} = \langle t = {\mathsf{{Node}}}\ h\ y\ l\ r, x &lt; y \rangle</annotation></semantics></math></li>
+<li>choose new path by negating path condition and solving for new inputs, e.g.
+<ul>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mstyle mathvariant="sans-serif"><mi>𝖭</mi><mi>𝗈</mi><mi>𝖽</mi><mi>𝖾</mi></mstyle><mspace width="0.222em"></mspace><mi>h</mi><mspace width="0.222em"></mspace><mi>y</mi><mspace width="0.222em"></mspace><mi>l</mi><mspace width="0.222em"></mspace><mi>r</mi><mo>∧</mo><mo>¬</mo><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>&lt;</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t = {\mathsf{{Node}}}\ h\ y\ l\ r \land \lnot (x &lt; y)</annotation></semantics></math></li>
+</ul></li>
+</ul>
+</div>
+<div id="concolic-testing-specifications" class="slide section level1">
+<h1>Concolic Testing: Specifications</h1>
+<ul>
+<li><code>insert</code> will never crash on its own, need to check specification</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bal x t <span class="fu">=</span> <span class="kw">do</span>
+  assume (balanced t)
+  <span class="kw">let</span> t&#39; <span class="fu">=</span> insert x t
+  assert (balanced t&#39;)</code></pre>
+<div class="incremental">
+<p><strong>PROBLEM</strong>: paths must pass through <code>balanced</code> before reaching <code>insert</code>!</p>
+</div>
+</div>
+<div id="concolic-testing-preconditions" class="slide section level1">
+<h1>Concolic Testing: Preconditions</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">balanced t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+  <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
+  <span class="dt">Node</span> h y l r <span class="ot">-&gt;</span> abs (height l <span class="fu">-</span> height r) <span class="fu">&lt;=</span> <span class="dv">1</span>
+               <span class="fu">&amp;&amp;</span> balanced l <span class="fu">&amp;&amp;</span> balanced r</code></pre>
+</div>
+<div id="concolic-testing-preconditions-1" class="slide section level1">
+<h1>Concolic Testing: Preconditions</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">balanced t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+  <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
+  <span class="dt">Node</span> h y l r <span class="ot">-&gt;</span>
+    <span class="fu">|</span> not (abs (height l <span class="fu">-</span> height r) <span class="fu">&lt;=</span> <span class="dv">1</span>) <span class="ot">-&gt;</span> <span class="dt">False</span>
+    <span class="fu">|</span> not (balanced l)                     <span class="ot">-&gt;</span> <span class="dt">False</span>
+    <span class="fu">|</span> not (balanced r)                     <span class="ot">-&gt;</span> <span class="dt">False</span>
+    <span class="fu">|</span> otherwise                            <span class="ot">-&gt;</span> <span class="dt">True</span></code></pre>
+<ul>
+<li>3 possible paths for <em>invalid</em> node, only 1 for <em>valid</em> node
+<ul>
+<li>compounds as execution unfolds recursive datatype</li>
+</ul></li>
+</ul>
+<div class="incremental">
+<blockquote>
+<p>executable specification causes solver to enumerate paths through <strong>precondition</strong> instead of function</p>
+</blockquote>
+</div>
+</div>
 <div id="what-we-want" class="slide section level1">
 <h1>What We Want</h1>
+<!-- > Write a single generator per type, that can generate values satisfying different predicates. -->
 <blockquote>
-<p>Write a single generator per type, that can generate values satisfying different predicates.</p>
+<p>Declarative specification language, enabling efficient analysis by constraint solvers</p>
 </blockquote>
 </div>
 <div id="refinement-types" class="slide section level1">
