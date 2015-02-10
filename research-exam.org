@@ -43,7 +43,7 @@
 
 #+BEGIN_ABSTRACT
 Program testing is a crucial yet tedious part of software development.
-Standard /unit-testing/ practice dictates manual specification of input-output
+Standard unit-testing practice dictates manual specification of input-output
 pairs for each expected behavior of a program, which involves large amounts of
 programmer effort and does not scale well with the size of a program. As a
 result, many groups have investigated techniques for automatically generating
@@ -52,7 +52,7 @@ test-cases from a specification or directly from the source code.
 We survey a selection of the prominent approaches for automatic test-case
 generation and present our own contribution to the field, a technique for
 generating inputs to highly constrained functions by specifying the expected
-behavior via /refinement types/.
+behavior via refinement types.
 #+END_ABSTRACT
 
 * Introduction
@@ -91,17 +91,17 @@ formal statement of the expected behavior of the system under test, and may
 range from the simple "this program should not crash" to the relatively complex
 "this program takes as input a sorted list $xs$ and an element $x$, and returns
 a new sorted list containing all elements of $xs$ as well as $x$". In fact, a
-complex safety specification can be reduced to crash-freedom by the function
-under scrutiny in another function that dynamically checks the safety condition
-and crashes if it is violated. Thus, in this report we will focus more on the
-method of generating input vectors than the specification mechanism.
+complex safety specification can be reduced to crash-freedom by calling the
+function under scrutiny from another function that dynamically checks the safety
+condition and crashes if it is violated. Thus, in this report we will focus more
+on the method of generating input vectors than the specification mechanism.
 
 **** Input generation
 There are two broad approaches to constructing test vectors for a
-system. /Functional/ or /black-box/ testing treats the system as opaque and
+system. /Functional/, or /black-box/, testing treats the system as opaque and
 selects input candidates based solely on the external specification. On the
-other hand, /structural/ or /white-box/ testing uses knowledge of the system's
-internal to select test vectors (e.g. to optimize statement coverage or attempt
+other hand, /structural/, or /white-box/, testing uses knowledge of the system's
+internals to select test vectors (e.g. to optimize statement coverage or attempt
 to steer control-flow to a dangerous location). Both categories are widely used,
 and in this report we will investigate techniques that fall into both.
 
@@ -157,24 +157,23 @@ gain a large degree of confidence in our program.
 *** SmallCheck
 SmallCheck \cite{runciman_smallcheck_2008} is a testing library for Haskell
 programs that does the simplest thing possible. Programmers specify how to
-enumerate input values using Haskell's type-class mechanism
-\cite{wadler_how_1989} and provide a boolean-valued function that describes the
-property they wish to check, and SmallCheck enumerates all possible inputs up to
-some depth, validating the property on each input vector. The input generators
-are expected to produce values in increasing size (indeed, such a generator can
-be automatically derived from a datatype definition), thus SmallCheck is
-guaranteed to find the /minimal/ counterexample if it lies within the
-depth-bound.
+enumerate input values using Haskell's type-class system \cite{wadler_how_1989}
+and provide a boolean-valued function that describes the property they wish to
+check, and SmallCheck enumerates all possible inputs up to some depth,
+validating the property on each input vector. The input generators are expected
+to produce values in increasing size (indeed, such a generator can be
+automatically derived from a datatype definition), thus SmallCheck is guaranteed
+to find the /minimal/ counterexample if it lies within the depth-bound.
 
 Naturally, such a brute-force enumeration of input vectors is bound to be
 wasteful (i.e. it will produce many inputs that trigger the same code path),
 thus the authors also introduce a /lazy/ variant that takes advantage of
 Haskell's inherent laziness to prune the search space. The key distinction of
 Lazy SmallCheck is that it produces /partially-defined/ values instead of
-fully-defined values, i.e. Lazy SmallCheck will initially leave each component
+fully-defined values, i.e. Lazy SmallCheck will initially leave each field
 of a value uninitialized, so that the Haskell runtime will thrown an exception
-if the component is read. Only when a value is demanded will Lazy SmallCheck
-fill in the "hole" with an actual value. Thus, Lazy SmallCheck reduces the
+if the field is read. Only when a field is demanded will Lazy SmallCheck
+fill in the hole with an actual value. Thus, Lazy SmallCheck reduces the
 search space by dynamically discovering which parts of a value are relevant to
 the property being tested.
 
@@ -519,7 +518,7 @@ contains the usual linear arithmetic expressions as in DART; however,
 $\mathcal{P}$ contains expressions of the form $x_p \cong y_p$ where
 $x_p$ is either a symbolic variable or the constant symbol =NULL= and 
 $\cong\ \in \{=, \neq\}$. When solving a pointer constraint, CUTE partitions the
-variables in $\mathcal{P}$ into equivalence classes and applying the arithmetic
+variables in $\mathcal{P}$ into equivalence classes and applies the arithmetic
 constraints to all members of the equivalence class. For example, given
 
 #+BEGIN_SRC c
@@ -752,7 +751,7 @@ program is bug-free, it truly is. The converse does not generally hold;
 even if your program is bug-free the verifier may still report a
 possible bug, as it often has to /over-approximate/ program behavior in
 order to achieve soundness. For instance, many verifiers struggle with
-non-linear arithmetic, i.e. they would be unable to verify
+non-linear arithmetic, i.e. they would be unable to verify the safety of
 
 #+BEGIN_SRC c
 int f (int x, int y) {
@@ -810,8 +809,8 @@ the final location. These traces are sequences of assignments and assumptions
 about the program state (e.g. from taking a specific direction of a branch), and
 must be converted into concrete test vectors before they can be executed. BLAST
 then translates these traces into logical formulae encoding constraints on the
-program variables and queries a theorem prover for a satisfying assignment,
-which finally represents a concrete test vector.
+program variables and queries a theorem prover for a satisfying assignment to
+the formula's variables, which finally represents a concrete test vector.
 
 An advantage of this approach over the Check'n'Crash approach is that the user
 can supply any predicate they wish and BLAST will find states that satisfy it,
@@ -1088,24 +1087,24 @@ input constraints.
 
 We have compared Target against QuickCheck and (Lazy) SmallCheck on a series of
 functions with complex preconditions. In order to evaluate our claim that
-Target's symbolic enumeration of inputs would fair better than concrete
+Target's symbolic enumeration of inputs would fare better than concrete
 enumeration (even lazily), we restricted each system to a single test-case
 generator per type. We checked properties of a custom red-black tree
 implementation, height-balanced trees from the =Data.Map= library, and the core
-=StackSet= datatype of the =XMonad= tiling window manager. In all of our
-examples we found that: (1) QuickCheck was unable to randomly generate suitably
-constrained inputs without a custom generator, (2) SmallCheck was substantially
-faster than Target at generating /very small/ inputs, and (3) Target was
-consistently able to explore /deeper/ inputs than (Lazy) SmallCheck before
-timing out.
+=StackSet= datatype of the =XMonad= tiling window manager -- which requires all
+of its window elements to be unique. In all of our examples we found that: (1)
+QuickCheck was unable to randomly generate suitably constrained inputs without a
+custom generator, (2) SmallCheck was substantially faster than Target at
+generating /very small/ inputs, and (3) Target was consistently able to explore
+/deeper/ inputs than (Lazy) SmallCheck before timing out.
 
-Regrettably, we know of no concolic testing libraries for Haskell, and so were
-unable to perform a direct comparison of our approach with concolic testing. We
-did however port a simplified version of the height-balanced tree example to
-=F#= to test Pex. We found that Pex was unable to generate any non-trivial
-(i.e. containing more than one element) trees, as the symbolic executor ended up
-enumerating paths through the /precondition/, unable to reach the actual
-function we were testing.
+Regrettably, we know of no dynamic-symbolic testing libraries for Haskell, and
+so were unable to perform a direct comparison of our approach with
+dynamic-symbolic testing. We did however port a simplified version of the
+height-balanced tree example to F\# to test Pex. We found that Pex was unable
+to generate any non-trivial (i.e. containing more than one element) trees, as
+the symbolic executor ended up enumerating paths through the /precondition/,
+unable to reach the actual function we were testing.
 
 * Future Work? :noexport:
 - modeling environment still a problem
