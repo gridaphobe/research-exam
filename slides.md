@@ -66,13 +66,29 @@ Tedious and error-prone!
 
 ```haskell
 prop_insert_elem x t = x `elem` insert x t
-prop_insert_bal  x t = balanced $ insert x t
+prop_insert_bal  x t = balanced (insert x t)
 ```
 
 - Boolean-valued function describes property
 - Test harness like QuickCheck enumerates inputs
 
-# Testing `insert`: Specifications
+# QuickCheck: Random Generation of Inputs
+
+- provides DSL for writing random value generators
+
+```haskell
+instance Arbitrary a => Arbitrary (Tree a) where
+  arbitrary = oneof [ leaf, node ]
+    where
+    leaf = return Leaf
+    node = do h <- arbitrary
+              x <- arbitrary
+              l <- arbitrary
+              r <- arbitrary
+              return (Node h x l r)
+```
+
+# Testing `insert`: QuickCheck
 
 ```haskell
 ghci> quickCheck prop_insert_bal
@@ -80,6 +96,8 @@ ghci> quickCheck prop_insert_bal
 'c'
 Node 2 'a' Leaf (Node 1 'b' Leaf Leaf)
 ```
+
+. . .
 
 `insert` doesn't accept just *any* tree
 
@@ -106,7 +124,7 @@ Very low probability of generating balanced trees at random!
 ```haskell
 newtype Balanced a = Tree a
 
-instance Arbitrary (Balanced a) where
+instance Arbitrary a => Arbitrary (Balanced a) where
   arbitrary = ...
 
 prop_insert_bal x (Balanced xs)

@@ -149,19 +149,36 @@ insert <span class="ch">&#39;a&#39;</span> (<span class="dt">Node</span> <span c
 <div id="testing-insert-specifications" class="slide section level1">
 <h1>Testing <code>insert</code>: Specifications</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_elem x t <span class="fu">=</span> x <span class="ot">`elem`</span> insert x t
-prop_insert_bal  x t <span class="fu">=</span> balanced <span class="fu">$</span> insert x t</code></pre>
+prop_insert_bal  x t <span class="fu">=</span> balanced (insert x t)</code></pre>
 <ul>
 <li>Boolean-valued function describes property</li>
 <li>Test harness like QuickCheck enumerates inputs</li>
 </ul>
 </div>
-<div id="testing-insert-specifications-1" class="slide section level1">
-<h1>Testing <code>insert</code>: Specifications</h1>
+<div id="quickcheck-random-generation-of-inputs" class="slide section level1">
+<h1>QuickCheck: Random Generation of Inputs</h1>
+<ul>
+<li>provides DSL for writing random value generators</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Arbitrary</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">Tree</span> a) <span class="kw">where</span>
+  arbitrary <span class="fu">=</span> oneof [ leaf, node ]
+    <span class="kw">where</span>
+    leaf <span class="fu">=</span> return <span class="dt">Leaf</span>
+    node <span class="fu">=</span> <span class="kw">do</span> h <span class="ot">&lt;-</span> arbitrary
+              x <span class="ot">&lt;-</span> arbitrary
+              l <span class="ot">&lt;-</span> arbitrary
+              r <span class="ot">&lt;-</span> arbitrary
+              return (<span class="dt">Node</span> h x l r)</code></pre>
+</div>
+<div id="testing-insert-quickcheck" class="slide section level1">
+<h1>Testing <code>insert</code>: QuickCheck</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bal
 <span class="fu">***</span> <span class="dt">Failed</span><span class="fu">!</span> <span class="dt">Falsifiable</span><span class="fu">:</span>
 <span class="ch">&#39;c&#39;</span>
 <span class="dt">Node</span> <span class="dv">2</span> <span class="ch">&#39;a&#39;</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">1</span> <span class="ch">&#39;b&#39;</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)</code></pre>
+<div class="incremental">
 <p><code>insert</code> doesn't accept just <em>any</em> tree</p>
+</div>
 </div>
 <div id="testing-insert-preconditions" class="slide section level1">
 <h1>Testing <code>insert</code>: Preconditions</h1>
@@ -179,7 +196,7 @@ prop_insert_bal  x t <span class="fu">=</span> balanced <span class="fu">$</span
 <h1>Testing <code>insert</code>: Custom Generators</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Balanced</span> a <span class="fu">=</span> <span class="dt">Tree</span> a
 
-<span class="kw">instance</span> <span class="dt">Arbitrary</span> (<span class="dt">Balanced</span> a) <span class="kw">where</span>
+<span class="kw">instance</span> <span class="dt">Arbitrary</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">Balanced</span> a) <span class="kw">where</span>
   arbitrary <span class="fu">=</span> <span class="fu">...</span>
 
 prop_insert_bal x (<span class="dt">Balanced</span> xs)
