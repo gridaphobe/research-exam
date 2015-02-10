@@ -1072,17 +1072,40 @@ $$
 $$
 thus restricting Target to produce lists with at least $k$ elements.
 
-** Implementation
-We have implemented Target as a testing library for Haskell programs, and have
-compared it against QuickCheck and (Lazy) SmallCheck on a series of functions
-with complex preconditions. We checked properties of a custom red-black tree
+** Implementation and Evaluation
+We have implemented Target as a testing library for Haskell programs. Target
+takes as input a function with a refined type, providing the specification, and
+exhaustively enumerates all /valid/ input vectors up to a given depth, verifying
+that each input produces a valid output. As with QuickCheck and SmallCheck, the
+user must provide a test-case generator for the input types and predicates
+describing the desired pre- and postconditions. Like SmallCheck (but /unlike/
+QuickCheck) the generators are extremely mechanical and can in fact be
+automatically derived from the data definition via a generics library like
+=GHC.Generics= \cite{magalhaes_generic_2010}. Furthermore, as Target uses an SMT
+solver to filter out invalid values, we only require a /single/ generator per
+input type, whereas SmallCheck often requires custom generators for each set of
+input constraints.
+
+We have compared Target against QuickCheck and (Lazy) SmallCheck on a series of
+functions with complex preconditions. In order to evaluate our claim that
+Target's symbolic enumeration of inputs would fair better than concrete
+enumeration (even lazily), we restricted each system to a single test-case
+generator per type. We checked properties of a custom red-black tree
 implementation, height-balanced trees from the =Data.Map= library, and the core
 =StackSet= datatype of the =XMonad= tiling window manager. In all of our
 examples we found that: (1) QuickCheck was unable to randomly generate suitably
 constrained inputs without a custom generator, (2) SmallCheck was substantially
 faster than Target at generating /very small/ inputs, and (3) Target was
-consistently able to explore /deeper/ inputs than (Lazy) SmallCheck before timing
-out.
+consistently able to explore /deeper/ inputs than (Lazy) SmallCheck before
+timing out.
+
+Regrettably, we know of no concolic testing libraries for Haskell, and so were
+unable to perform a direct comparison of our approach with concolic testing. We
+did however port a simplified version of the height-balanced tree example to
+=F#= to test Pex. We found that Pex was unable to generate any non-trivial
+(i.e. containing more than one element) trees, as the symbolic executor ended up
+enumerating paths through the /precondition/, unable to reach the actual
+function we were testing.
 
 * Future Work? :noexport:
 - modeling environment still a problem
