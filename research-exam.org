@@ -14,7 +14,7 @@
 \newcommand{\lnil}{\mathrm{[]}}
 \newcommand{\imp}{\Rightarrow}
 \newcommand{\xor}{\oplus}
-\newcommand{\defeq}{\ \doteq\ }
+\newcommand{\defeq}{\doteq}
 
 \newcommand\val[1]{\sigma(x)}
 \newcommand\cvar[1]{\mathit{{#1}}}
@@ -171,11 +171,12 @@ wasteful (i.e. it will produce many inputs that trigger the same code path),
 thus the authors also introduce a /lazy/ variant that takes advantage of
 Haskell's inherent laziness to prune the search space. The key distinction of
 Lazy SmallCheck is that it produces /partially-defined/ values instead of
-fully-defined values, i.e. Lazy SmallCheck will initially set each
-component of a value to $\bot$. Only when a value is demanded (and Haskell's
-runtime throws an exception) will Lazy SmallCheck fill in the "hole" with an
-actual value. Thus, Lazy SmallCheck reduces the search space by dynamically
-discovering which parts of a value are relevant to the property being tested.
+fully-defined values, i.e. Lazy SmallCheck will initially leave each component
+of a value uninitialized, so that the Haskell runtime will thrown an exception
+if the component is read. Only when a value is demanded will Lazy SmallCheck
+fill in the "hole" with an actual value. Thus, Lazy SmallCheck reduces the
+search space by dynamically discovering which parts of a value are relevant to
+the property being tested.
 
 Initially, Lazy SmallCheck had several disadvantages compared to SmallCheck. It
 could not generate functional values (commonly used in Haskell), and it could
@@ -846,7 +847,12 @@ function types by refining the individual components.
 
 Traditionally, refinement types have been used as a means of program
 verification \cite{xi_eliminating_1998,dunfield_refined_2007,swamy_secure_2011,vazou_liquidhaskell:_2014},
-but we are instead going to use refinement types as a high-level specification
+by translating the program into a logical formula that can be efficiently analyzed
+by an SMT solver. SMT (/Satisfiability Modulo Theories/) solvers combine a 
+satisfiability solver for propositional logic with decision procedures for various
+external theories, such as linear integer arithmetic, bitvectors, and uninterpreted
+functions. We are not going to discuss refinement types in the context of
+verification however; instead we will use refinement types as a high-level specification
 mechanism for generating exhaustive test-suites.
 
 **** Why test instead of prove?
@@ -889,7 +895,7 @@ the following input constraint for =rescale=:
 $$
 \cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \cvar{r1} 
 $$
-Suppose the SMT solves the above constraint with the model
+Suppose the SMT solver solves the above constraint with the model
 $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$, Target will
 then execute =rescale 1 1 0=, which results in output =0=. Next we /validate/
 the output against the postcondition by encoding the conjunction of the output
@@ -1065,6 +1071,18 @@ $$
 0 \leq \cvar{k} \land \cvar{k} \leq \clen{\cvar{xs_0}}
 $$
 thus restricting Target to produce lists with at least $k$ elements.
+
+** Implementation
+We have implemented Target as a testing library for Haskell programs, and have
+compared it against QuickCheck and (Lazy) SmallCheck on a series of functions
+with complex preconditions. We checked properties of a custom red-black tree
+implementation, height-balanced trees from the =Data.Map= library, and the core
+=StackSet= datatype of the =XMonad= tiling window manager. In all of our
+examples we found that: (1) QuickCheck was unable to randomly generate suitably
+constrained inputs without a custom generator, (2) SmallCheck was substantially
+faster than Target at generating /very small/ inputs, and (3) Target was
+consistently able to explore /deeper/ inputs than (Lazy) SmallCheck before timing
+out.
 
 * Future Work? :noexport:
 - modeling environment still a problem
