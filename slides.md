@@ -20,20 +20,42 @@
 \newcommand\meta[1]{[\![#1]\!]}
 \newcommand\reft[3]{\{{#1}:{#2}\ |\ {#3}\}}
 
-# Insertion Sort
+# Balanced Trees
 
 ```haskell
-sort   :: Ord a => [a] -> [a]
-insert :: Ord a => a -> [a] -> [a]
+data Tree a
+  = Leaf
+  | Node Int a (Tree a) (Tree a)
 ```
 
-Crucially, `insert` must maintain sortedness of the list
+```haskell
+height :: Tree a -> Int
+
+balanced t = case t of
+  Leaf -> True
+  Node _ _ l r -> abs (height l - height r) <= 1
+               && balanced l && balanced r
+```
+
+# Balanced Trees: Inserting
+
+```haskell
+insert x t = case t of
+  Leaf -> singleton x
+  Node _ y l r -> case compare x y of
+    LT -> bal y (insert x l) r
+    GT -> bal y l (insert x r)
+    EQ -> t
+
+bal :: a -> Tree a -> Tree a -> Tree a
+```
 
 # Testing `insert`: Manually
 
 ```haskell
-insert 1 []    == [1]
-insert 1 [0,2] == [0,1,2]
+insert 'a' Leaf  == Node 1 'a' Leaf Leaf
+insert 'a' (Node 1 'b' Leaf Leaf)
+  == Node 2 'a' Leaf (Node 1 'b' Leaf Leaf)
 ```
 
 Tedious and error-prone!
@@ -41,8 +63,8 @@ Tedious and error-prone!
 # Testing `insert`: Specifications
 
 ```haskell
-prop_insert_elem x xs = x `elem` insert x xs
-prop_insert_sort x xs = sorted $ insert x xs
+prop_insert_elem x t = x `elem` insert x t
+prop_insert_bal  x t = balanced $ insert x t
 ```
 
 - Boolean-valued function describes property
@@ -51,42 +73,42 @@ prop_insert_sort x xs = sorted $ insert x xs
 # Testing `insert`: Specifications
 
 ```haskell
-ghci> quickCheck prop_insert_sort
+ghci> quickCheck prop_insert_bal
 *** Failed! Falsifiable:
-0
-[2,2]
+'c'
+Node 2 'a' Leaf (Node 1 'b' Leaf Leaf)
 ```
 
-`insert` doesn't accept just *any* list
+`insert` doesn't accept just *any* tree
 
 # Testing `insert`: Preconditions
 
 ```haskell
-prop_insert_sort x xs
-  = sorted xs ==> sorted (insert x xs)
+prop_insert_bal x t
+  = balanced t ==> balanced (insert x t)
 ```
 
 . . .
 
 ```haskell
-ghci> quickCheck prop_insert_sort
+ghci> quickCheck prop_insert_bal
 *** Gave up! Passed only 3 tests.
 ```
 
 . . .
 
-Very low probability of generating sorted lists at random!
+Very low probability of generating balanced trees at random!
 
 # Testing `insert`: Custom Generators
 
 ```haskell
-newtype Sorted a = [a]
+newtype Balanced a = Tree a
 
-instance Ord a => Arbitrary (Sorted a) where
-  arbitrary = Sorted . sort . arbitrary
+instance Arbitrary (Balanced a) where
+  arbitrary = ...
 
-prop_insert_sort x (Sorted xs)
-  = sorted (insert x xs)
+prop_insert_bal x (Balanced xs)
+  = balanced (insert x xs)
 ```
 
 . . .
