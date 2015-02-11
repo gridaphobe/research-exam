@@ -11,7 +11,7 @@
 \newcommand{\wedge}{\ \land\ }
 
 \newcommand\val[1]{\sigma(x)}
-\newcommand\cvar[1]{\mathit{{#1}}}
+\newcommand\cvar[1]{\mathrm{{#1}}}
 \newcommand\clen[1]{\cstr{len}\ {#1}}
 \newcommand\cstr[1]{\mathsf{{#1}}}
 \newcommand\ttrue{\cstr{true}}
@@ -20,81 +20,92 @@
 \newcommand\meta[1]{[\![#1]\!]}
 \newcommand\reft[3]{\{{#1}:{#2}\ |\ {#3}\}}
 
-# Balanced Trees
+# A Binary Search Tree Library
 
 ```haskell
 data Tree a
   = Leaf
-  | Node Int a (Tree a) (Tree a)
+  | Node a (Tree a) (Tree a)
+
+insert :: Ord a => a -> Tree a -> Tree a
+delete :: Ord a => a -> Tree a -> Tree a
 ```
+
+. . .
+
+> Did I get it "right"?
+
+# Testing
+
+Two key questions to answer when testing:
+
+1. How to *provide* inputs?
+2. How to *check* outputs?
+
+# Outline
+
+1. **Human-generated tests**
+2. Machine-generated inputs
+3. Concolic Execution
+4. Type-targeted testing
+
+# Human-generated tests
+
+Programmer specifies inputs *and* outputs
+
+. . .
 
 ```haskell
-height :: Tree a -> Int
+insert 1 Leaf
+  == Node 1 Leaf Leaf
 
-balanced t = case t of
-  Leaf -> True
-  Node _ _ l r -> abs (height l - height r) <= 1
-               && balanced l && balanced r
+insert 1 (Node 2 Leaf Leaf)
+  == Node 1 Leaf (Node 2 Leaf Leaf)
 ```
 
-# Balanced Trees: Inserting
+. . .
 
-```haskell
-insert x t = case t of
-  Leaf -> singleton x
-  Node _ y l r -> case compare x y of
-    LT -> bal y (insert x l) r
-    GT -> bal y l (insert x r)
-    EQ -> t
+But this is tiresome and error-prone!
 
-bal :: a -> Tree a -> Tree a -> Tree a
-```
+# Outline
 
-# Testing `insert`: Manually
+1. Human-generated tests
+2. **Machine-generated inputs**
+3. Concolic Execution
+4. Type-targeted testing
 
-```haskell
-insert 'a' Leaf
-  == Node 1 'a' Leaf Leaf
+# Machine-generated inputs
 
-insert 'a' (Node 1 'b' Leaf Leaf)
-  == Node 2 'a' Leaf (Node 1 'b' Leaf Leaf)
-```
+- Machine enumerates all inputs
+- Programmer specifies oracle to check outputs
 
-Tedious and error-prone!
-
-# Testing `insert`: Specifications
+. . .
 
 ```haskell
 prop_insert_elem x t = x `elem` insert x t
 prop_insert_bal  x t = balanced (insert x t)
 ```
 
-- Boolean-valued function describes property
-- Test harness like QuickCheck enumerates inputs
+# SmallCheck: Enumerate Small Inputs
 
-# QuickCheck: Random Generation of Inputs
+"Small-scope hypothesis"
 
-- provides DSL for writing random value generators
+> if a counterexample exists, a "small" counterexample probably exists too
+
+. . .
 
 ```haskell
-instance Arbitrary a => Arbitrary (Tree a) where
-  arbitrary = oneof [ leaf, node ]
-    where
-    leaf = return Leaf
-    node = do h <- arbitrary
-              x <- arbitrary
-              l <- arbitrary
-              r <- arbitrary
-              return (Node h x l r)
+instance Serial a => Serial (Tree a) where
+  series = cons0 \/ cons3
 ```
 
-# Testing `insert`: QuickCheck
+. . .
 
 ```haskell
-ghci> quickCheck prop_insert_bal
+ghci> smallCheck 3 prop_insert_bal
 *** Failed! Falsifiable:
-'c'
-Node 2 'a' Leaf (Node 1 'b' Leaf Leaf)
+3
+Node 1 Leaf (Node 2 Leaf Leaf)
 ```
 
 . . .
@@ -111,13 +122,56 @@ prop_insert_bal x t
 . . .
 
 ```haskell
+ghci> smallCheck 3 prop_insert_bal
+Completed 2944 tests without failure.
+But 480 did not meet ==> condition.
+```
+
+# How small?
+
+```haskell
+ghci> smallCheck 4 prop_insert_bal
+............
+```
+
+. . .
+
+Exponential blowup in input space confines search to *very small* inputs!
+
+<!-- (Again, custom generators are a standard solution to increase feasible search depth) -->
+
+. . .
+
+- Can abuse laziness to filter equivalent inputs (Lazy SmallCheck, Korat)
+
+
+# QuickCheck: Random Generation of Inputs
+
+- provides DSL for writing random value generators
+
+```haskell
+instance Arbitrary a => Arbitrary (Tree a) where
+  arbitrary = oneof [ leaf, node ]
+    where
+    leaf = return Leaf
+    node = do x <- arbitrary
+              l <- arbitrary
+              r <- arbitrary
+              return (Node x l r)
+```
+
+- properties specified as before
+
+# Testing `insert`: QuickCheck
+
+```haskell
 ghci> quickCheck prop_insert_bal
 *** Gave up! Passed only 3 tests.
 ```
 
 . . .
 
-Very low probability of generating balanced trees at random!
+Input domain is too sparse, QuickCheck gives up!
 
 # Testing `insert`: Custom Generators
 
@@ -135,47 +189,25 @@ prop_insert_bal x (Balanced xs)
 
 Must define a new type/generator for *each* precondition!
 
-# Alternative: Enumerate Small Inputs
+# Outline
 
-```haskell
-instance Serial (Tree a) where
-  series = ...
-```
+1. Human-generated tests
+2. Machine-generated inputs
+3. **Concolic Execution**
+4. Type-targeted testing
 
-. . .
+# Concolic Execution
 
-```haskell
-ghci> smallCheck 3 prop_insert_bal
-Completed 2944 tests without failure.
-But 480 did not meet ==> condition.
-```
+- Specify correctness condition (e.g. don't crash!)
+- Search for inputs designed to violate it (via symbolic execution)
 
-. . .
+<!-- # Dynamic-Symbolic Testing -->
 
-"Small-scope hypothesis"
+<!-- - introduced by Godefroid et al and Cadar et al in 2005 -->
 
-> if a counterexample exists, a "small" counterexample probably exists too
+<!-- - combines symbolic execution to enumerate code paths with concrete execution to trigger bugs -->
 
-# How small?
-
-```haskell
-ghci> smallCheck 4 prop_insert_bal
-............
-```
-
-. . .
-
-Exponential blowup in input space confines search to *very small* inputs!
-
-(Again, custom generators are a standard solution to increase feasible search depth)
-
-# Dynamic-Symbolic Testing
-
-- introduced by Godefroid et al and Cadar et al in 2005
-
-- combines symbolic execution to enumerate code paths with concrete execution to trigger bugs
-
-- search for inputs that make the program crash
+<!-- - search for inputs that make the program crash -->
 
 # Symbolic Execution
 
@@ -183,34 +215,37 @@ Exponential blowup in input space confines search to *very small* inputs!
 - construct *path condition* describing constraints to trigger current path
 
 ```haskell
-f x y = let z = y + 1
-        in if z > 0
-           then x / z
-           else x
+f x y              -- 0
+  = let z = y + 1  -- 1
+    in if z > 0    -- 2
+       then x / z
+       else x
 ```
 
-- $G_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}$
-- $G_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (y + 1)\}$
-- $P_1 = \langle z > 0 \rangle$
+$M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}$
+
+$M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (y + 1)\}$
+
+$P_2 = \langle z > 0 \rangle$
 
 # Concolic Testing
 
-- execute symbolically and dynamically in tandem
-- DART (2005), CUTE (2006), PEX (2008)
-- start with random inputs, e.g. $\{x \mapsto \cstr{'a'}, t \mapsto \cstr{Node}\ 1 \cstr{'b'} \cstr{Leaf}\ \cstr{Leaf}\}$
+- combine symbolic and concrete execution
+- DART (2005), EXE (2005), CUTE (2006), PEX (2008), KLEE (2008)
+- start with random inputs, e.g. $\{x \mapsto 1, t \mapsto \cstr{Node}\ 2\ \cstr{Leaf}\ \cstr{Leaf}\}$
 
 ```haskell
 insert x t = case t of
   Leaf -> singleton x
-  Node h y l r -> case compare x y of
+  Node y l r -> case compare x y of
     LT -> bal y (insert x l) r
     GT -> bal y l (insert x r)
     EQ -> t
 ```
 
-- at `LT` branch, we have $P_{LT} = \langle t = \cstr{Node}\ h\ y\ l\ r, x < y \rangle$
-- choose new path by negating path condition and solving for new inputs, e.g.
-    - $t = \cstr{Node}\ h\ y\ l\ r \land \lnot (x < y)$
+- at `LT` branch, we have $P_{LT} = \langle t = \cstr{Node}\ y\ l\ r, x < y \rangle$
+- choose new path by negating path condition and solving for new inputs, e.g. $t = \cstr{Node}\ y\ l\ r \land \lnot (x < y)$
+    - (many more sophisticated search techniques have been explored)
 
 # Concolic Testing: Specifications
 
@@ -232,8 +267,8 @@ prop_insert_bal x t = do
 ```haskell
 balanced t = case t of
   Leaf -> True
-  Node h y l r -> abs (height l - height r) <= 1
-               && balanced l && balanced r
+  Node y l r -> abs (height l - height r) <= 1
+             && balanced l && balanced r
 ```
 
 # Concolic Testing: Preconditions
@@ -241,7 +276,7 @@ balanced t = case t of
 ```haskell
 balanced t = case t of
   Leaf -> True
-  Node h y l r ->
+  Node y l r ->
     | not (abs (height l - height r) <= 1) -> False
     | not (balanced l)                     -> False
     | not (balanced r)                     -> False
@@ -255,12 +290,22 @@ balanced t = case t of
 
 > executable specification causes solver to enumerate paths through **precondition** instead of function
 
+# Outline
+
+1. Human-generated tests
+2. Machine-generated inputs
+3. Symbolic Execution
+4. **Type-targeted testing**
 
 # What We Want
 
 <!-- > Write a single generator per type, that can generate values satisfying different predicates. -->
 
-> Declarative specification language, enabling efficient analysis by constraint solvers
+> Systematically generate **valid inputs** that are **guaranteed** to pass the precondition
+
+# Type-Targeted Testing
+
+Use *refinement types* as unified specification mechanism for input-generation and output-checking
 
 # Refinement Types
 
@@ -292,8 +337,8 @@ x:Nat -> {v:Nat | v = x + 1}
 
 # Refinement Types: Applications
 
-> - Traditionally used for program verification
-> - We show that refinement types can also be viewed as *exhaustive test-suite*
+- Traditionally used for program verification
+- We show that refinement types can also be viewed as *exhaustive test-suite*
 
 . . .
 
@@ -311,6 +356,7 @@ x:Nat -> {v:Nat | v = x + 1}
     3. run function and **check** that result inhabits output type
 
 - exhaustively checks all inputs up to a given depth-bound
+    - like SmallCheck with a smarter filter
 
 # Primitive Types: Query
 
@@ -341,12 +387,10 @@ rescale 1 1 0
 rescale 1 1 0 == 0
 ```
 
-Postcondition is
+> - Postcondition is: `{v:Int | v >= 0 && v < r2}`
+> - After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
 
-- `{v:Int | v >= 0 && v < r2}`
-- $0 \geq 0 \wedge 0 < 1$
-
-**VALID**
+. . .
 
 Request another model by *refuting* previous with
 
@@ -362,9 +406,9 @@ becomes
 rescale 1 0 0 == 0
 ```
 
-$0 \geq 0 \wedge 0 < 0$
+. . .
 
-**INVALID**
+After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**INVALID**
 
 `rescale 1 0 0` is a counterexample!
 
@@ -402,6 +446,8 @@ Propositional variables that *guard* other constraints
 
 $(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1})$
 
+. . .
+
 Force solver to choose one
 
 $\cvar{c}_{00} \oplus \cvar{c}_{01}$
@@ -423,6 +469,8 @@ $\begin{aligned}
                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
 \end{aligned}$
 
+. . .
+
 $\begin{aligned}
 \cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\
                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
@@ -436,20 +484,22 @@ To build a list from a model
 $[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
 1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
 
+. . .
+
 follow the choice variables.
 
 - $\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil$ 
 - $\cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
 
-```haskell
-[(1,2)]
-```
+Result: `[(1,2)]`
 
 # Refuting Containers
 
 Key optimization
 
 - refute only constraints that contribute to *realized* value
+
+. . .
 
 $[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
 1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
@@ -476,8 +526,10 @@ Recursive refinement relates the `head` with *each* element of the `tail`.
 
 Instantiate recursive refinement each time we unfold `(:)`
 
-- Level 2: `x1 < x2`
-- Level 3: `x1 < x3 && x2 < x3`
+> - Level 2:   `x1 < x2`
+> - Level 3:   `x1 < x3 && x2 < x3`
+
+. . .
 
 $\begin{aligned}
 \cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2)
@@ -491,7 +543,11 @@ $\begin{aligned}
                     \wedge   (\cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3)
 \end{aligned}$
 
+. . .
+
 forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ *regardless* of which are in the realized model!
+
+. . .
 
 Prohibits generation of valid inputs, e.g. `[2,3]`
 
@@ -540,6 +596,9 @@ $\begin{aligned}
 <img height=500px src="benchmarks.png">
 
 # Takeaway
-- Target can explore larger input spaces than (Lazy) SmallCheck
-- QuickCheck **requires** custom generators for functions with complex preconditions
-- Target specs are amenable to future formal verification
+> - Target can explore larger input spaces than (Lazy) SmallCheck
+> - QuickCheck **requires** custom generators for functions with complex preconditions
+> - Concolic testing gets stuck on precondition path-explosion
+> - Target specs are amenable to future formal verification
+
+# Questions?

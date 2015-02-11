@@ -1,3 +1,3 @@
 .phony: slides
 slides:
-	pandoc slides.md -s -t slidy --mathml >slides.html
+	pandoc slides.md --smart --standalone -t slidy --mathml >slides.html
