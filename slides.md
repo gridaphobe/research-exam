@@ -39,13 +39,13 @@ delete :: Ord a => a -> Tree a -> Tree a
 
 Two key questions to answer when testing:
 
-1. How to *provide* inputs?
-2. How to *check* outputs?
+1. How to **provide** inputs?
+2. How to **check** outputs?
 
 # Outline
 
 1. **Human-generated tests**
-2. Machine-generated inputs
+2. Machine-enumerated inputs
 3. Concolic Execution
 4. Type-targeted testing
 
@@ -70,13 +70,13 @@ But this is tiresome and error-prone!
 # Outline
 
 1. Human-generated tests
-2. **Machine-generated inputs**
+2. **Machine-enumerated inputs**
 3. Concolic Execution
 4. Type-targeted testing
 
-# Machine-generated inputs
+# Machine-enumerated inputs
 
-- Machine enumerates all inputs
+- Machine enumerates many inputs
 - Programmer specifies oracle to check outputs
 
 . . .
@@ -95,6 +95,10 @@ prop_insert_bal  x t = balanced (insert x t)
 . . .
 
 ```haskell
+data Tree a
+  = Leaf
+  | Node a (Tree a) (Tree a)
+
 instance Serial a => Serial (Tree a) where
   series = cons0 \/ cons3
 ```
@@ -131,7 +135,13 @@ But 480 did not meet ==> condition.
 
 ```haskell
 ghci> smallCheck 4 prop_insert_bal
-............
+```
+
+# How small?
+
+```haskell
+ghci> smallCheck 4 prop_insert_bal
+..........................................................
 ```
 
 . . .
@@ -166,9 +176,14 @@ instance Arbitrary a => Arbitrary (Tree a) where
 
 ```haskell
 ghci> quickCheck prop_insert_bal
-*** Gave up! Passed only 3 tests.
 ```
 
+# Testing `insert`: QuickCheck
+
+```haskell
+ghci> quickCheck prop_insert_bal
+*** Gave up! Passed only 3 tests.
+```
 . . .
 
 Input domain is too sparse, QuickCheck gives up!
@@ -192,7 +207,7 @@ Must define a new type/generator for *each* precondition!
 # Outline
 
 1. Human-generated tests
-2. Machine-generated inputs
+2. Machine-enumerated inputs
 3. **Concolic Execution**
 4. Type-targeted testing
 
@@ -222,6 +237,8 @@ f x y              -- 0
        else x
 ```
 
+. . .
+
 $M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}$
 
 $M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (y + 1)\}$
@@ -231,7 +248,12 @@ $P_2 = \langle z > 0 \rangle$
 # Concolic Testing
 
 - combine symbolic and concrete execution
-- DART (2005), EXE (2005), CUTE (2006), PEX (2008), KLEE (2008)
+    - DART (2005), EXE (2005), CUTE (2006), PEX (2008), KLEE (2008)
+
+# Concolic Testing
+
+- combine symbolic and concrete execution
+    - DART (2005), EXE (2005), CUTE (2006), PEX (2008), KLEE (2008)
 - start with random inputs, e.g. $\{x \mapsto 1, t \mapsto \cstr{Node}\ 2\ \cstr{Leaf}\ \cstr{Leaf}\}$
 
 ```haskell
@@ -243,8 +265,8 @@ insert x t = case t of
     EQ -> t
 ```
 
-- at `LT` branch, we have $P_{LT} = \langle t = \cstr{Node}\ y\ l\ r, x < y \rangle$
-- choose new path by negating path condition and solving for new inputs, e.g. $t = \cstr{Node}\ y\ l\ r \land \lnot (x < y)$
+> - at `LT` branch, we have $P_{LT} = \langle t = \cstr{Node}\ y\ l\ r, x < y \rangle$
+> - choose new path by negating path condition and solving for new inputs, e.g. $t = \cstr{Node}\ y\ l\ r \land \lnot (x < y)$
     - (many more sophisticated search techniques have been explored)
 
 # Concolic Testing: Specifications
@@ -283,6 +305,8 @@ balanced t = case t of
     | otherwise                            -> True
 ```
 
+. . .
+
 - 3 possible paths for *invalid* node, only 1 for *valid* node
     - compounds as execution unfolds recursive datatype
 
@@ -293,7 +317,7 @@ balanced t = case t of
 # Outline
 
 1. Human-generated tests
-2. Machine-generated inputs
+2. Machine-enumerated inputs
 3. Symbolic Execution
 4. **Type-targeted testing**
 
@@ -348,15 +372,15 @@ x:Nat -> {v:Nat | v = x + 1}
 3. once design has settled, add hints / inductive invariants to allow verification
 
 # Target
-
 - generates tests from refinement types via *query-decode-check* loop
+  1. translate input types into SMT **query**
+  2. **decode** SMT model into concrete values
+  3. run function and **check** that result inhabits output type
 
-    1. translate input types into SMT **query**
-    2. **decode** SMT model into concrete values
-    3. run function and **check** that result inhabits output type
+. . .
 
 - exhaustively checks all inputs up to a given depth-bound
-    - like SmallCheck with a smarter filter
+    - like SmallCheck with a smarter generator
 
 # Primitive Types: Query
 
@@ -365,16 +389,15 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
+. . .
+
 Embed primitive constraints directly in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \cvar{r1}$
 
 # Primitive Types: Decode
 
-A model
-
-$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$
-
+A model $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
@@ -388,7 +411,16 @@ rescale 1 1 0 == 0
 ```
 
 > - Postcondition is: `{v:Int | v >= 0 && v < r2}`
-> - After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
+> - After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$
+
+# Primitive Types: Check
+
+```haskell
+rescale 1 1 0 == 0
+```
+
+- Postcondition is: `{v:Int | v >= 0 && v < r2}`
+- After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
 
 . . .
 
@@ -407,6 +439,18 @@ rescale 1 0 0 == 0
 ```
 
 . . .
+
+After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$
+
+# Primitive Types: Next model
+
+$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$
+
+becomes
+
+```haskell
+rescale 1 0 0 == 0
+```
 
 After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**INVALID**
 
@@ -448,9 +492,7 @@ $(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarr
 
 . . .
 
-Force solver to choose one
-
-$\cvar{c}_{00} \oplus \cvar{c}_{01}$
+Force solver to choose one with $\cvar{c}_{00} \oplus \cvar{c}_{01}$
 
 
 # Encoding Lists of Depth 3
@@ -486,12 +528,12 @@ $[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \
 
 . . .
 
-follow the choice variables.
+follow the choice variables!
 
 - $\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil$ 
 - $\cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
 
-Result: `[(1,2)]`
+Result:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`[(1,2)]`
 
 # Refuting Containers
 
@@ -526,8 +568,8 @@ Recursive refinement relates the `head` with *each* element of the `tail`.
 
 Instantiate recursive refinement each time we unfold `(:)`
 
-> - Level 2:   `x1 < x2`
-> - Level 3:   `x1 < x3 && x2 < x3`
+> - Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2`
+> - Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3`
 
 . . .
 
@@ -576,6 +618,10 @@ $\begin{aligned}
                            (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0) &        &
 \end{aligned}$
+
+. . .
+
+Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{xs}_0}$
 
 # Evaluation
 
