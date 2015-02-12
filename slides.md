@@ -83,7 +83,7 @@ But this is tiresome and error-prone!
 
 ```haskell
 prop_insert_elem x t = x `elem` insert x t
-prop_insert_bal  x t = balanced (insert x t)
+prop_insert_bst  x t = isBST (insert x t)
 ```
 
 # SmallCheck: Enumerate Small Inputs
@@ -106,7 +106,7 @@ instance Serial a => Serial (Tree a) where
 . . .
 
 ```haskell
-ghci> smallCheck 3 prop_insert_bal
+ghci> smallCheck 3 prop_insert_bst
 *** Failed! Falsifiable:
 3
 Node 1 Leaf (Node 2 Leaf Leaf)
@@ -119,14 +119,14 @@ Node 1 Leaf (Node 2 Leaf Leaf)
 # Testing `insert`: Preconditions
 
 ```haskell
-prop_insert_bal x t
-  = balanced t ==> balanced (insert x t)
+prop_insert_bst x t
+  = isBST t ==> isBST (insert x t)
 ```
 
 . . .
 
 ```haskell
-ghci> smallCheck 3 prop_insert_bal
+ghci> smallCheck 3 prop_insert_bst
 Completed 2944 tests without failure.
 But 480 did not meet ==> condition.
 ```
@@ -134,13 +134,13 @@ But 480 did not meet ==> condition.
 # How small?
 
 ```haskell
-ghci> smallCheck 4 prop_insert_bal
+ghci> smallCheck 4 prop_insert_bst
 ```
 
 # How small?
 
 ```haskell
-ghci> smallCheck 4 prop_insert_bal
+ghci> smallCheck 4 prop_insert_bst
 ..........................................................
 ```
 
@@ -153,6 +153,8 @@ Exponential blowup in input space confines search to *very small* inputs!
 . . .
 
 - Can abuse laziness to filter equivalent inputs (Lazy SmallCheck, Korat)
+    - but must be careful how you structure filtering predicate
+    - e.g. should binary-search tree check ordering or balancing first?
 
 
 # QuickCheck: Random Generation of Inputs
@@ -175,13 +177,13 @@ instance Arbitrary a => Arbitrary (Tree a) where
 # Testing `insert`: QuickCheck
 
 ```haskell
-ghci> quickCheck prop_insert_bal
+ghci> quickCheck prop_insert_bst
 ```
 
 # Testing `insert`: QuickCheck
 
 ```haskell
-ghci> quickCheck prop_insert_bal
+ghci> quickCheck prop_insert_bst
 *** Gave up! Passed only 3 tests.
 ```
 . . .
@@ -191,13 +193,13 @@ Input domain is too sparse, QuickCheck gives up!
 # Testing `insert`: Custom Generators
 
 ```haskell
-newtype Balanced a = Tree a
+newtype BST a = Tree a
 
-instance Arbitrary a => Arbitrary (Balanced a) where
+instance Arbitrary a => Arbitrary (BST a) where
   arbitrary = ...
 
-prop_insert_bal x (Balanced xs)
-  = balanced (insert x xs)
+prop_insert_bst x (BST xs)
+  = isBST (insert x xs)
 ```
 
 . . .
@@ -308,7 +310,7 @@ $P_3 = \langle z > 0 \rangle$
 
 . . .
 
-- Want to ensure `z != 0` to prevent divide-by-zero
+- Want to ensure `z!=0` to prevent divide-by-zero
     - conjoin with path condition to check feasibility of **implicit** branch
 
 . . .
@@ -332,7 +334,7 @@ $M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
 
 $P_3 = \langle z > 0 \rangle$
 
-- Want to ensure `z != 0` to prevent divide-by-zero
+- Want to ensure `z!=0` to prevent divide-by-zero
     - conjoin with path condition to check feasibility of **implicit** branch
 
 Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z = 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**UNSAT**
@@ -371,40 +373,43 @@ insert x t = case t of
 - `insert` will never crash on its own, need to check specification
 
 ```haskell
-prop_insert_bal x t = do
-  assume (balanced t)
+prop_insert_bst x t = do
+  assume (isBST t)
   let t' = insert x t
-  assert (balanced t')
+  assert (isBST t')
 ```
 
 . . .
 
-**PROBLEM**: paths must pass through `balanced` before reaching `insert`!
+**PROBLEM**: paths must pass through `isBST` before reaching `insert`!
 
 # Concolic Testing: Preconditions
 
 ```haskell
-balanced t = case t of
+isBST t = case t of
   Leaf -> True
   Node y l r -> abs (height l - height r) <= 1
-             && balanced l && balanced r
+             && all (< y) l && all (> y) r
+             && isBST l     && isBST r
 ```
 
 # Concolic Testing: Preconditions
 
 ```haskell
-balanced t = case t of
+isBST t = case t of
   Leaf -> True
   Node y l r ->
     | not (abs (height l - height r) <= 1) -> False
-    | not (balanced l)                     -> False
-    | not (balanced r)                     -> False
+    | not (all (< y) l)                    -> False
+    | not (all (> y) r)                    -> False
+    | not (isBST l)                        -> False
+    | not (isBST r)                        -> False
     | otherwise                            -> True
 ```
 
 . . .
 
-- 3 possible paths for *invalid* node, only 1 for *valid* node
+- 5 possible paths for *invalid* node, only 1 for *valid* node
     - compounds as execution unfolds recursive datatype
 
 . . .
@@ -745,3 +750,23 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 > - Target specs are amenable to future formal verification
 
 # Questions?
+
+# Backup Slides
+
+# Concolic Testing: Why Concrete + Symbolic?
+
+```c
+struct foo { int i; char c; }
+bar (struct foo *a) {
+  if (a->c == 0) {
+    *((char *)a + sizeof(int)) = 1;
+    if (a->c != 0)
+      abort();
+  }
+}
+```
+
+> - Symbolic executors often cannot report with *certainty* that `abort` is reachable
+    - pointer arithmetic confuses alias analysis
+> - Concolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
+    - fill gaps in symbolic reasoning with **concrete** value

@@ -176,7 +176,7 @@ insert <span class="dv">1</span> (<span class="dt">Node</span> <span class="dv">
 </ul>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_elem x t <span class="fu">=</span> x <span class="ot">`elem`</span> insert x t
-prop_insert_bal  x t <span class="fu">=</span> balanced (insert x t)</code></pre>
+prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 </div>
 </div>
 <div id="smallcheck-enumerate-small-inputs" class="slide section level1">
@@ -194,7 +194,7 @@ prop_insert_bal  x t <span class="fu">=</span> balanced (insert x t)</code></pre
   series <span class="fu">=</span> cons0 \<span class="fu">/</span> cons3</code></pre>
 </div>
 <div class="incremental">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bal
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst
 <span class="fu">***</span> <span class="dt">Failed</span><span class="fu">!</span> <span class="dt">Falsifiable</span><span class="fu">:</span>
 <span class="dv">3</span>
 <span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">2</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)</code></pre>
@@ -205,21 +205,21 @@ prop_insert_bal  x t <span class="fu">=</span> balanced (insert x t)</code></pre
 </div>
 <div id="testing-insert-preconditions" class="slide section level1">
 <h1>Testing <code>insert</code>: Preconditions</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bal x t
-  <span class="fu">=</span> balanced t <span class="fu">==&gt;</span> balanced (insert x t)</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
+  <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <div class="incremental">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bal
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst
 <span class="dt">Completed</span> <span class="dv">2944</span> tests without failure<span class="fu">.</span>
 <span class="dt">But</span> <span class="dv">480</span> did not meet <span class="fu">==&gt;</span> condition<span class="fu">.</span></code></pre>
 </div>
 </div>
 <div id="how-small" class="slide section level1">
 <h1>How small?</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">4</span> prop_insert_bal</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">4</span> prop_insert_bst</code></pre>
 </div>
 <div id="how-small-1" class="slide section level1">
 <h1>How small?</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">4</span> prop_insert_bal
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">4</span> prop_insert_bst
 <span class="fu">..........................................................</span></code></pre>
 <div class="incremental">
 <p>Exponential blowup in input space confines search to <em>very small</em> inputs!</p>
@@ -227,7 +227,11 @@ prop_insert_bal  x t <span class="fu">=</span> balanced (insert x t)</code></pre
 </div>
 <div class="incremental">
 <ul>
-<li>Can abuse laziness to filter equivalent inputs (Lazy SmallCheck, Korat)</li>
+<li>Can abuse laziness to filter equivalent inputs (Lazy SmallCheck, Korat)
+<ul>
+<li>but must be careful how you structure filtering predicate</li>
+<li>e.g. should binary-search tree check ordering or balancing first?</li>
+</ul></li>
 </ul>
 </div>
 </div>
@@ -250,11 +254,11 @@ prop_insert_bal  x t <span class="fu">=</span> balanced (insert x t)</code></pre
 </div>
 <div id="testing-insert-quickcheck" class="slide section level1">
 <h1>Testing <code>insert</code>: QuickCheck</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bal</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
 </div>
 <div id="testing-insert-quickcheck-1" class="slide section level1">
 <h1>Testing <code>insert</code>: QuickCheck</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bal
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst
 <span class="fu">***</span> <span class="dt">Gave</span> up<span class="fu">!</span> <span class="dt">Passed</span> only <span class="dv">3</span> tests<span class="fu">.</span></code></pre>
 <div class="incremental">
 <p>Input domain is too sparse, QuickCheck gives up!</p>
@@ -262,13 +266,13 @@ prop_insert_bal  x t <span class="fu">=</span> balanced (insert x t)</code></pre
 </div>
 <div id="testing-insert-custom-generators" class="slide section level1">
 <h1>Testing <code>insert</code>: Custom Generators</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">Balanced</span> a <span class="fu">=</span> <span class="dt">Tree</span> a
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">BST</span> a <span class="fu">=</span> <span class="dt">Tree</span> a
 
-<span class="kw">instance</span> <span class="dt">Arbitrary</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">Balanced</span> a) <span class="kw">where</span>
+<span class="kw">instance</span> <span class="dt">Arbitrary</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">BST</span> a) <span class="kw">where</span>
   arbitrary <span class="fu">=</span> <span class="fu">...</span>
 
-prop_insert_bal x (<span class="dt">Balanced</span> xs)
-  <span class="fu">=</span> balanced (insert x xs)</code></pre>
+prop_insert_bst x (<span class="dt">BST</span> xs)
+  <span class="fu">=</span> isBST (insert x xs)</code></pre>
 <div class="incremental">
 <p>Must define a new type/generator for <em>each</em> precondition!</p>
 </div>
@@ -365,7 +369,7 @@ prop_insert_bal x (<span class="dt">Balanced</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_3 = \langle z &gt; 0 \rangle</annotation></semantics></math></p>
 <div class="incremental">
 <ul>
-<li>Want to ensure <code>z != 0</code> to prevent divide-by-zero
+<li>Want to ensure <code>z!=0</code> to prevent divide-by-zero
 <ul>
 <li>conjoin with path condition to check feasibility of <strong>implicit</strong> branch</li>
 </ul></li>
@@ -389,7 +393,7 @@ prop_insert_bal x (<span class="dt">Balanced</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_3 = \langle z &gt; 0 \rangle</annotation></semantics></math></p>
 <ul>
-<li>Want to ensure <code>z != 0</code> to prevent divide-by-zero
+<li>Want to ensure <code>z!=0</code> to prevent divide-by-zero
 <ul>
 <li>conjoin with path condition to check feasibility of <strong>implicit</strong> branch</li>
 </ul></li>
@@ -436,33 +440,36 @@ prop_insert_bal x (<span class="dt">Balanced</span> xs)
 <ul>
 <li><code>insert</code> will never crash on its own, need to check specification</li>
 </ul>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bal x t <span class="fu">=</span> <span class="kw">do</span>
-  assume (balanced t)
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t <span class="fu">=</span> <span class="kw">do</span>
+  assume (isBST t)
   <span class="kw">let</span> t&#39; <span class="fu">=</span> insert x t
-  assert (balanced t&#39;)</code></pre>
+  assert (isBST t&#39;)</code></pre>
 <div class="incremental">
-<p><strong>PROBLEM</strong>: paths must pass through <code>balanced</code> before reaching <code>insert</code>!</p>
+<p><strong>PROBLEM</strong>: paths must pass through <code>isBST</code> before reaching <code>insert</code>!</p>
 </div>
 </div>
 <div id="concolic-testing-preconditions" class="slide section level1">
 <h1>Concolic Testing: Preconditions</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">balanced t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">isBST t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
   <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
   <span class="dt">Node</span> y l r <span class="ot">-&gt;</span> abs (height l <span class="fu">-</span> height r) <span class="fu">&lt;=</span> <span class="dv">1</span>
-             <span class="fu">&amp;&amp;</span> balanced l <span class="fu">&amp;&amp;</span> balanced r</code></pre>
+             <span class="fu">&amp;&amp;</span> all (<span class="fu">&lt;</span> y) l <span class="fu">&amp;&amp;</span> all (<span class="fu">&gt;</span> y) r
+             <span class="fu">&amp;&amp;</span> isBST l     <span class="fu">&amp;&amp;</span> isBST r</code></pre>
 </div>
 <div id="concolic-testing-preconditions-1" class="slide section level1">
 <h1>Concolic Testing: Preconditions</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">balanced t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">isBST t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
   <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
   <span class="dt">Node</span> y l r <span class="ot">-&gt;</span>
     <span class="fu">|</span> not (abs (height l <span class="fu">-</span> height r) <span class="fu">&lt;=</span> <span class="dv">1</span>) <span class="ot">-&gt;</span> <span class="dt">False</span>
-    <span class="fu">|</span> not (balanced l)                     <span class="ot">-&gt;</span> <span class="dt">False</span>
-    <span class="fu">|</span> not (balanced r)                     <span class="ot">-&gt;</span> <span class="dt">False</span>
+    <span class="fu">|</span> not (all (<span class="fu">&lt;</span> y) l)                    <span class="ot">-&gt;</span> <span class="dt">False</span>
+    <span class="fu">|</span> not (all (<span class="fu">&gt;</span> y) r)                    <span class="ot">-&gt;</span> <span class="dt">False</span>
+    <span class="fu">|</span> not (isBST l)                        <span class="ot">-&gt;</span> <span class="dt">False</span>
+    <span class="fu">|</span> not (isBST r)                        <span class="ot">-&gt;</span> <span class="dt">False</span>
     <span class="fu">|</span> otherwise                            <span class="ot">-&gt;</span> <span class="dt">True</span></code></pre>
 <div class="incremental">
 <ul>
-<li>3 possible paths for <em>invalid</em> node, only 1 for <em>valid</em> node
+<li>5 possible paths for <em>invalid</em> node, only 1 for <em>valid</em> node
 <ul>
 <li>compounds as execution unfolds recursive datatype</li>
 </ul></li>
@@ -748,6 +755,30 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 </div>
 <div id="questions" class="slide section level1">
 <h1>Questions?</h1>
+</div>
+<div id="backup-slides" class="slide section level1">
+<h1>Backup Slides</h1>
+</div>
+<div id="concolic-testing-why-concrete-symbolic" class="slide section level1">
+<h1>Concolic Testing: Why Concrete + Symbolic?</h1>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="kw">struct</span> foo { <span class="dt">int</span> i; <span class="dt">char</span> c; }
+bar (<span class="kw">struct</span> foo *a) {
+  <span class="kw">if</span> (a-&gt;c == <span class="dv">0</span>) {
+    *((<span class="dt">char</span> *)a + <span class="kw">sizeof</span>(<span class="dt">int</span>)) = <span class="dv">1</span>;
+    <span class="kw">if</span> (a-&gt;c != <span class="dv">0</span>)
+      abort();
+  }
+}</code></pre>
+<ul class="incremental">
+<li>Symbolic executors often cannot report with <em>certainty</em> that <code>abort</code> is reachable
+<ul class="incremental">
+<li>pointer arithmetic confuses alias analysis</li>
+</ul></li>
+<li>Concolic testing need only solve <code>a-&gt;c == 0</code> to produce <em>concrete</em> input that will blow up!
+<ul class="incremental">
+<li>fill gaps in symbolic reasoning with <strong>concrete</strong> value</li>
+</ul></li>
+</ul>
 </div>
 </body>
 </html>
