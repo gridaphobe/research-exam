@@ -1,0 +1,75 @@
+I MOTIVATION
+
+Goal
+
+  * `data Tree a = ...`
+  * `insert` , `delete`
+  * Did I get it right?
+
+Testing
+
+  1. How to *provide* inputs?
+  2. How to *check* outputs?
+
+II. STATE OF THE ART
+
+  start with (1) and then do (2)
+
+A. HUMAN
+
+  + Provides input *and* output examples
+
+  EXAMPLE
+  + PROBLEM: But I get tired ...
+
+B. Machine
+
+  + *Enumerate* all inputs
+  + *Specify* predicate/oracle for output
+
+  EXAMPLE
+  + "balance" ...
+  + PROBLEM: But machine gets tired ...
+
+C. Machine/Random
+
+  + *Randomly Enumerate* all inputs
+  + *Specify* predicate/oracle for output
+
+  EXAMPLE
+  + oops precondition
+  + PROBLEM: domain is too sparse
+
+  (Have to write custom generator)
+
+  start with (2) and use symbolic methods for (1)
+
+D. Symbolic/Concolic Execution
+
+  + *Specify* postcondtion
+  + *Generate* inputs that fail postcondition (by searching paths)
+
+  EXAMPLE
+  + Explicitly enumerate paths
+  + PROBLEM: highly structured inputs => precondition path blowup
+
+  "To get to interesting code, need to get past the precondition"
+
+  "Can we systematically generate VALID INPUTS that ONLY satisfy the
+precondition"
+
+III TARGET
+
+  1. How to *provide* inputs?
+  2. How to *check* outputs?
+
+STRATEGY
+
+  1. Unified mechanism for SPECIFYING input and output
+  2. Use mechanism to GENERATE valid inputs
+  3. Execute code
+  4. Use mechanism to CHECK result
+
+A. Refinement Types
+
+     EXAMPLE: AVL/Balance

@@ -116,12 +116,12 @@ Eric Seidel
 </div>
 <div id="a-binary-search-tree-library" class="slide section level1">
 <h1>A Binary Search Tree Library</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span> a
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span>
   <span class="fu">=</span> <span class="dt">Leaf</span>
-  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)
+  <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span>
 
-<span class="ot">insert ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> a
-<span class="ot">delete ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> a <span class="ot">-&gt;</span> <span class="dt">Tree</span> a</code></pre>
+<span class="ot">insert ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span>
+<span class="ot">delete ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span></code></pre>
 <div class="incremental">
 <blockquote>
 <p>Did I get it “right”?</p>
@@ -186,18 +186,18 @@ prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 <p>if a counterexample exists, a “small” counterexample probably exists too</p>
 </blockquote>
 <div class="incremental">
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span> a
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span>
   <span class="fu">=</span> <span class="dt">Leaf</span>
-  <span class="fu">|</span> <span class="dt">Node</span> a (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)
+  <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span>
 
-<span class="kw">instance</span> <span class="dt">Serial</span> a <span class="ot">=&gt;</span> <span class="dt">Serial</span> (<span class="dt">Tree</span> a) <span class="kw">where</span>
-  series <span class="fu">=</span> cons0 \<span class="fu">/</span> cons3</code></pre>
+<span class="kw">instance</span> <span class="dt">Serial</span> <span class="dt">Tree</span> <span class="kw">where</span>
+  series <span class="fu">=</span> cons0 <span class="dt">Leaf</span> \<span class="fu">/</span> cons3 <span class="dt">Node</span></code></pre>
 </div>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst
-<span class="fu">***</span> <span class="dt">Failed</span><span class="fu">!</span> <span class="dt">Falsifiable</span><span class="fu">:</span>
-<span class="dv">3</span>
-<span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">2</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)</code></pre>
+<span class="dt">Failed</span> test no<span class="fu">.</span> <span class="dv">4</span><span class="fu">.</span>
+there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class="dv">0</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">0</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>) such that
+  condition is false</code></pre>
 </div>
 <div class="incremental">
 <p><code>insert</code> doesn’t accept just <em>any</em> tree</p>
@@ -209,8 +209,8 @@ prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
   <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst
-<span class="dt">Completed</span> <span class="dv">2944</span> tests without failure<span class="fu">.</span>
-<span class="dt">But</span> <span class="dv">480</span> did not meet <span class="fu">==&gt;</span> condition<span class="fu">.</span></code></pre>
+<span class="dt">Completed</span> <span class="dv">567</span> tests without failure<span class="fu">.</span>
+<span class="dt">But</span> <span class="dv">434</span> did not meet <span class="fu">==&gt;</span> condition<span class="fu">.</span></code></pre>
 </div>
 </div>
 <div id="how-small" class="slide section level1">
@@ -240,7 +240,7 @@ prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 <ul>
 <li>provides DSL for writing random value generators</li>
 </ul>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Arbitrary</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">Tree</span> a) <span class="kw">where</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Arbitrary</span> <span class="dt">Tree</span> <span class="kw">where</span>
   arbitrary <span class="fu">=</span> oneof [ leaf, node ]
     <span class="kw">where</span>
     leaf <span class="fu">=</span> return <span class="dt">Leaf</span>
@@ -254,21 +254,41 @@ prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 </div>
 <div id="testing-insert-quickcheck" class="slide section level1">
 <h1>Testing <code>insert</code>: QuickCheck</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst
+<span class="fu">+++</span> <span class="dt">OK</span>, passed <span class="dv">100</span> tests<span class="fu">.</span></code></pre>
+<div class="incremental">
+<p>How is this possible? SmallCheck showed that input domain is <em>very</em> sparse!</p>
+</div>
 </div>
 <div id="testing-insert-quickcheck-1" class="slide section level1">
 <h1>Testing <code>insert</code>: QuickCheck</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst
-<span class="fu">***</span> <span class="dt">Gave</span> up<span class="fu">!</span> <span class="dt">Passed</span> only <span class="dv">3</span> tests<span class="fu">.</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
+  <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> collect (size t) (isBST (insert x t))</code></pre>
 <div class="incremental">
-<p>Input domain is too sparse, QuickCheck gives up!</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst
+<span class="fu">+++</span> <span class="dt">OK</span>, passed <span class="dv">100</span> tests<span class="fu">:</span>
+<span class="dv">73</span><span class="fu">%</span> <span class="dv">0</span>
+<span class="dv">21</span><span class="fu">%</span> <span class="dv">1</span>
+ <span class="dv">6</span><span class="fu">%</span> <span class="dv">2</span></code></pre>
+</div>
+</div>
+<div id="testing-insert-quickcheck-2" class="slide section level1">
+<h1>Testing <code>insert</code>: QuickCheck</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst_nontrivial x t
+  <span class="fu">=</span> isBST t <span class="fu">&amp;&amp;</span> size t <span class="fu">&gt;</span> <span class="dv">1</span> <span class="fu">==&gt;</span> collect (size t) (isBST (insert x t))</code></pre>
+<div class="incremental">
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst
+<span class="fu">***</span> <span class="dt">Gave</span> up<span class="fu">!</span> <span class="dt">Passed</span> only <span class="dv">37</span> tests (<span class="dv">100</span><span class="fu">%</span> <span class="dv">2</span>)<span class="fu">.</span></code></pre>
+</div>
+<div class="incremental">
+<p>Input domain is too sparse, QuickCheck cannot generate trees with more than 2 elements!</p>
 </div>
 </div>
 <div id="testing-insert-custom-generators" class="slide section level1">
 <h1>Testing <code>insert</code>: Custom Generators</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">BST</span> a <span class="fu">=</span> <span class="dt">Tree</span> a
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">BST</span> <span class="fu">=</span> <span class="dt">Tree</span>
 
-<span class="kw">instance</span> <span class="dt">Arbitrary</span> a <span class="ot">=&gt;</span> <span class="dt">Arbitrary</span> (<span class="dt">BST</span> a) <span class="kw">where</span>
+<span class="kw">instance</span> <span class="dt">Arbitrary</span> <span class="dt">BST</span> <span class="kw">where</span>
   arbitrary <span class="fu">=</span> <span class="fu">...</span>
 
 prop_insert_bst x (<span class="dt">BST</span> xs)
@@ -293,6 +313,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>Search for inputs designed to violate it
 <ul>
 <li>enumerate program paths via symbolic execution</li>
+<li>aim for 100% coverage as quickly as possible</li>
 </ul></li>
 </ul>
 <!-- # Dynamic-Symbolic Testing -->
@@ -567,31 +588,39 @@ rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span 
 </div>
 <div id="primitive-types-decode" class="slide section level1">
 <h1>Primitive Types: Decode</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2
+rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span class="ot">`div`</span> r1)</code></pre>
 <p>A model <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><mi>r</mi><mn>1</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><mi>r</mi><mn>2</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathrm{{r1}}} \mapsto 1, {\mathrm{{r2}}} \mapsto 1, {\mathrm{{s}}} \mapsto 0]</annotation></semantics></math> maps to a concrete test case</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span></code></pre>
 </div>
 <div id="primitive-types-check" class="slide section level1">
 <h1>Primitive Types: Check</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2
+rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span class="ot">`div`</span> r1)</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
 <ul class="incremental">
-<li>Postcondition is: <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></li>
+<li>Postcondition is:        <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></li>
 <li>After substitution:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 1</annotation></semantics></math></li>
 </ul>
 </div>
 <div id="primitive-types-check-1" class="slide section level1">
 <h1>Primitive Types: Check</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2
+rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span class="ot">`div`</span> r1)</code></pre>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
 <ul>
-<li>Postcondition is: <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></li>
+<li>Postcondition is:        <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></li>
 <li>After substitution:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 1</annotation></semantics></math>      <strong>VALID</strong></li>
 </ul>
 <div class="incremental">
 <p>Request another model by <em>refuting</em> previous with</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>1</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>0</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mo stretchy="false" form="prefix">(</mo><mstyle mathvariant="normal"><mi>r</mi><mn>1</mn></mstyle><mo>≠</mo><mn>1</mn><mo>∨</mo><mstyle mathvariant="normal"><mi>r</mi><mn>2</mn></mstyle><mo>≠</mo><mn>1</mn><mo>∨</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo>≠</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">{\mathsf{{C_1}}} {\ \doteq\ }{\mathsf{{C_0}}} {\ \land\ }({\mathrm{{r1}}} \neq 1 \vee {\mathrm{{r2}}} \neq 1 \vee {\mathrm{{s}}} \neq 0)</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>1</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>0</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mo>¬</mo><mo stretchy="false" form="prefix">(</mo><mstyle mathvariant="normal"><mi>r</mi><mn>1</mn></mstyle><mo>=</mo><mn>1</mn><mo>∧</mo><mstyle mathvariant="normal"><mi>r</mi><mn>2</mn></mstyle><mo>=</mo><mn>1</mn><mo>∧</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo>=</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">{\mathsf{{C_1}}} {\ \doteq\ }{\mathsf{{C_0}}} {\ \land\ }\lnot ({\mathrm{{r1}}} = 1 \land {\mathrm{{r2}}} = 1 \land {\mathrm{{s}}} = 0)</annotation></semantics></math></p>
 </div>
 </div>
 <div id="primitive-types-next-model" class="slide section level1">
 <h1>Primitive Types: Next model</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2
+rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span class="ot">`div`</span> r1)</code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><mi>r</mi><mn>1</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><mi>r</mi><mn>2</mn></mstyle><mo accent="false">↦</mo><mn>0</mn><mo>,</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathrm{{r1}}} \mapsto 1, {\mathrm{{r2}}} \mapsto 0, {\mathrm{{s}}} \mapsto 0]</annotation></semantics></math></p>
 <p>becomes</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
@@ -601,6 +630,8 @@ rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span 
 </div>
 <div id="primitive-types-next-model-1" class="slide section level1">
 <h1>Primitive Types: Next model</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2
+rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span class="ot">`div`</span> r1)</code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><mi>r</mi><mn>1</mn></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><mi>r</mi><mn>2</mn></mstyle><mo accent="false">↦</mo><mn>0</mn><mo>,</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathrm{{r1}}} \mapsto 1, {\mathrm{{r2}}} \mapsto 0, {\mathrm{{s}}} \mapsto 0]</annotation></semantics></math></p>
 <p>becomes</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">rescale <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span> <span class="fu">==</span> <span class="dv">0</span></code></pre>
@@ -613,9 +644,10 @@ rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span 
 </div>
 <div id="containers" class="slide section level1">
 <h1>Containers</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Score</span> <span class="fu">=</span> <span class="dt">Rng</span> <span class="dv">100</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Weight</span> <span class="fu">=</span> <span class="dt">Pos</span>
+<span class="kw">type</span> <span class="dt">Score</span>  <span class="fu">=</span> <span class="dt">Rng</span> <span class="dv">100</span>
 
-<span class="ot">average ::</span> [(<span class="dt">Pos</span>, <span class="dt">Score</span>)] <span class="ot">-&gt;</span> <span class="dt">Score</span>
+<span class="ot">average ::</span> [(<span class="dt">Weight</span>, <span class="dt">Score</span>)] <span class="ot">-&gt;</span> <span class="dt">Score</span>
 average []  <span class="fu">=</span> <span class="dv">0</span>
 average wxs <span class="fu">=</span> total <span class="ot">`div`</span> n
   <span class="kw">where</span>
@@ -625,7 +657,7 @@ average wxs <span class="fu">=</span> total <span class="ot">`div`</span> n
 </div>
 <div id="containers-query" class="slide section level1">
 <h1>Containers: Query</h1>
-<p>Generate constraints describing <em>all possible</em> inputs.</p>
+<p>Generate a <em>single</em> set of constraints describing <em>all possible</em> inputs.</p>
 <p><img height=400px src="skeleton.png"></p>
 <p>Let solver choose path through skeleton.</p>
 </div>
@@ -666,12 +698,12 @@ average wxs <span class="fu">=</span> total <span class="ot">`div`</span> n
 <div class="incremental">
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><msub><mi>c</mi><mn>00</mn></msub></mstyle><mo accent="false">↦</mo><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝖿</mi><mi>𝖺</mi><mi>𝗅</mi><mi>𝗌</mi><mi>𝖾</mi></mstyle><mo>,</mo><mspace width="0.222em"></mspace><mstyle mathvariant="normal"><msub><mi>c</mi><mn>01</mn></msub></mstyle><mo accent="false">↦</mo><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝗍</mi><mi>𝗋</mi><mi>𝗎</mi><mi>𝖾</mi></mstyle><mo>,</mo><mspace width="0.222em"></mspace><mstyle mathvariant="normal"><msub><mi>w</mi><mn>1</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mspace width="0.222em"></mspace><mstyle mathvariant="normal"><msub><mi>s</mi><mn>1</mn></msub></mstyle><mo accent="false">↦</mo><mn>2</mn><mo>,</mo><mspace width="0.222em"></mspace><mstyle mathvariant="normal"><msub><mi>c</mi><mn>10</mn></msub></mstyle><mo accent="false">↦</mo><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝗍</mi><mi>𝗋</mi><mi>𝗎</mi><mi>𝖾</mi></mstyle><mo>,</mo><mo>…</mo><mspace width="0.222em"></mspace><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[ {\mathrm{{c_{00}}}} \mapsto\ {{\mathsf{{false}}}},\ {\mathrm{{c_{01}}}} \mapsto\ {{\mathsf{{true}}}},\ {\mathrm{{w_1}}} \mapsto 1,\ {\mathrm{{s_1}}} \mapsto 2,\ {\mathrm{{c_{10}}}} \mapsto\ {{\mathsf{{true}}}}, \ldots\ ]</annotation></semantics></math></p>
 <p>is refuted by</p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="normal"><msub><mi>c</mi><mn>00</mn></msub></mstyle><mo>≠</mo><mstyle mathvariant="sans-serif"><mi>𝖿</mi><mi>𝖺</mi><mi>𝗅</mi><mi>𝗌</mi><mi>𝖾</mi></mstyle><mo>∨</mo><mstyle mathvariant="normal"><msub><mi>c</mi><mn>01</mn></msub></mstyle><mo>≠</mo><mstyle mathvariant="sans-serif"><mi>𝗍</mi><mi>𝗋</mi><mi>𝗎</mi><mi>𝖾</mi></mstyle><mo>∨</mo><mstyle mathvariant="normal"><msub><mi>w</mi><mn>1</mn></msub></mstyle><mo>≠</mo><mn>1</mn><mo>∨</mo><mstyle mathvariant="normal"><msub><mi>s</mi><mn>1</mn></msub></mstyle><mo>≠</mo><mn>2</mn><mo>∨</mo><mstyle mathvariant="normal"><msub><mi>c</mi><mn>10</mn></msub></mstyle><mo>≠</mo><mstyle mathvariant="sans-serif"><mi>𝗍</mi><mi>𝗋</mi><mi>𝗎</mi><mi>𝖾</mi></mstyle></mrow><annotation encoding="application/x-tex">{\mathrm{{c_{00}}}} \neq {{\mathsf{{false}}}}\lor {\mathrm{{c_{01}}}} \neq {{\mathsf{{true}}}}\lor {\mathrm{{w_1}}} \neq 1 \lor {\mathrm{{s_1}}} \neq 2 \lor {\mathrm{{c_{10}}}} \neq {{\mathsf{{true}}}}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>¬</mo><mo stretchy="false" form="prefix">(</mo><mstyle mathvariant="normal"><msub><mi>c</mi><mn>00</mn></msub></mstyle><mo>=</mo><mstyle mathvariant="sans-serif"><mi>𝖿</mi><mi>𝖺</mi><mi>𝗅</mi><mi>𝗌</mi><mi>𝖾</mi></mstyle><mo>∧</mo><mstyle mathvariant="normal"><msub><mi>c</mi><mn>01</mn></msub></mstyle><mo>=</mo><mstyle mathvariant="sans-serif"><mi>𝗍</mi><mi>𝗋</mi><mi>𝗎</mi><mi>𝖾</mi></mstyle><mo>∧</mo><mstyle mathvariant="normal"><msub><mi>w</mi><mn>1</mn></msub></mstyle><mo>=</mo><mn>1</mn><mo>∧</mo><mstyle mathvariant="normal"><msub><mi>s</mi><mn>1</mn></msub></mstyle><mo>=</mo><mn>2</mn><mo>∧</mo><mstyle mathvariant="normal"><msub><mi>c</mi><mn>10</mn></msub></mstyle><mo>=</mo><mstyle mathvariant="sans-serif"><mi>𝗍</mi><mi>𝗋</mi><mi>𝗎</mi><mi>𝖾</mi></mstyle><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\lnot ({\mathrm{{c_{00}}}} = {{\mathsf{{false}}}}\land {\mathrm{{c_{01}}}} = {{\mathsf{{true}}}}\land {\mathrm{{w_1}}} = 1 \land {\mathrm{{s_1}}} = 2 \land {\mathrm{{c_{10}}}} = {{\mathsf{{true}}}})</annotation></semantics></math></p>
 </div>
 </div>
 <div id="ordered-containers" class="slide section level1">
 <h1>Ordered Containers</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">insert ::</span> <span class="dt">Ord</span> a <span class="ot">=&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Sorted</span> a <span class="ot">-&gt;</span> <span class="dt">Sorted</span> a
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">insert ::</span> a <span class="ot">-&gt;</span> <span class="dt">Sorted</span> a <span class="ot">-&gt;</span> <span class="dt">Sorted</span> a
 
 <span class="kw">data</span> <span class="dt">Sorted</span> a <span class="fu">=</span> []
               <span class="fu">|</span> (<span class="fu">:</span>) {<span class="ot"> h ::</span> a
@@ -748,13 +780,10 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 <h1>Takeaway</h1>
 <ul class="incremental">
 <li>Target can explore larger input spaces than (Lazy) SmallCheck</li>
-<li>QuickCheck <strong>requires</strong> custom generators for functions with complex preconditions</li>
+<li>QuickCheck requires custom generators for functions with complex preconditions</li>
 <li>Concolic testing gets stuck on precondition path-explosion</li>
 <li>Target specs are amenable to future formal verification</li>
 </ul>
-</div>
-<div id="questions" class="slide section level1">
-<h1>Questions?</h1>
 </div>
 <div id="backup-slides" class="slide section level1">
 <h1>Backup Slides</h1>
@@ -770,7 +799,7 @@ bar (<span class="kw">struct</span> foo *a) {
   }
 }</code></pre>
 <ul class="incremental">
-<li>Symbolic executors often cannot report with <em>certainty</em> that <code>abort</code> is reachable
+<li>Symbolic executors cannot report with <em>certainty</em> that <code>abort</code> is reachable
 <ul class="incremental">
 <li>pointer arithmetic confuses alias analysis</li>
 </ul></li>
@@ -778,6 +807,35 @@ bar (<span class="kw">struct</span> foo *a) {
 <ul class="incremental">
 <li>fill gaps in symbolic reasoning with <strong>concrete</strong> value</li>
 </ul></li>
+</ul>
+</div>
+<div id="notes" class="slide section level1">
+<h1>NOTES</h1>
+<ul>
+<li>[ ] perhaps start with demo</li>
+<li>[ ] intro is abrupt</li>
+<li>[X] monomorphic tree</li>
+<li>[ ] don’t show class isntances</li>
+<li>[X] fix smallcheck/quickcheck examples</li>
+<li>[ ] preface symbolic execution better (why?)</li>
+<li>[X] keep rescale def around</li>
+<li>[X] kill questions slide</li>
+<li>[ ] maybe start with <code>average</code></li>
+<li>[ ] more comparisons!!</li>
+<li>[X] un-demorgan refutations</li>
+<li>[X] clarify that we use a single set of constraints to represent all possible inputs</li>
+</ul>
+</div>
+<div id="questions" class="slide section level1">
+<h1>Questions</h1>
+<ul>
+<li>do we need base types in refinements (i.e. why not assertions?)
+<ul>
+<li>we use base types to implicitly quantify over elements of containers</li>
+<li>avoid recursive assertions, which are difficult to reason about</li>
+</ul></li>
+<li>is theory of inductive datatypes decidable?</li>
+<li>studies validating small-scope hypothesis?</li>
 </ul>
 </div>
 </body>

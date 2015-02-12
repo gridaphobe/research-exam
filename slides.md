@@ -23,12 +23,12 @@
 # A Binary Search Tree Library
 
 ```haskell
-data Tree a
+data Tree
   = Leaf
-  | Node a (Tree a) (Tree a)
+  | Node Int Tree Tree
 
-insert :: Ord a => a -> Tree a -> Tree a
-delete :: Ord a => a -> Tree a -> Tree a
+insert :: Int -> Tree -> Tree
+delete :: Int -> Tree -> Tree
 ```
 
 . . .
@@ -95,21 +95,21 @@ prop_insert_bst  x t = isBST (insert x t)
 . . .
 
 ```haskell
-data Tree a
+data Tree
   = Leaf
-  | Node a (Tree a) (Tree a)
+  | Node Int Tree Tree
 
-instance Serial a => Serial (Tree a) where
-  series = cons0 \/ cons3
+instance Serial Tree where
+  series = cons0 Leaf \/ cons3 Node
 ```
 
 . . .
 
 ```haskell
 ghci> smallCheck 3 prop_insert_bst
-*** Failed! Falsifiable:
-3
-Node 1 Leaf (Node 2 Leaf Leaf)
+Failed test no. 4.
+there exist 0, Node 0 Leaf (Node 0 Leaf Leaf) such that
+  condition is false
 ```
 
 . . .
@@ -127,8 +127,8 @@ prop_insert_bst x t
 
 ```haskell
 ghci> smallCheck 3 prop_insert_bst
-Completed 2944 tests without failure.
-But 480 did not meet ==> condition.
+Completed 567 tests without failure.
+But 434 did not meet ==> condition.
 ```
 
 # How small?
@@ -162,7 +162,7 @@ Exponential blowup in input space confines search to *very small* inputs!
 - provides DSL for writing random value generators
 
 ```haskell
-instance Arbitrary a => Arbitrary (Tree a) where
+instance Arbitrary Tree where
   arbitrary = oneof [ leaf, node ]
     where
     leaf = return Leaf
@@ -178,24 +178,54 @@ instance Arbitrary a => Arbitrary (Tree a) where
 
 ```haskell
 ghci> quickCheck prop_insert_bst
++++ OK, passed 100 tests.
+```
+
+. . .
+
+How is this possible? SmallCheck showed that input domain is *very* sparse!
+
+# Testing `insert`: QuickCheck
+
+```haskell
+prop_insert_bst x t
+  = isBST t ==> collect (size t) (isBST (insert x t))
+```
+
+. . .
+
+```haskell
+ghci> quickCheck prop_insert_bst
++++ OK, passed 100 tests:
+73% 0
+21% 1
+ 6% 2
 ```
 
 # Testing `insert`: QuickCheck
 
 ```haskell
-ghci> quickCheck prop_insert_bst
-*** Gave up! Passed only 3 tests.
+prop_insert_bst_nontrivial x t
+  = isBST t && size t > 1 ==> collect (size t) (isBST (insert x t))
 ```
+
 . . .
 
-Input domain is too sparse, QuickCheck gives up!
+```haskell
+ghci> quickCheck prop_insert_bst
+*** Gave up! Passed only 37 tests (100% 2).
+```
+
+. . .
+
+Input domain is too sparse, QuickCheck cannot generate trees with more than 2 elements!
 
 # Testing `insert`: Custom Generators
 
 ```haskell
-newtype BST a = Tree a
+newtype BST = Tree
 
-instance Arbitrary a => Arbitrary (BST a) where
+instance Arbitrary BST where
   arbitrary = ...
 
 prop_insert_bst x (BST xs)
@@ -218,6 +248,7 @@ Must define a new type/generator for *each* precondition!
 - Specify correctness condition (e.g. don't crash!)
 - Search for inputs designed to violate it
     - enumerate program paths via symbolic execution
+    - aim for 100% coverage as quickly as possible
 
 <!-- # Dynamic-Symbolic Testing -->
 
@@ -499,6 +530,11 @@ $\cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \c
 
 # Primitive Types: Decode
 
+```haskell
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
+rescale r1 r2 s = s * (r2 `div` r1)
+```
+
 A model $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
@@ -509,28 +545,43 @@ rescale 1 1 0
 # Primitive Types: Check
 
 ```haskell
-rescale 1 1 0 == 0
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
+rescale r1 r2 s = s * (r2 `div` r1)
 ```
-
-> - Postcondition is: `{v:Int | v >= 0 && v < r2}`
-> - After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$
-
-# Primitive Types: Check
 
 ```haskell
 rescale 1 1 0 == 0
 ```
 
-- Postcondition is: `{v:Int | v >= 0 && v < r2}`
+> - Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+> - After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$
+
+# Primitive Types: Check
+
+```haskell
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
+rescale r1 r2 s = s * (r2 `div` r1)
+```
+
+```haskell
+rescale 1 1 0 == 0
+```
+
+- Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
 - After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
 
 . . .
 
 Request another model by *refuting* previous with
 
-$\cstr{C_1} \defeq \cstr{C_0} \wedge (\cvar{r1} \neq 1 \vee \cvar{r2} \neq 1 \vee \cvar{s} \neq 0)$
+$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r1} = 1 \land \cvar{r2} = 1 \land \cvar{s} = 0)$
 
 # Primitive Types: Next model
+
+```haskell
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
+rescale r1 r2 s = s * (r2 `div` r1)
+```
 
 $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$
 
@@ -545,6 +596,11 @@ rescale 1 0 0 == 0
 After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$
 
 # Primitive Types: Next model
+
+```haskell
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
+rescale r1 r2 s = s * (r2 `div` r1)
+```
 
 $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$
 
@@ -566,9 +622,10 @@ After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$&nb
 # Containers
 
 ```haskell
-type Score = Rng 100
+type Weight = Pos
+type Score  = Rng 100
 
-average :: [(Pos, Score)] -> Score
+average :: [(Weight, Score)] -> Score
 average []  = 0
 average wxs = total `div` n
   where
@@ -580,7 +637,7 @@ How to encode structured data in SMT formula?
 
 # Containers: Query
 
-Generate constraints describing *all possible* inputs.
+Generate a *single* set of constraints describing *all possible* inputs.
 
 <img height=400px src="skeleton.png">
 
@@ -650,13 +707,12 @@ $[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \
 
 is refuted by
 
-$\cvar{c_{00}} \neq \tfalse \lor \cvar{c_{01}} \neq \ttrue \lor \cvar{w_1} \neq
-1 \lor \cvar{s_1} \neq 2 \lor \cvar{c_{10}} \neq \ttrue$
+$\lnot (\cvar{c_{00}} = \tfalse \land \cvar{c_{01}} = \ttrue \land \cvar{w_1} = 1 \land \cvar{s_1} = 2 \land \cvar{c_{10}} = \ttrue)$
 
 # Ordered Containers
 
 ```haskell
-insert :: Ord a => a -> Sorted a -> Sorted a
+insert :: a -> Sorted a -> Sorted a
 
 data Sorted a = []
               | (:) { h :: a
@@ -745,11 +801,9 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 
 # Takeaway
 > - Target can explore larger input spaces than (Lazy) SmallCheck
-> - QuickCheck **requires** custom generators for functions with complex preconditions
+> - QuickCheck requires custom generators for functions with complex preconditions
 > - Concolic testing gets stuck on precondition path-explosion
 > - Target specs are amenable to future formal verification
-
-# Questions?
 
 # Backup Slides
 
@@ -766,7 +820,30 @@ bar (struct foo *a) {
 }
 ```
 
-> - Symbolic executors often cannot report with *certainty* that `abort` is reachable
+> - Symbolic executors cannot report with *certainty* that `abort` is reachable
     - pointer arithmetic confuses alias analysis
 > - Concolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
     - fill gaps in symbolic reasoning with **concrete** value
+
+# NOTES
+
+- [ ] perhaps start with demo
+- [ ] intro is abrupt
+- [X] monomorphic tree
+- [ ] don't show class isntances
+- [X] fix smallcheck/quickcheck examples
+- [ ] preface symbolic execution better (why?)
+- [X] keep rescale def around
+- [X] kill questions slide
+- [ ] maybe start with `average`
+- [ ] more comparisons!!
+- [X] un-demorgan refutations
+- [X] clarify that we use a single set of constraints to represent all possible inputs
+
+
+# Questions
+- do we need base types in refinements (i.e. why not assertions?)
+    - we use base types to implicitly quantify over elements of containers
+    - avoid recursive assertions, which are difficult to reason about
+- is theory of inductive datatypes decidable?
+- studies validating small-scope hypothesis?
