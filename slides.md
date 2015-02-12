@@ -345,12 +345,12 @@ Divide-by-zero is impossible!
 # Concolic Testing
 
 - combine symbolic and concrete execution
-    - DART (2005), EXE (2005), CUTE (2006), PEX (2008), KLEE (2008)
+    - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
 
 # Concolic Testing
 
 - combine symbolic and concrete execution
-    - DART (2005), EXE (2005), CUTE (2006), PEX (2008), KLEE (2008)
+    - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
 - start with random inputs, e.g. $\{x \mapsto 1, t \mapsto \cstr{Node}\ 2\ \cstr{Leaf}\ \cstr{Leaf}\}$
 
 ```haskell
