@@ -1,0 +1,30 @@
+digraph G {
+  graph [ dpi = 300, fontname = "Latin-Modern-Math" ];
+  node [ fontname = "Latin Modern Math" ];
+  edge [ fontname = "Latin Modern Math" ];
+  t[label=<t>];
+  leaft[label=<t = Leaf>];
+  nodet[label=<t = Node x<SUB>t</SUB> l<SUB>t</SUB> r<SUB>t</SUB>>];
+  leafl[label=<l<SUB>t</SUB> = Leaf>];
+  nodel[label=<l<SUB>t</SUB> = Node x<SUB>l</SUB> l<SUB>l</SUB> r<SUB>l</SUB>>];
+  l_ln[label="", fixedsize="false", width=0, height=0, shape=none];
+  r_ln[label="", fixedsize="false", width=0, height=0, shape=none];
+  leafll[label=<l<SUB>l</SUB> = Leaf>];
+  leaflr[label=<r<SUB>l</SUB> = Leaf>];
+  leafr[label=<r<SUB>t</SUB> = Leaf>];
+  noder[label=<r<SUB>t</SUB> = Node x<SUB>r</SUB> l<SUB>r</SUB> r<SUB>r</SUB>>];
+  leafrl[label=<l<SUB>r</SUB> = Leaf>];
+  leafrr[label=<r<SUB>r</SUB> = Leaf>];
+  t -> leaft;
+  t -> nodet;
+  nodet -> l_ln [arrowhead=none];
+  nodet -> r_ln [arrowhead=none];
+  l_ln -> leafl;
+  l_ln -> nodel;
+  r_ln -> leafr;
+  r_ln -> noder;
+  nodel -> leafll;
+  nodel -> leaflr;
+  noder -> leafrl;
+  noder -> leafrr;
+}

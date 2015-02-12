@@ -846,4 +846,9 @@ bar (struct foo *a) {
     - we use base types to implicitly quantify over elements of containers
     - avoid recursive assertions, which are difficult to reason about
 - is theory of inductive datatypes decidable?
+    - theory is decidable, but NP-complete
+    - Arrays: QF is decidable (NP-complete), w/ quals undecidable
+    - Integers: QF is NP-complete, w/ quals undecidable
+    - contrast to QF_EUF, which is polynomial
 - studies validating small-scope hypothesis?
+    - 2003 (unpublished) study of java collections framework claims validity
