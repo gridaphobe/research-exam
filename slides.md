@@ -214,7 +214,8 @@ Must define a new type/generator for *each* precondition!
 # Concolic Execution
 
 - Specify correctness condition (e.g. don't crash!)
-- Search for inputs designed to violate it (via symbolic execution)
+- Search for inputs designed to violate it
+    - enumerate program paths via symbolic execution
 
 <!-- # Dynamic-Symbolic Testing -->
 
