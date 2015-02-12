@@ -230,20 +230,116 @@ Must define a new type/generator for *each* precondition!
 - construct *path condition* describing constraints to trigger current path
 
 ```haskell
-f x y              -- 0
-  = let z = y + 1  -- 1
-    in if z > 0    -- 2
+f x y
+  = let z = y + 1
+    in if z > 0
        then x / z
        else x
 ```
 
-. . .
+# Symbolic Execution
+
+- map variables to symbolic expressions instead of concrete values
+- construct *path condition* describing constraints to trigger current path
+
+```haskell
+f x y                -- 0
+  = let z = y + 1
+    in if z > 0
+       then x / z
+       else x
+```
 
 $M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}$
 
-$M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (y + 1)\}$
+$P_0 = \langle \rangle$
 
-$P_2 = \langle z > 0 \rangle$
+# Symbolic Execution
+
+- map variables to symbolic expressions instead of concrete values
+- construct *path condition* describing constraints to trigger current path
+
+```haskell
+f x y                -- 0
+  = let z = y + 1    -- 1
+    in if z > 0
+       then x / z
+       else x
+```
+
+$M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
+
+$P_1 = \langle \rangle$
+
+# Symbolic Execution
+
+- map variables to symbolic expressions instead of concrete values
+- construct *path condition* describing constraints to trigger current path
+
+```haskell
+f x y                -- 0
+  = let z = y + 1    -- 1
+    in if z > 0      -- 2
+       then x / z
+       else x
+```
+
+$M_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
+
+$P_2 = \langle \rangle$
+
+# Symbolic Execution
+
+- map variables to symbolic expressions instead of concrete values
+- construct *path condition* describing constraints to trigger current path
+
+```haskell
+f x y                -- 0
+  = let z = y + 1    -- 1
+    in if z > 0      -- 2
+       then x / z    -- 3
+       else x
+```
+
+$M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
+
+$P_3 = \langle z > 0 \rangle$
+
+. . .
+
+- Want to ensure `z != 0` to prevent divide-by-zero
+    - conjoin with path condition to check feasibility of **implicit** branch
+
+. . .
+
+Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z = 0$
+
+# Symbolic Execution
+
+- map variables to symbolic expressions instead of concrete values
+- construct *path condition* describing constraints to trigger current path
+
+```haskell
+f x y                -- 0
+  = let z = y + 1    -- 1
+    in if z > 0      -- 2
+       then x / z    -- 3
+       else x
+```
+
+$M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
+
+$P_3 = \langle z > 0 \rangle$
+
+- Want to ensure `z != 0` to prevent divide-by-zero
+    - conjoin with path condition to check feasibility of **implicit** branch
+
+Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z = 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**UNSAT**
+
+. . .
+
+Divide-by-zero is impossible!
+
 
 # Concolic Testing
 

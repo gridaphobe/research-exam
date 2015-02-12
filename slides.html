@@ -299,15 +299,101 @@ prop_insert_bal x (<span class="dt">Balanced</span> xs)
 <li>map variables to symbolic expressions instead of concrete values</li>
 <li>construct <em>path condition</em> describing constraints to trigger current path</li>
 </ul>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y              <span class="co">-- 0</span>
-  <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>  <span class="co">-- 1</span>
-    <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>    <span class="co">-- 2</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y
+  <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>
+    <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
        <span class="kw">then</span> x <span class="fu">/</span> z
        <span class="kw">else</span> x</code></pre>
-<div class="incremental">
+</div>
+<div id="symbolic-execution-1" class="slide section level1">
+<h1>Symbolic Execution</h1>
+<ul>
+<li>map variables to symbolic expressions instead of concrete values</li>
+<li>construct <em>path condition</em> describing constraints to trigger current path</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                <span class="co">-- 0</span>
+  <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>
+    <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
+       <span class="kw">then</span> x <span class="fu">/</span> z
+       <span class="kw">else</span> x</code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}</annotation></semantics></math></p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><mi>y</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (y + 1)\}</annotation></semantics></math></p>
-<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_2 = \langle z &gt; 0 \rangle</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_0 = \langle \rangle</annotation></semantics></math></p>
+</div>
+<div id="symbolic-execution-2" class="slide section level1">
+<h1>Symbolic Execution</h1>
+<ul>
+<li>map variables to symbolic expressions instead of concrete values</li>
+<li>construct <em>path condition</em> describing constraints to trigger current path</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                <span class="co">-- 0</span>
+  <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>    <span class="co">-- 1</span>
+    <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
+       <span class="kw">then</span> x <span class="fu">/</span> z
+       <span class="kw">else</span> x</code></pre>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_1 = \langle \rangle</annotation></semantics></math></p>
+</div>
+<div id="symbolic-execution-3" class="slide section level1">
+<h1>Symbolic Execution</h1>
+<ul>
+<li>map variables to symbolic expressions instead of concrete values</li>
+<li>construct <em>path condition</em> describing constraints to trigger current path</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                <span class="co">-- 0</span>
+  <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>    <span class="co">-- 1</span>
+    <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>      <span class="co">-- 2</span>
+       <span class="kw">then</span> x <span class="fu">/</span> z
+       <span class="kw">else</span> x</code></pre>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_2 = \langle \rangle</annotation></semantics></math></p>
+</div>
+<div id="symbolic-execution-4" class="slide section level1">
+<h1>Symbolic Execution</h1>
+<ul>
+<li>map variables to symbolic expressions instead of concrete values</li>
+<li>construct <em>path condition</em> describing constraints to trigger current path</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                <span class="co">-- 0</span>
+  <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>    <span class="co">-- 1</span>
+    <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>      <span class="co">-- 2</span>
+       <span class="kw">then</span> x <span class="fu">/</span> z    <span class="co">-- 3</span>
+       <span class="kw">else</span> x</code></pre>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_3 = \langle z &gt; 0 \rangle</annotation></semantics></math></p>
+<div class="incremental">
+<ul>
+<li>Want to ensure <code>z != 0</code> to prevent divide-by-zero
+<ul>
+<li>conjoin with path condition to check feasibility of <strong>implicit</strong> branch</li>
+</ul></li>
+</ul>
+</div>
+<div class="incremental">
+<p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo>∧</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z = \alpha_2 + 1 \land z &gt; 0 \land z = 0</annotation></semantics></math></p>
+</div>
+</div>
+<div id="symbolic-execution-5" class="slide section level1">
+<h1>Symbolic Execution</h1>
+<ul>
+<li>map variables to symbolic expressions instead of concrete values</li>
+<li>construct <em>path condition</em> describing constraints to trigger current path</li>
+</ul>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                <span class="co">-- 0</span>
+  <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>    <span class="co">-- 1</span>
+    <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>      <span class="co">-- 2</span>
+       <span class="kw">then</span> x <span class="fu">/</span> z    <span class="co">-- 3</span>
+       <span class="kw">else</span> x</code></pre>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_3 = \langle z &gt; 0 \rangle</annotation></semantics></math></p>
+<ul>
+<li>Want to ensure <code>z != 0</code> to prevent divide-by-zero
+<ul>
+<li>conjoin with path condition to check feasibility of <strong>implicit</strong> branch</li>
+</ul></li>
+</ul>
+<p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo>∧</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z = \alpha_2 + 1 \land z &gt; 0 \land z = 0</annotation></semantics></math>      <strong>UNSAT</strong></p>
+<div class="incremental">
+<p>Divide-by-zero is impossible!</p>
 </div>
 </div>
 <div id="concolic-testing" class="slide section level1">
