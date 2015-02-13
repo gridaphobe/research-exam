@@ -46,7 +46,7 @@ Two key questions to answer when testing:
 
 1. **Human-generated tests**
 2. Machine-enumerated inputs
-3. Concolic Execution
+3. Dynamic-Symbolic Execution
 4. Type-targeted testing
 
 # Human-generated tests
@@ -65,13 +65,17 @@ insert 1 (Node 2 Leaf Leaf)
 
 . . .
 
-But this is tiresome and error-prone!
+But this is tiresome...
+
+. . .
+
+> hope that these tests generalize!
 
 # Outline
 
 1. Human-generated tests
 2. **Machine-enumerated inputs**
-3. Concolic Execution
+3. Dynamic-Symbolic Execution
 4. Type-targeted testing
 
 # Machine-enumerated inputs
@@ -86,13 +90,15 @@ prop_insert_elem x t = x `elem` insert x t
 prop_insert_bst  x t = isBST (insert x t)
 ```
 
-# SmallCheck: Enumerate Small Inputs
+# Enumerate All "Small" Inputs
 
 "Small-scope hypothesis"
 
 > if a counterexample exists, a "small" counterexample probably exists too
 
-. . .
+- TestEra (2001), Korat (2004), SmallCheck (2008)
+
+# SmallCheck
 
 ```haskell
 data Tree
@@ -158,10 +164,10 @@ Exponential blowup in input space confines search to *very small* inputs!
 
 # Alternative: Randomly Generate Inputs
 
-- random sampling from uniform distribution of inputs
+- random sampling from all possible inputs
     - enables checking larger inputs
     - no guarantee of minimal counterexample
-- QuickCheck (2000), JCrasher (YYYY), Randoop (YYYY)
+- QuickCheck (2000), JCrasher (2004), Randoop (2007)
 
 # QuickCheck
 
@@ -242,17 +248,23 @@ prop_insert_bst x (BST xs)
 
 Must define a new type/generator for *each* precondition!
 
+# Recap
+
+- brute-force enumeration of inputs suffers from input explosion
+- random generation enables testing larger inputs
+    - but requires custom generators for preconditions
+
 # Outline
 
 1. Human-generated tests
 2. Machine-enumerated inputs
-3. **Concolic Execution**
+3. **Dynamic-Symbolic Execution**
 4. Type-targeted testing
 
-# Concolic Execution
+# Dynamic-Symbolic Execution
 
-- Specify correctness condition (e.g. don't crash!)
-- Search for inputs designed to violate it
+- Hard-code correctness condition (e.g. don't crash!)
+- Machine searches for inputs that violate it
     - enumerate program paths via symbolic execution
     - aim for 100% coverage as quickly as possible
 
@@ -264,8 +276,9 @@ Must define a new type/generator for *each* precondition!
 
 <!-- - search for inputs that make the program crash -->
 
-# Symbolic Execution
+# A Primer on Symbolic Execution
 
+- originally envisioned as static-analysis technique
 - map variables to symbolic expressions instead of concrete values
 - construct *path condition* describing constraints to trigger current path
 
@@ -277,8 +290,9 @@ f x y
        else x
 ```
 
-# Symbolic Execution
+# A Primer on Symbolic Execution
 
+- originally envisioned as static-analysis technique
 - map variables to symbolic expressions instead of concrete values
 - construct *path condition* describing constraints to trigger current path
 
@@ -294,8 +308,9 @@ $M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}$
 
 $P_0 = \langle \rangle$
 
-# Symbolic Execution
+# A Primer on Symbolic Execution
 
+- originally envisioned as static-analysis technique
 - map variables to symbolic expressions instead of concrete values
 - construct *path condition* describing constraints to trigger current path
 
@@ -311,8 +326,9 @@ $M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
 
 $P_1 = \langle \rangle$
 
-# Symbolic Execution
+# A Primer on Symbolic Execution
 
+- originally envisioned as static-analysis technique
 - map variables to symbolic expressions instead of concrete values
 - construct *path condition* describing constraints to trigger current path
 
@@ -328,8 +344,9 @@ $M_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
 
 $P_2 = \langle \rangle$
 
-# Symbolic Execution
+# A Primer on Symbolic Execution
 
+- originally envisioned as static-analysis technique
 - map variables to symbolic expressions instead of concrete values
 - construct *path condition* describing constraints to trigger current path
 
@@ -354,8 +371,9 @@ $P_3 = \langle z > 0 \rangle$
 
 Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z = 0$
 
-# Symbolic Execution
+# A Primer on Symbolic Execution
 
+- originally envisioned as static-analysis technique
 - map variables to symbolic expressions instead of concrete values
 - construct *path condition* describing constraints to trigger current path
 
@@ -381,12 +399,12 @@ Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z 
 Divide-by-zero is impossible!
 
 
-# Concolic Testing
+# Dynamic-Symbolic Testing
 
 - combine symbolic and concrete execution
     - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
 
-# Concolic Testing
+# Dynamic-Symbolic Testing
 
 - combine symbolic and concrete execution
     - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
@@ -405,7 +423,7 @@ insert x t = case t of
 > - choose new path by negating path condition and solving for new inputs, e.g. $t = \cstr{Node}\ y\ l\ r \land \lnot (x < y)$
     - (many more sophisticated search techniques have been explored)
 
-# Concolic Testing: Specifications
+# Dynamic-Symbolic Testing: Specifications
 
 - `insert` will never crash on its own, need to check specification
 
@@ -416,11 +434,13 @@ prop_insert_bst x t = do
   assert (isBST t')
 ```
 
+- `assume` is a variant of `assert` that test-harness will not consider an error
+
 . . .
 
 **PROBLEM**: paths must pass through `isBST` before reaching `insert`!
 
-# Concolic Testing: Preconditions
+# Dynamic-Symbolic Testing: Preconditions
 
 ```haskell
 isBST t = case t of
@@ -430,7 +450,7 @@ isBST t = case t of
              && isBST l     && isBST r
 ```
 
-# Concolic Testing: Preconditions
+# Dynamic-Symbolic Testing: Preconditions
 
 ```haskell
 isBST t = case t of
@@ -452,6 +472,12 @@ isBST t = case t of
 . . .
 
 > executable specification causes solver to enumerate paths through **precondition** instead of function
+
+# Recap
+
+- dynamic-symbolic execution avoids input explosion by enumerating paths
+    - can still suffer from **path** explosion
+    - particularly when faced with recursive preconditions
 
 # Outline
 
@@ -808,12 +834,12 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 # Takeaway
 > - Target can explore larger input spaces than (Lazy) SmallCheck
 > - QuickCheck requires custom generators for functions with complex preconditions
-> - Concolic testing gets stuck on precondition path-explosion
+> - Dynamic-Symbolic testing gets stuck on precondition path-explosion
 > - Target specs are amenable to future formal verification
 
 # Backup Slides
 
-# Concolic Testing: Why Concrete + Symbolic?
+# Dynamic-Symbolic Testing: Why Concrete + Symbolic?
 
 ```c
 struct foo { int i; char c; }
@@ -828,7 +854,7 @@ bar (struct foo *a) {
 
 > - Symbolic executors cannot report with *certainty* that `abort` is reachable
     - pointer arithmetic confuses alias analysis
-> - Concolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
+> - Dynamic-Symbolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
     - fill gaps in symbolic reasoning with **concrete** value
 
 # NOTES

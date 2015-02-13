@@ -141,7 +141,7 @@ Eric Seidel
 <ol style="list-style-type: decimal">
 <li><strong>Human-generated tests</strong></li>
 <li>Machine-enumerated inputs</li>
-<li>Concolic Execution</li>
+<li>Dynamic-Symbolic Execution</li>
 <li>Type-targeted testing</li>
 </ol>
 </div>
@@ -156,7 +156,12 @@ insert <span class="dv">1</span> (<span class="dt">Node</span> <span class="dv">
   <span class="fu">==</span> <span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">2</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)</code></pre>
 </div>
 <div class="incremental">
-<p>But this is tiresome and error-prone!</p>
+<p>But this is tiresome…</p>
+</div>
+<div class="incremental">
+<blockquote>
+<p>hope that these tests generalize!</p>
+</blockquote>
 </div>
 </div>
 <div id="outline-1" class="slide section level1">
@@ -164,7 +169,7 @@ insert <span class="dv">1</span> (<span class="dt">Node</span> <span class="dv">
 <ol style="list-style-type: decimal">
 <li>Human-generated tests</li>
 <li><strong>Machine-enumerated inputs</strong></li>
-<li>Concolic Execution</li>
+<li>Dynamic-Symbolic Execution</li>
 <li>Type-targeted testing</li>
 </ol>
 </div>
@@ -179,20 +184,24 @@ insert <span class="dv">1</span> (<span class="dt">Node</span> <span class="dv">
 prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 </div>
 </div>
-<div id="smallcheck-enumerate-small-inputs" class="slide section level1">
-<h1>SmallCheck: Enumerate Small Inputs</h1>
+<div id="enumerate-all-small-inputs" class="slide section level1">
+<h1>Enumerate All “Small” Inputs</h1>
 <p>“Small-scope hypothesis”</p>
 <blockquote>
 <p>if a counterexample exists, a “small” counterexample probably exists too</p>
 </blockquote>
-<div class="incremental">
+<ul>
+<li>TestEra (2001), Korat (2004), SmallCheck (2008)</li>
+</ul>
+</div>
+<div id="smallcheck" class="slide section level1">
+<h1>SmallCheck</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span>
   <span class="fu">=</span> <span class="dt">Leaf</span>
   <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span>
 
 <span class="kw">instance</span> <span class="dt">Serial</span> <span class="dt">Tree</span> <span class="kw">where</span>
   series <span class="fu">=</span> cons0 <span class="dt">Leaf</span> \<span class="fu">/</span> cons3 <span class="dt">Node</span></code></pre>
-</div>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst
 <span class="dt">Failed</span> test no<span class="fu">.</span> <span class="dv">4</span><span class="fu">.</span>
@@ -238,12 +247,12 @@ there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class=
 <div id="alternative-randomly-generate-inputs" class="slide section level1">
 <h1>Alternative: Randomly Generate Inputs</h1>
 <ul>
-<li>random sampling from uniform distribution of inputs
+<li>random sampling from all possible inputs
 <ul>
 <li>enables checking larger inputs</li>
 <li>no guarantee of minimal counterexample</li>
 </ul></li>
-<li>QuickCheck (2000), JCrasher (YYYY), Randoop (YYYY)</li>
+<li>QuickCheck (2000), JCrasher (2004), Randoop (2007)</li>
 </ul>
 </div>
 <div id="quickcheck" class="slide section level1">
@@ -308,20 +317,30 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>Must define a new type/generator for <em>each</em> precondition!</p>
 </div>
 </div>
+<div id="recap" class="slide section level1">
+<h1>Recap</h1>
+<ul>
+<li>brute-force enumeration of inputs suffers from input explosion</li>
+<li>random generation enables testing larger inputs
+<ul>
+<li>but requires custom generators for preconditions</li>
+</ul></li>
+</ul>
+</div>
 <div id="outline-2" class="slide section level1">
 <h1>Outline</h1>
 <ol style="list-style-type: decimal">
 <li>Human-generated tests</li>
 <li>Machine-enumerated inputs</li>
-<li><strong>Concolic Execution</strong></li>
+<li><strong>Dynamic-Symbolic Execution</strong></li>
 <li>Type-targeted testing</li>
 </ol>
 </div>
-<div id="concolic-execution" class="slide section level1">
-<h1>Concolic Execution</h1>
+<div id="dynamic-symbolic-execution" class="slide section level1">
+<h1>Dynamic-Symbolic Execution</h1>
 <ul>
-<li>Specify correctness condition (e.g. don’t crash!)</li>
-<li>Search for inputs designed to violate it
+<li>Hard-code correctness condition (e.g. don’t crash!)</li>
+<li>Machine searches for inputs that violate it
 <ul>
 <li>enumerate program paths via symbolic execution</li>
 <li>aim for 100% coverage as quickly as possible</li>
@@ -332,9 +351,10 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <!-- - combines symbolic execution to enumerate code paths with concrete execution to trigger bugs -->
 <!-- - search for inputs that make the program crash -->
 </div>
-<div id="symbolic-execution" class="slide section level1">
-<h1>Symbolic Execution</h1>
+<div id="a-primer-on-symbolic-execution" class="slide section level1">
+<h1>A Primer on Symbolic Execution</h1>
 <ul>
+<li>originally envisioned as static-analysis technique</li>
 <li>map variables to symbolic expressions instead of concrete values</li>
 <li>construct <em>path condition</em> describing constraints to trigger current path</li>
 </ul>
@@ -344,9 +364,10 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
        <span class="kw">then</span> x <span class="fu">/</span> z
        <span class="kw">else</span> x</code></pre>
 </div>
-<div id="symbolic-execution-1" class="slide section level1">
-<h1>Symbolic Execution</h1>
+<div id="a-primer-on-symbolic-execution-1" class="slide section level1">
+<h1>A Primer on Symbolic Execution</h1>
 <ul>
+<li>originally envisioned as static-analysis technique</li>
 <li>map variables to symbolic expressions instead of concrete values</li>
 <li>construct <em>path condition</em> describing constraints to trigger current path</li>
 </ul>
@@ -358,9 +379,10 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_0 = \langle \rangle</annotation></semantics></math></p>
 </div>
-<div id="symbolic-execution-2" class="slide section level1">
-<h1>Symbolic Execution</h1>
+<div id="a-primer-on-symbolic-execution-2" class="slide section level1">
+<h1>A Primer on Symbolic Execution</h1>
 <ul>
+<li>originally envisioned as static-analysis technique</li>
 <li>map variables to symbolic expressions instead of concrete values</li>
 <li>construct <em>path condition</em> describing constraints to trigger current path</li>
 </ul>
@@ -372,9 +394,10 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_1 = \langle \rangle</annotation></semantics></math></p>
 </div>
-<div id="symbolic-execution-3" class="slide section level1">
-<h1>Symbolic Execution</h1>
+<div id="a-primer-on-symbolic-execution-3" class="slide section level1">
+<h1>A Primer on Symbolic Execution</h1>
 <ul>
+<li>originally envisioned as static-analysis technique</li>
 <li>map variables to symbolic expressions instead of concrete values</li>
 <li>construct <em>path condition</em> describing constraints to trigger current path</li>
 </ul>
@@ -386,9 +409,10 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_2 = \langle \rangle</annotation></semantics></math></p>
 </div>
-<div id="symbolic-execution-4" class="slide section level1">
-<h1>Symbolic Execution</h1>
+<div id="a-primer-on-symbolic-execution-4" class="slide section level1">
+<h1>A Primer on Symbolic Execution</h1>
 <ul>
+<li>originally envisioned as static-analysis technique</li>
 <li>map variables to symbolic expressions instead of concrete values</li>
 <li>construct <em>path condition</em> describing constraints to trigger current path</li>
 </ul>
@@ -411,9 +435,10 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo>∧</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z = \alpha_2 + 1 \land z &gt; 0 \land z = 0</annotation></semantics></math></p>
 </div>
 </div>
-<div id="symbolic-execution-5" class="slide section level1">
-<h1>Symbolic Execution</h1>
+<div id="a-primer-on-symbolic-execution-5" class="slide section level1">
+<h1>A Primer on Symbolic Execution</h1>
 <ul>
+<li>originally envisioned as static-analysis technique</li>
 <li>map variables to symbolic expressions instead of concrete values</li>
 <li>construct <em>path condition</em> describing constraints to trigger current path</li>
 </ul>
@@ -435,8 +460,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>Divide-by-zero is impossible!</p>
 </div>
 </div>
-<div id="concolic-testing" class="slide section level1">
-<h1>Concolic Testing</h1>
+<div id="dynamic-symbolic-testing" class="slide section level1">
+<h1>Dynamic-Symbolic Testing</h1>
 <ul>
 <li>combine symbolic and concrete execution
 <ul>
@@ -444,8 +469,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul></li>
 </ul>
 </div>
-<div id="concolic-testing-1" class="slide section level1">
-<h1>Concolic Testing</h1>
+<div id="dynamic-symbolic-testing-1" class="slide section level1">
+<h1>Dynamic-Symbolic Testing</h1>
 <ul>
 <li>combine symbolic and concrete execution
 <ul>
@@ -467,8 +492,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul></li>
 </ul>
 </div>
-<div id="concolic-testing-specifications" class="slide section level1">
-<h1>Concolic Testing: Specifications</h1>
+<div id="dynamic-symbolic-testing-specifications" class="slide section level1">
+<h1>Dynamic-Symbolic Testing: Specifications</h1>
 <ul>
 <li><code>insert</code> will never crash on its own, need to check specification</li>
 </ul>
@@ -476,20 +501,23 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
   assume (isBST t)
   <span class="kw">let</span> t&#39; <span class="fu">=</span> insert x t
   assert (isBST t&#39;)</code></pre>
+<ul>
+<li><code>assume</code> is a variant of <code>assert</code> that test-harness will not consider an error</li>
+</ul>
 <div class="incremental">
 <p><strong>PROBLEM</strong>: paths must pass through <code>isBST</code> before reaching <code>insert</code>!</p>
 </div>
 </div>
-<div id="concolic-testing-preconditions" class="slide section level1">
-<h1>Concolic Testing: Preconditions</h1>
+<div id="dynamic-symbolic-testing-preconditions" class="slide section level1">
+<h1>Dynamic-Symbolic Testing: Preconditions</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">isBST t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
   <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
   <span class="dt">Node</span> y l r <span class="ot">-&gt;</span> abs (height l <span class="fu">-</span> height r) <span class="fu">&lt;=</span> <span class="dv">1</span>
              <span class="fu">&amp;&amp;</span> all (<span class="fu">&lt;</span> y) l <span class="fu">&amp;&amp;</span> all (<span class="fu">&gt;</span> y) r
              <span class="fu">&amp;&amp;</span> isBST l     <span class="fu">&amp;&amp;</span> isBST r</code></pre>
 </div>
-<div id="concolic-testing-preconditions-1" class="slide section level1">
-<h1>Concolic Testing: Preconditions</h1>
+<div id="dynamic-symbolic-testing-preconditions-1" class="slide section level1">
+<h1>Dynamic-Symbolic Testing: Preconditions</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">isBST t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
   <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
   <span class="dt">Node</span> y l r <span class="ot">-&gt;</span>
@@ -512,6 +540,16 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>executable specification causes solver to enumerate paths through <strong>precondition</strong> instead of function</p>
 </blockquote>
 </div>
+</div>
+<div id="recap-1" class="slide section level1">
+<h1>Recap</h1>
+<ul>
+<li>dynamic-symbolic execution avoids input explosion by enumerating paths
+<ul>
+<li>can still suffer from <strong>path</strong> explosion</li>
+<li>particularly when faced with recursive preconditions</li>
+</ul></li>
+</ul>
 </div>
 <div id="outline-3" class="slide section level1">
 <h1>Outline</h1>
@@ -792,15 +830,15 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 <ul class="incremental">
 <li>Target can explore larger input spaces than (Lazy) SmallCheck</li>
 <li>QuickCheck requires custom generators for functions with complex preconditions</li>
-<li>Concolic testing gets stuck on precondition path-explosion</li>
+<li>Dynamic-Symbolic testing gets stuck on precondition path-explosion</li>
 <li>Target specs are amenable to future formal verification</li>
 </ul>
 </div>
 <div id="backup-slides" class="slide section level1">
 <h1>Backup Slides</h1>
 </div>
-<div id="concolic-testing-why-concrete-symbolic" class="slide section level1">
-<h1>Concolic Testing: Why Concrete + Symbolic?</h1>
+<div id="dynamic-symbolic-testing-why-concrete-symbolic" class="slide section level1">
+<h1>Dynamic-Symbolic Testing: Why Concrete + Symbolic?</h1>
 <pre class="sourceCode c"><code class="sourceCode c"><span class="kw">struct</span> foo { <span class="dt">int</span> i; <span class="dt">char</span> c; }
 bar (<span class="kw">struct</span> foo *a) {
   <span class="kw">if</span> (a-&gt;c == <span class="dv">0</span>) {
@@ -814,7 +852,7 @@ bar (<span class="kw">struct</span> foo *a) {
 <ul class="incremental">
 <li>pointer arithmetic confuses alias analysis</li>
 </ul></li>
-<li>Concolic testing need only solve <code>a-&gt;c == 0</code> to produce <em>concrete</em> input that will blow up!
+<li>Dynamic-Symbolic testing need only solve <code>a-&gt;c == 0</code> to produce <em>concrete</em> input that will blow up!
 <ul class="incremental">
 <li>fill gaps in symbolic reasoning with <strong>concrete</strong> value</li>
 </ul></li>
