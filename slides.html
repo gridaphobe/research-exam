@@ -118,9 +118,8 @@ Eric Seidel
 <h1>A Binary Search Tree Library</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span>
   <span class="fu">=</span> <span class="dt">Leaf</span>
-  <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span>
-
-<span class="ot">insert ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span>
+  <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span></code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">insert ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span>
 <span class="ot">delete ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span></code></pre>
 <div class="incremental">
 <blockquote>
@@ -141,31 +140,37 @@ Eric Seidel
 <!-- 3. Dynamic-Symbolic Execution -->
 <!-- 4. Type-targeted testing -->
 </div>
-<div id="standard-practice" class="slide section level1">
-<h1>Standard Practice</h1>
+<div id="standard-practice-unit-testing" class="slide section level1">
+<h1>Standard Practice: Unit-Testing</h1>
 <p>Programmer specifies inputs <em>and</em> outputs</p>
 <div class="incremental">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">insert <span class="dv">1</span> <span class="dt">Leaf</span>
-  <span class="fu">==</span> <span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">assertEquals (insert <span class="dv">1</span> <span class="dt">Leaf</span>) (<span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)
 
 insert <span class="dv">1</span> (<span class="dt">Node</span> <span class="dv">2</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)
   <span class="fu">==</span> <span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">2</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>)</code></pre>
 </div>
 <div class="incremental">
-<p>But this is tiresome…</p>
-</div>
-<div class="incremental">
-<blockquote>
-<p>hope that these tests generalize!</p>
-</blockquote>
+<p>a lot of effort to produce a “complete” test-suite!</p>
+<!-- But this is tiresome... -->
+<!-- . . . -->
+<!-- > hope that these tests generalize! -->
 </div>
 </div>
-<div id="outline" class="slide section level1">
-<h1>Outline</h1>
+<div id="this-talk" class="slide section level1">
+<h1>This Talk</h1>
+<h2 id="techniques-for-automated-unit-testing">Techniques for Automated Unit-Testing</h2>
 <!-- 1. Human-generated tests -->
+<ul>
+<li>Existing</li>
+</ul>
 <ol style="list-style-type: decimal">
 <li><strong>Black-box testing</strong></li>
 <li>White-box testing</li>
+</ol>
+<ul>
+<li>Our contribution</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
 <li>Type-targeted testing</li>
 </ol>
 </div>
@@ -178,15 +183,31 @@ insert <span class="dv">1</span> (<span class="dt">Node</span> <span class="dv">
 </ul></li>
 <li>Generate many inputs and validate against spec</li>
 </ul>
+<div class="incremental">
+<ol style="list-style-type: decimal">
+<li>How to <strong>provide</strong> inputs?</li>
+</ol>
+<ul>
+<li>machine enumerates based on spec</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>How to <strong>check</strong> outputs?</li>
+</ol>
+<ul>
+<li>programmer-supplied oracle</li>
+</ul>
+<p>1 is harder, start with 2</p>
 <!-- - Machine enumerates many inputs -->
 <!-- - Programmer specifies oracle to check outputs -->
+</div>
 <div class="incremental">
+<p>MOVE THIS LATER, SHOW iSBST</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_elem x t <span class="fu">=</span> x <span class="ot">`elem`</span> insert x t
 prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 </div>
 </div>
-<div id="enumerate-all-small-inputs" class="slide section level1">
-<h1>Enumerate All “Small” Inputs</h1>
+<div id="providing-inputs-by-enumeration" class="slide section level1">
+<h1>Providing Inputs by Enumeration</h1>
 <p>“Small-scope hypothesis”</p>
 <blockquote>
 <p>if a counterexample exists, a “small” counterexample probably exists too</p>
@@ -197,24 +218,33 @@ prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 </div>
 <div id="smallcheck" class="slide section level1">
 <h1>SmallCheck</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span>
-  <span class="fu">=</span> <span class="dt">Leaf</span>
-  <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span>
-
-<span class="kw">instance</span> <span class="dt">Serial</span> <span class="dt">Tree</span> <span class="kw">where</span>
-  series <span class="fu">=</span> cons0 <span class="dt">Leaf</span> \<span class="fu">/</span> cons3 <span class="dt">Node</span></code></pre>
+<!-- ```haskell -->
+<!-- data Tree -->
+<!--   = Leaf -->
+<!--   | Node Int Tree Tree -->
+<!-- instance Serial Tree where -->
+<!--   series = cons0 Leaf \/ cons3 Node -->
+<!-- ``` -->
+<!-- . . . -->
+<p>ENUMERAUTE ALL SMALL INPUTS</p>
+<p>WHAT ARE INPUTS AND OUTPUTS</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 <div class="incremental">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst
-<span class="dt">Failed</span> test no<span class="fu">.</span> <span class="dv">4</span><span class="fu">.</span>
+<p>HOW TO RUN IT</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst</code></pre>
+</div>
+<div class="incremental">
+<p>WHAT IS OUTPUT</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Failed</span> test no<span class="fu">.</span> <span class="dv">4</span><span class="fu">.</span>
 there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class="dv">0</span> <span class="dt">Leaf</span> (<span class="dt">Node</span> <span class="dv">0</span> <span class="dt">Leaf</span> <span class="dt">Leaf</span>) such that
   condition is false</code></pre>
 </div>
 <div class="incremental">
-<p><code>insert</code> doesn’t accept just <em>any</em> tree</p>
+<p>property does not hold for <strong>all</strong> trees</p>
 </div>
 </div>
-<div id="testing-insert-preconditions" class="slide section level1">
-<h1>Testing <code>insert</code>: Preconditions</h1>
+<div id="smallcheck-preconditions" class="slide section level1">
+<h1>SmallCheck: Preconditions</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
   <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <div class="incremental">
@@ -237,12 +267,10 @@ there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class=
 </div>
 <div class="incremental">
 <ul>
-<li>Can abuse laziness to filter equivalent inputs (Lazy SmallCheck, Korat)
-<ul>
-<li>but must be careful how you structure filtering predicate</li>
-<li>e.g. should binary-search tree check ordering or balancing first?</li>
-</ul></li>
+<li>heuristics to prune “equivalent” inputs (Lazy SmallCheck, Korat)</li>
+<li>can be brittle in practice <!-- - but must be careful how you structure precondition --> <!-- - e.g. should binary-search tree check ordering or balancing first? --></li>
 </ul>
+<p>POP BACK TO BLACK-BOX, STRIKEOUT ALL, REPLACE WITH RANDOM</p>
 </div>
 </div>
 <div id="alternative-randomly-generate-inputs" class="slide section level1">
@@ -315,7 +343,11 @@ there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class=
 prop_insert_bst x (<span class="dt">BST</span> xs)
   <span class="fu">=</span> isBST (insert x xs)</code></pre>
 <div class="incremental">
-<p>Must define a new type/generator for <em>each</em> precondition!</p>
+<ol style="list-style-type: decimal">
+<li>how to generate?</li>
+<li>are we generating uniformly?</li>
+<li>Must define a new type/generator for <em>each</em> precondition!</li>
+</ol>
 </div>
 </div>
 <div id="recap" class="slide section level1">
@@ -329,7 +361,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul></li>
 </ul>
 </div>
-<div id="outline-1" class="slide section level1">
+<div id="outline" class="slide section level1">
 <h1>Outline</h1>
 <!-- 1. Human-generated tests -->
 <ol style="list-style-type: decimal">
@@ -341,20 +373,17 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <div id="white-box-testing" class="slide section level1">
 <h1>White-Box Testing</h1>
 <ul>
-<li>Given program <em>implementation</em></li>
-<li>Try to break it (i.e. make it crash) <!-- - Machine searches for inputs that violate it -->
-<ul>
-<li>avoid input explosion by enumerating program paths (via <strong>symbolic execution</strong>)</li>
-<li>aim for 100% coverage as quickly as possible</li>
-</ul></li>
+<li>Given program <em>implementation</em>, make it <em>crash</em></li>
+<li>enumerating program paths instead of inputs</li>
+<li><strong>symbolic execution</strong> groups equivalent inputs <!-- - aim for 100% coverage as quickly as possible --></li>
 </ul>
 <!-- # Dynamic-Symbolic Testing -->
 <!-- - introduced by Godefroid et al and Cadar et al in 2005 -->
 <!-- - combines symbolic execution to enumerate code paths with concrete execution to trigger bugs -->
 <!-- - search for inputs that make the program crash -->
 </div>
-<div id="a-primer-on-symbolic-execution" class="slide section level1">
-<h1>A Primer on Symbolic Execution</h1>
+<div id="white-box-testing-via-symbolic-execution" class="slide section level1">
+<h1>WHITE-BOX TESTING VIA Symbolic Execution</h1>
 <ul>
 <li>originally envisioned as static-analysis technique</li>
 <li>map variables to symbolic expressions instead of concrete values</li>
@@ -363,10 +392,10 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y
   <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>
     <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
-       <span class="kw">then</span> x <span class="fu">/</span> z
+       <span class="kw">then</span> assert (z<span class="fu">!=</span><span class="dv">0</span>)
        <span class="kw">else</span> x</code></pre>
 </div>
-<div id="a-primer-on-symbolic-execution-1" class="slide section level1">
+<div id="a-primer-on-symbolic-execution" class="slide section level1">
 <h1>A Primer on Symbolic Execution</h1>
 <ul>
 <li>originally envisioned as static-analysis technique</li>
@@ -381,7 +410,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_0 = \langle \rangle</annotation></semantics></math></p>
 </div>
-<div id="a-primer-on-symbolic-execution-2" class="slide section level1">
+<div id="a-primer-on-symbolic-execution-1" class="slide section level1">
 <h1>A Primer on Symbolic Execution</h1>
 <ul>
 <li>originally envisioned as static-analysis technique</li>
@@ -396,7 +425,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_1 = \langle \rangle</annotation></semantics></math></p>
 </div>
-<div id="a-primer-on-symbolic-execution-3" class="slide section level1">
+<div id="a-primer-on-symbolic-execution-2" class="slide section level1">
 <h1>A Primer on Symbolic Execution</h1>
 <ul>
 <li>originally envisioned as static-analysis technique</li>
@@ -411,7 +440,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_2 = \langle \rangle</annotation></semantics></math></p>
 </div>
-<div id="a-primer-on-symbolic-execution-4" class="slide section level1">
+<div id="a-primer-on-symbolic-execution-3" class="slide section level1">
 <h1>A Primer on Symbolic Execution</h1>
 <ul>
 <li>originally envisioned as static-analysis technique</li>
@@ -437,7 +466,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo>∧</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z = \alpha_2 + 1 \land z &gt; 0 \land z = 0</annotation></semantics></math></p>
 </div>
 </div>
-<div id="a-primer-on-symbolic-execution-5" class="slide section level1">
+<div id="a-primer-on-symbolic-execution-4" class="slide section level1">
 <h1>A Primer on Symbolic Execution</h1>
 <ul>
 <li>originally envisioned as static-analysis technique</li>
@@ -457,7 +486,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>conjoin with path condition to check feasibility of <strong>implicit</strong> branch</li>
 </ul></li>
 </ul>
-<p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo>∧</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z = \alpha_2 + 1 \land z &gt; 0 \land z = 0</annotation></semantics></math>      <strong>UNSAT</strong></p>
+<p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>∧</mo><msub><mi>P</mi><mn>3</mn></msub><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">M_3 \land P_3 \land z = 0</annotation></semantics></math>      <strong>UNSAT</strong></p>
 <div class="incremental">
 <p>Divide-by-zero is impossible!</p>
 </div>
@@ -521,9 +550,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
   assume (isBST t)
   <span class="kw">let</span> t&#39; <span class="fu">=</span> insert x t
   assert (isBST t&#39;)</code></pre>
-<ul>
-<li><code>assume</code> is a variant of <code>assert</code> that test-harness will not consider an error</li>
-</ul>
+<p>REPLACE ASSUME WITH IF THEN ELSE - <code>assume</code> is a variant of <code>assert</code> that test-harness will not consider an error</p>
 <div class="incremental">
 <p><strong>PROBLEM</strong>: paths must pass through <code>isBST</code> before reaching <code>insert</code>!</p>
 </div>
@@ -571,7 +598,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul></li>
 </ul>
 </div>
-<div id="outline-2" class="slide section level1">
+<div id="outline-1" class="slide section level1">
 <h1>Outline</h1>
 <!-- 1. Human-generated tests -->
 <ol style="list-style-type: decimal">
@@ -901,6 +928,10 @@ bar (<span class="kw">struct</span> foo *a) {
 <li>[ ] more comparisons!!</li>
 <li>[X] un-demorgan refutations</li>
 <li>[X] clarify that we use a single set of constraints to represent all possible inputs</li>
+<li>[ ] no sub-bullets or just bold</li>
+<li>[ ] more consistent slide titles</li>
+<li>[ ] explain all code with english</li>
+<li>[ ] RECAP: re-use black-box slides with PROBLEM section</li>
 </ul>
 </div>
 <div id="questions" class="slide section level1">

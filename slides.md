@@ -28,7 +28,9 @@
 data Tree
   = Leaf
   | Node Int Tree Tree
+```
 
+```haskell
 insert :: Int -> Tree -> Tree
 delete :: Int -> Tree -> Tree
 ```
@@ -51,15 +53,14 @@ Two key questions to answer when testing:
 <!-- 3. Dynamic-Symbolic Execution -->
 <!-- 4. Type-targeted testing -->
 
-# Standard Practice
+# Standard Practice: Unit-Testing
 
 Programmer specifies inputs *and* outputs
 
 . . .
 
 ```haskell
-insert 1 Leaf
-  == Node 1 Leaf Leaf
+assertEquals (insert 1 Leaf) (Node 1 Leaf Leaf)
 
 insert 1 (Node 2 Leaf Leaf)
   == Node 1 Leaf (Node 2 Leaf Leaf)
@@ -67,17 +68,23 @@ insert 1 (Node 2 Leaf Leaf)
 
 . . .
 
-But this is tiresome...
+a lot of effort to produce a "complete" test-suite!
 
-. . .
+<!-- But this is tiresome... -->
 
-> hope that these tests generalize!
+<!-- . . . -->
 
-# Outline
+<!-- > hope that these tests generalize! -->
+
+# This Talk
+
+## Techniques for Automated Unit-Testing
 
 <!-- 1. Human-generated tests -->
+- Existing
 1. **Black-box testing**
 2. White-box testing
+- Our contribution
 3. Type-targeted testing
 
 # Black-box testing
@@ -86,17 +93,27 @@ But this is tiresome...
     - but no knowledge of internals
 - Generate many inputs and validate against spec
 
+. . .
+
+1. How to **provide** inputs?
+   - machine enumerates based on spec
+2. How to **check** outputs?
+   - programmer-supplied oracle
+
+1 is harder, start with 2
+
 <!-- - Machine enumerates many inputs -->
 <!-- - Programmer specifies oracle to check outputs -->
 
 . . .
 
+MOVE THIS LATER, SHOW iSBST
 ```haskell
 prop_insert_elem x t = x `elem` insert x t
 prop_insert_bst  x t = isBST (insert x t)
 ```
 
-# Enumerate All "Small" Inputs
+# Providing Inputs by Enumeration
 
 "Small-scope hypothesis"
 
@@ -106,19 +123,36 @@ prop_insert_bst  x t = isBST (insert x t)
 
 # SmallCheck
 
-```haskell
-data Tree
-  = Leaf
-  | Node Int Tree Tree
+<!-- ```haskell -->
+<!-- data Tree -->
+<!--   = Leaf -->
+<!--   | Node Int Tree Tree -->
 
-instance Serial Tree where
-  series = cons0 Leaf \/ cons3 Node
+<!-- instance Serial Tree where -->
+<!--   series = cons0 Leaf \/ cons3 Node -->
+<!-- ``` -->
+
+<!-- . . . -->
+
+ENUMERAUTE ALL SMALL INPUTS
+
+WHAT ARE INPUTS AND OUTPUTS
+
+```haskell
+prop_insert_bst  x t = isBST (insert x t)
 ```
 
 . . .
 
+HOW TO RUN IT
 ```haskell
 ghci> smallCheck 3 prop_insert_bst
+```
+
+. . .
+
+WHAT IS OUTPUT
+```haskell
 Failed test no. 4.
 there exist 0, Node 0 Leaf (Node 0 Leaf Leaf) such that
   condition is false
@@ -126,9 +160,9 @@ there exist 0, Node 0 Leaf (Node 0 Leaf Leaf) such that
 
 . . .
 
-`insert` doesn't accept just *any* tree
+property does not hold for **all** trees
 
-# Testing `insert`: Preconditions
+# SmallCheck: Preconditions
 
 ```haskell
 prop_insert_bst x t
@@ -164,9 +198,12 @@ Exponential blowup in input space confines search to *very small* inputs!
 
 . . .
 
-- Can abuse laziness to filter equivalent inputs (Lazy SmallCheck, Korat)
-    - but must be careful how you structure filtering predicate
-    - e.g. should binary-search tree check ordering or balancing first?
+- heuristics to prune "equivalent" inputs (Lazy SmallCheck, Korat)
+- can be brittle in practice
+    <!-- - but must be careful how you structure precondition -->
+    <!-- - e.g. should binary-search tree check ordering or balancing first? -->
+
+POP BACK TO BLACK-BOX, STRIKEOUT ALL, REPLACE WITH RANDOM
 
 # Alternative: Randomly Generate Inputs
 
@@ -252,7 +289,9 @@ prop_insert_bst x (BST xs)
 
 . . .
 
-Must define a new type/generator for *each* precondition!
+1. how to generate?
+2. are we generating uniformly?
+3. Must define a new type/generator for *each* precondition!
 
 # Recap
 
@@ -270,11 +309,10 @@ Must define a new type/generator for *each* precondition!
 
 # White-Box Testing
 
-- Given program *implementation*
-- Try to break it (i.e. make it crash)
-<!-- - Machine searches for inputs that violate it -->
-    - avoid input explosion by enumerating program paths (via **symbolic execution**)
-    - aim for 100% coverage as quickly as possible
+- Given program *implementation*, make it *crash*
+- enumerating program paths instead of inputs
+- **symbolic execution** groups equivalent inputs
+<!-- - aim for 100% coverage as quickly as possible -->
 
 <!-- # Dynamic-Symbolic Testing -->
 
@@ -284,7 +322,7 @@ Must define a new type/generator for *each* precondition!
 
 <!-- - search for inputs that make the program crash -->
 
-# A Primer on Symbolic Execution
+# WHITE-BOX TESTING VIA Symbolic Execution
 
 - originally envisioned as static-analysis technique
 - map variables to symbolic expressions instead of concrete values
@@ -294,7 +332,7 @@ Must define a new type/generator for *each* precondition!
 f x y
   = let z = y + 1
     in if z > 0
-       then x / z
+       then assert (z!=0)
        else x
 ```
 
@@ -400,7 +438,7 @@ $P_3 = \langle z > 0 \rangle$
 - Want to ensure `z!=0` to prevent divide-by-zero
     - conjoin with path condition to check feasibility of **implicit** branch
 
-Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z = 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**UNSAT**
+Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$M_3 \land P_3 \land z = 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**UNSAT**
 
 . . .
 
@@ -454,7 +492,7 @@ prop_insert_bst x t = do
   let t' = insert x t
   assert (isBST t')
 ```
-
+REPLACE ASSUME WITH IF THEN ELSE
 - `assume` is a variant of `assert` that test-harness will not consider an error
 
 . . .
@@ -925,6 +963,10 @@ $\begin{aligned}
 - [ ] more comparisons!!
 - [X] un-demorgan refutations
 - [X] clarify that we use a single set of constraints to represent all possible inputs
+- [ ] no sub-bullets or just bold
+- [ ] more consistent slide titles
+- [ ] explain all code with english
+- [ ] RECAP: re-use black-box slides with PROBLEM section
 
 
 # Questions
