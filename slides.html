@@ -135,18 +135,14 @@ Eric Seidel
 <li>How to <strong>provide</strong> inputs?</li>
 <li>How to <strong>check</strong> outputs?</li>
 </ol>
+<!-- # Outline -->
+<!-- 1. **Human-generated tests** -->
+<!-- 2. Machine-enumerated inputs -->
+<!-- 3. Dynamic-Symbolic Execution -->
+<!-- 4. Type-targeted testing -->
 </div>
-<div id="outline" class="slide section level1">
-<h1>Outline</h1>
-<ol style="list-style-type: decimal">
-<li><strong>Human-generated tests</strong></li>
-<li>Machine-enumerated inputs</li>
-<li>Dynamic-Symbolic Execution</li>
-<li>Type-targeted testing</li>
-</ol>
-</div>
-<div id="human-generated-tests" class="slide section level1">
-<h1>Human-generated tests</h1>
+<div id="standard-practice" class="slide section level1">
+<h1>Standard Practice</h1>
 <p>Programmer specifies inputs <em>and</em> outputs</p>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">insert <span class="dv">1</span> <span class="dt">Leaf</span>
@@ -164,21 +160,26 @@ insert <span class="dv">1</span> (<span class="dt">Node</span> <span class="dv">
 </blockquote>
 </div>
 </div>
-<div id="outline-1" class="slide section level1">
+<div id="outline" class="slide section level1">
 <h1>Outline</h1>
+<!-- 1. Human-generated tests -->
 <ol style="list-style-type: decimal">
-<li>Human-generated tests</li>
-<li><strong>Machine-enumerated inputs</strong></li>
-<li>Dynamic-Symbolic Execution</li>
+<li><strong>Black-box testing</strong></li>
+<li>White-box testing</li>
 <li>Type-targeted testing</li>
 </ol>
 </div>
-<div id="machine-enumerated-inputs" class="slide section level1">
-<h1>Machine-enumerated inputs</h1>
+<div id="black-box-testing" class="slide section level1">
+<h1>Black-box testing</h1>
 <ul>
-<li>Machine enumerates many inputs</li>
-<li>Programmer specifies oracle to check outputs</li>
+<li>Given a <em>specification</em> of expected behavior
+<ul>
+<li>but no knowledge of internals</li>
+</ul></li>
+<li>Generate many inputs and validate against spec</li>
 </ul>
+<!-- - Machine enumerates many inputs -->
+<!-- - Programmer specifies oracle to check outputs -->
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_elem x t <span class="fu">=</span> x <span class="ot">`elem`</span> insert x t
 prop_insert_bst  x t <span class="fu">=</span> isBST (insert x t)</code></pre>
@@ -328,20 +329,20 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul></li>
 </ul>
 </div>
-<div id="outline-2" class="slide section level1">
+<div id="outline-1" class="slide section level1">
 <h1>Outline</h1>
+<!-- 1. Human-generated tests -->
 <ol style="list-style-type: decimal">
-<li>Human-generated tests</li>
-<li>Machine-enumerated inputs</li>
-<li><strong>Dynamic-Symbolic Execution</strong></li>
+<li>Black-box testing</li>
+<li><strong>White-box testing</strong></li>
 <li>Type-targeted testing</li>
 </ol>
 </div>
-<div id="dynamic-symbolic-execution" class="slide section level1">
-<h1>Dynamic-Symbolic Execution</h1>
+<div id="white-box-testing" class="slide section level1">
+<h1>White-Box Testing</h1>
 <ul>
-<li>Hard-code correctness condition (e.g. don’t crash!)</li>
-<li>Machine searches for inputs that violate it
+<li>Given program <em>implementation</em></li>
+<li>Try to break it (i.e. make it crash) <!-- - Machine searches for inputs that violate it -->
 <ul>
 <li>avoid input explosion by enumerating program paths (via symbolic execution)</li>
 <li>aim for 100% coverage as quickly as possible</li>
@@ -570,12 +571,12 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul></li>
 </ul>
 </div>
-<div id="outline-3" class="slide section level1">
+<div id="outline-2" class="slide section level1">
 <h1>Outline</h1>
+<!-- 1. Human-generated tests -->
 <ol style="list-style-type: decimal">
-<li>Human-generated tests</li>
-<li>Machine-enumerated inputs</li>
-<li>Symbolic Execution</li>
+<li>Black-box testing</li>
+<li>White-box testing</li>
 <li><strong>Type-targeted testing</strong></li>
 </ol>
 </div>
@@ -849,7 +850,7 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 <ul class="incremental">
 <li>Target can explore larger input spaces than (Lazy) SmallCheck</li>
 <li>QuickCheck requires custom generators for functions with complex preconditions</li>
-<li>Dynamic-Symbolic testing gets stuck on precondition path-explosion</li>
+<li>Dynamic-symbolic testing gets stuck on precondition path-explosion</li>
 <li>Target specs are amenable to future formal verification</li>
 </ul>
 </div>

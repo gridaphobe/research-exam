@@ -42,14 +42,14 @@ Two key questions to answer when testing:
 1. How to **provide** inputs?
 2. How to **check** outputs?
 
-# Outline
+<!-- # Outline -->
 
-1. **Human-generated tests**
-2. Machine-enumerated inputs
-3. Dynamic-Symbolic Execution
-4. Type-targeted testing
+<!-- 1. **Human-generated tests** -->
+<!-- 2. Machine-enumerated inputs -->
+<!-- 3. Dynamic-Symbolic Execution -->
+<!-- 4. Type-targeted testing -->
 
-# Human-generated tests
+# Standard Practice
 
 Programmer specifies inputs *and* outputs
 
@@ -73,15 +73,19 @@ But this is tiresome...
 
 # Outline
 
-1. Human-generated tests
-2. **Machine-enumerated inputs**
-3. Dynamic-Symbolic Execution
-4. Type-targeted testing
+<!-- 1. Human-generated tests -->
+1. **Black-box testing**
+2. White-box testing
+3. Type-targeted testing
 
-# Machine-enumerated inputs
+# Black-box testing
 
-- Machine enumerates many inputs
-- Programmer specifies oracle to check outputs
+- Given a *specification* of expected behavior
+    - but no knowledge of internals
+- Generate many inputs and validate against spec
+
+<!-- - Machine enumerates many inputs -->
+<!-- - Programmer specifies oracle to check outputs -->
 
 . . .
 
@@ -257,15 +261,16 @@ Must define a new type/generator for *each* precondition!
 
 # Outline
 
-1. Human-generated tests
-2. Machine-enumerated inputs
-3. **Dynamic-Symbolic Execution**
-4. Type-targeted testing
+<!-- 1. Human-generated tests -->
+1. Black-box testing
+2. **White-box testing**
+3. Type-targeted testing
 
-# Dynamic-Symbolic Execution
+# White-Box Testing
 
-- Hard-code correctness condition (e.g. don't crash!)
-- Machine searches for inputs that violate it
+- Given program *implementation*
+- Try to break it (i.e. make it crash)
+<!-- - Machine searches for inputs that violate it -->
     - avoid input explosion by enumerating program paths (via symbolic execution)
     - aim for 100% coverage as quickly as possible
 
@@ -495,10 +500,10 @@ isBST t = case t of
 
 # Outline
 
-1. Human-generated tests
-2. Machine-enumerated inputs
-3. Symbolic Execution
-4. **Type-targeted testing**
+<!-- 1. Human-generated tests -->
+1. Black-box testing
+2. White-box testing
+3. **Type-targeted testing**
 
 # What We Want
 
@@ -848,7 +853,7 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 # Takeaway
 > - Target can explore larger input spaces than (Lazy) SmallCheck
 > - QuickCheck requires custom generators for functions with complex preconditions
-> - Dynamic-Symbolic testing gets stuck on precondition path-explosion
+> - Dynamic-symbolic testing gets stuck on precondition path-explosion
 > - Target specs are amenable to future formal verification
 
 # Backup Slides
