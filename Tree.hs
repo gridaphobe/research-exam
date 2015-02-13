@@ -4,27 +4,27 @@ module Tree where
 
 import GHC.Generics
 
--- import Test.SmallCheck
--- import Test.SmallCheck.Series
-import Test.QuickCheck
-import Test.QuickCheck.Gen
+import Test.SmallCheck
+import Test.SmallCheck.Series
+-- import Test.QuickCheck
+-- import Test.QuickCheck.Gen
 
 data Tree
   = Leaf
   | Node Int Tree Tree
   deriving (Show, Generic)
 
--- instance Serial IO Tree where
---   series = cons0 Leaf \/ cons3 Node
+instance Serial IO Tree where
+  series = cons0 Leaf \/ cons3 Node
 
-instance Arbitrary Tree where
-  arbitrary = oneof [ leaf, node ]
-    where
-    leaf = return Leaf
-    node = do x <- arbitrary
-              l <- arbitrary
-              r <- arbitrary
-              return (Node x l r)
+-- instance Arbitrary Tree where
+--   arbitrary = oneof [ leaf, node ]
+--     where
+--     leaf = return Leaf
+--     node = do x <- arbitrary
+--               l <- arbitrary
+--               r <- arbitrary
+--               return (Node x l r)
 
 insert :: Int -> Tree -> Tree
 insert x t = case t of
@@ -48,7 +48,8 @@ isBST t = case t of
 allT p Leaf = True
 allT p (Node x l r) = p x && allT p l && allT p r
 
-prop_insert_bst  x t = isBST t && size t > 1 ==> collect (size t) $ isBST (insert x t)
+prop_insert_bst  x t = isBST t ==> isBST (insert x t)
+-- prop_insert_bst  x t = isBST t && size t > 1 ==> collect (size t) $ isBST (insert x t)
 
 size Leaf         = 0
 size (Node _ l r) = 1 + size l + size r

@@ -156,8 +156,14 @@ Exponential blowup in input space confines search to *very small* inputs!
     - but must be careful how you structure filtering predicate
     - e.g. should binary-search tree check ordering or balancing first?
 
+# Alternative: Randomly Generate Inputs
 
-# QuickCheck: Random Generation of Inputs
+- random sampling from uniform distribution of inputs
+    - enables checking larger inputs
+    - no guarantee of minimal counterexample
+- QuickCheck (2000), JCrasher (YYYY), Randoop (YYYY)
+
+# QuickCheck
 
 - provides DSL for writing random value generators
 
@@ -172,7 +178,7 @@ instance Arbitrary Tree where
               return (Node x l r)
 ```
 
-- properties specified as before
+- properties specified as with SmallCheck
 
 # Testing `insert`: QuickCheck
 

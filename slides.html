@@ -235,8 +235,19 @@ there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class=
 </ul>
 </div>
 </div>
-<div id="quickcheck-random-generation-of-inputs" class="slide section level1">
-<h1>QuickCheck: Random Generation of Inputs</h1>
+<div id="alternative-randomly-generate-inputs" class="slide section level1">
+<h1>Alternative: Randomly Generate Inputs</h1>
+<ul>
+<li>random sampling from uniform distribution of inputs
+<ul>
+<li>enables checking larger inputs</li>
+<li>no guarantee of minimal counterexample</li>
+</ul></li>
+<li>QuickCheck (2000), JCrasher (YYYY), Randoop (YYYY)</li>
+</ul>
+</div>
+<div id="quickcheck" class="slide section level1">
+<h1>QuickCheck</h1>
 <ul>
 <li>provides DSL for writing random value generators</li>
 </ul>
@@ -249,7 +260,7 @@ there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class=
               r <span class="ot">&lt;-</span> arbitrary
               return (<span class="dt">Node</span> x l r)</code></pre>
 <ul>
-<li>properties specified as before</li>
+<li>properties specified as with SmallCheck</li>
 </ul>
 </div>
 <div id="testing-insert-quickcheck" class="slide section level1">
@@ -834,8 +845,17 @@ bar (<span class="kw">struct</span> foo *a) {
 <li>we use base types to implicitly quantify over elements of containers</li>
 <li>avoid recursive assertions, which are difficult to reason about</li>
 </ul></li>
-<li>is theory of inductive datatypes decidable?</li>
-<li>studies validating small-scope hypothesis?</li>
+<li>is theory of inductive datatypes decidable?
+<ul>
+<li>theory is decidable, but NP-complete</li>
+<li>Arrays: QF is decidable (NP-complete), w/ quals undecidable</li>
+<li>Integers: QF is NP-complete, w/ quals undecidable</li>
+<li>contrast to QF_EUF, which is polynomial</li>
+</ul></li>
+<li>studies validating small-scope hypothesis?
+<ul>
+<li>2003 (unpublished) study of java collections framework claims validity</li>
+</ul></li>
 </ul>
 </div>
 </body>
