@@ -323,6 +323,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>brute-force enumeration of inputs suffers from input explosion</li>
 <li>random generation enables testing larger inputs
 <ul>
+<li>sampling from a <strong>uniform</strong> distribution provides better case for generalizing outcome</li>
 <li>but requires custom generators for preconditions</li>
 </ul></li>
 </ul>
@@ -342,7 +343,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>Hard-code correctness condition (e.g. don’t crash!)</li>
 <li>Machine searches for inputs that violate it
 <ul>
-<li>enumerate program paths via symbolic execution</li>
+<li>avoid input explosion by enumerating program paths (via symbolic execution)</li>
 <li>aim for 100% coverage as quickly as possible</li>
 </ul></li>
 </ul>
@@ -460,11 +461,24 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>Divide-by-zero is impossible!</p>
 </div>
 </div>
+<div id="the-problem-with-symbolic-execution" class="slide section level1">
+<h1>The Problem With Symbolic Execution</h1>
+<ul>
+<li>relies on constraint solver to reason about path feasibility</li>
+<li>many programs are difficult to express in solver’s logic
+<ul>
+<li>non-linear arithmetic</li>
+<li>floating-point numbers</li>
+<li>pointers</li>
+</ul></li>
+</ul>
+</div>
 <div id="dynamic-symbolic-testing" class="slide section level1">
 <h1>Dynamic-Symbolic Testing</h1>
 <ul>
 <li>combine symbolic and concrete execution
 <ul>
+<li>fall back on <strong>concrete</strong> value when symbolic execution fails</li>
 <li>DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)</li>
 </ul></li>
 </ul>
@@ -474,8 +488,12 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <ul>
 <li>combine symbolic and concrete execution
 <ul>
+<li>fall back on <strong>concrete</strong> value when symbolic execution fails</li>
 <li>DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)</li>
 </ul></li>
+</ul>
+<div class="incremental">
+<ul>
 <li>start with random inputs, e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mi>t</mi><mo accent="false">↦</mo><mstyle mathvariant="sans-serif"><mi>𝖭</mi><mi>𝗈</mi><mi>𝖽</mi><mi>𝖾</mi></mstyle><mspace width="0.222em"></mspace><mn>2</mn><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝖫</mi><mi>𝖾</mi><mi>𝖺</mi><mi>𝖿</mi></mstyle><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝖫</mi><mi>𝖾</mi><mi>𝖺</mi><mi>𝖿</mi></mstyle><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{x \mapsto 1, t \mapsto {\mathsf{{Node}}}\ 2\ {\mathsf{{Leaf}}}\ {\mathsf{{Leaf}}}\}</annotation></semantics></math></li>
 </ul>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">insert x t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
@@ -491,6 +509,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>(many more sophisticated search techniques have been explored)</li>
 </ul></li>
 </ul>
+</div>
 </div>
 <div id="dynamic-symbolic-testing-specifications" class="slide section level1">
 <h1>Dynamic-Symbolic Testing: Specifications</h1>

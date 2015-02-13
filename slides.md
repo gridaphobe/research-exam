@@ -252,6 +252,7 @@ Must define a new type/generator for *each* precondition!
 
 - brute-force enumeration of inputs suffers from input explosion
 - random generation enables testing larger inputs
+    - sampling from a **uniform** distribution provides better case for generalizing outcome
     - but requires custom generators for preconditions
 
 # Outline
@@ -265,7 +266,7 @@ Must define a new type/generator for *each* precondition!
 
 - Hard-code correctness condition (e.g. don't crash!)
 - Machine searches for inputs that violate it
-    - enumerate program paths via symbolic execution
+    - avoid input explosion by enumerating program paths (via symbolic execution)
     - aim for 100% coverage as quickly as possible
 
 <!-- # Dynamic-Symbolic Testing -->
@@ -398,16 +399,29 @@ Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z 
 
 Divide-by-zero is impossible!
 
+# The Problem With Symbolic Execution
+
+- relies on constraint solver to reason about path feasibility
+- many programs are difficult to express in solver's logic
+    - non-linear arithmetic
+    - floating-point numbers
+    - pointers
+
 
 # Dynamic-Symbolic Testing
 
 - combine symbolic and concrete execution
+    - fall back on **concrete** value when symbolic execution fails
     - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
 
 # Dynamic-Symbolic Testing
 
 - combine symbolic and concrete execution
+    - fall back on **concrete** value when symbolic execution fails
     - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
+
+. . .
+
 - start with random inputs, e.g. $\{x \mapsto 1, t \mapsto \cstr{Node}\ 2\ \cstr{Leaf}\ \cstr{Leaf}\}$
 
 ```haskell
