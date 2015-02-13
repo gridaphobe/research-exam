@@ -273,7 +273,7 @@ Must define a new type/generator for *each* precondition!
 - Given program *implementation*
 - Try to break it (i.e. make it crash)
 <!-- - Machine searches for inputs that violate it -->
-    - avoid input explosion by enumerating program paths (via symbolic execution)
+    - avoid input explosion by enumerating program paths (via **symbolic execution**)
     - aim for 100% coverage as quickly as possible
 
 <!-- # Dynamic-Symbolic Testing -->
