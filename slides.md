@@ -2,6 +2,8 @@
 % Eric Seidel
 % eseidel@cs.ucsd.edu
 
+\newcommand{\lnode}[3]{\mathrm{Node\ {#1}\ {#2}\ {#3}}}
+\newcommand{\lleaf}{\mathrm{Leaf}}
 \newcommand{\ltup}[2]{\mathrm{({#1},{#2})}}
 \newcommand{\lcons}[2]{\mathrm{{#1}:{#2}}}
 \newcommand{\lnil}{\mathrm{[]}}
@@ -410,7 +412,7 @@ Divide-by-zero is impossible!
 - many programs are difficult to express in solver's logic
     - non-linear arithmetic
     - floating-point numbers
-    - pointers
+    - pointer arithmetic
 
 
 # Dynamic-Symbolic Testing
@@ -509,11 +511,17 @@ isBST t = case t of
 
 <!-- > Write a single generator per type, that can generate values satisfying different predicates. -->
 
-> Systematically generate **valid inputs** that are **guaranteed** to pass the precondition
+Systematically generate **valid inputs** that are **guaranteed** to pass the precondition
 
-# Type-Targeted Testing
+. . .
 
-Use *refinement types* as unified specification mechanism for input-generation and output-checking
+1. How to **provide** inputs?
+2. How to **check** outputs?
+
+<!-- # Type-Targeted Testing -->
+. . .
+
+Use **refinement types** as unified specification mechanism for input-generation and output-checking
 
 # Refinement Types
 
@@ -577,7 +585,7 @@ rescale r1 r2 s = s * (r2 `div` r1)
 
 Embed primitive constraints directly in logic
 
-$\cstr{C_0} \defeq 0 \leq \cvar{r1} \wedge 0 \leq \cvar{r2} \wedge 0 \leq s < \cvar{r1}$
+$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
 # Primitive Types: Decode
 
@@ -586,7 +594,7 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-A model $[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 1, \cvar{s} \mapsto 0]$
+A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
@@ -625,7 +633,7 @@ rescale 1 1 0 == 0
 
 Request another model by *refuting* previous with
 
-$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r1} = 1 \land \cvar{r2} = 1 \land \cvar{s} = 0)$
+$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 
 # Primitive Types: Next model
 
@@ -634,7 +642,7 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$
+$[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
 
 becomes
 
@@ -653,7 +661,7 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-$[\cvar{r1} \mapsto 1, \cvar{r2} \mapsto 0, \cvar{s} \mapsto 0]$
+$[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
 
 becomes
 
@@ -677,12 +685,12 @@ type Weight = Pos
 type Score  = Rng 100
 
 average :: [(Weight, Score)] -> Score
-average []  = 0
-average wxs = total `div` n
-  where
-    total   = sum [w * x | (w, x) <- wxs ]
-    n       = sum [w     | (w, _) <- wxs ]
 ```
+<!-- average []  = 0 -->
+<!-- average wxs = total `div` n -->
+<!--   where -->
+<!--     total   = sum [w * x | (w, x) <- wxs ] -->
+<!--     n       = sum [w     | (w, _) <- wxs ] -->
 
 How to encode structured data in SMT formula?
 
@@ -807,12 +815,12 @@ Prohibits generation of valid inputs, e.g. `[2,3]`
 ```haskell
 best :: k:Nat -> {v:[Score] | k <= len v} 
      -> {v:[Score] | k = len v}
-best k xs = take k $ reverse $ sort xs
 
 measure len :: [a] -> Nat
 len []      = 0
 len (x:xs)  = 1 + len xs
 ```
+<!-- best k xs = take k $ reverse $ sort xs -->
 
 # Structured Containers: Query
 
@@ -875,6 +883,33 @@ bar (struct foo *a) {
     - pointer arithmetic confuses alias analysis
 > - Dynamic-Symbolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
     - fill gaps in symbolic reasoning with **concrete** value
+
+# Encoding Trees of Depth 2
+
+$\begin{aligned}
+\cstr{C_{tree}} & \defeq & (\cvar{c}_{t0} \Rightarrow \cvar{t} = \lleaf) & \wedge &
+                           (\cvar{c}_{t1} \Rightarrow \cvar{t} = \lnode{\cvar{x}_t}{\cvar{l}_t}{\cvar{r}_t}) & \wedge &
+                           & & (\cvar{c}_{t0} & \oplus & \cvar{c}_{t1}) \\
+                & \wedge & (\cvar{c}_{l_t0} \Rightarrow \cvar{l}_t = \lleaf) & \wedge &
+                           (\cvar{c}_{l_t1} \Rightarrow \cvar{l}_t = \lnode{\cvar{x}_l}{\cvar{l}_l}{\cvar{r}_l}) & \wedge &
+                           (\cvar{c}_{t1} & \Rightarrow & \cvar{c}_{l_t0} & \oplus & \cvar{c}_{l_t1}) \\
+                & \wedge & (\cvar{c}_{r_t0} \Rightarrow \cvar{r}_t = \lleaf) & \wedge &
+                           (\cvar{c}_{r_t1} \Rightarrow \cvar{r}_t = \lnode{\cvar{x}_r}{\cvar{l}_r}{\cvar{r}_r}) & \wedge &
+                           (\cvar{c}_{t1} & \Rightarrow & \cvar{c}_{r_t0} & \oplus & \cvar{c}_{r_t1}) \\
+                & \wedge & (\cvar{c}_{l_l0} \Rightarrow \cvar{l}_l = \lleaf) &  &
+                            & \wedge &
+                           (\cvar{c}_{l_t1} & \Rightarrow & \cvar{c}_{l_l0}) &  & \\
+                & \wedge & (\cvar{c}_{r_l0} \Rightarrow \cvar{r}_l = \lleaf) &  &
+                            & \wedge &
+                           (\cvar{c}_{l_t1} & \Rightarrow & \cvar{c}_{r_l0}) &  & \\
+                & \wedge & (\cvar{c}_{l_r0} \Rightarrow \cvar{l}_r = \lleaf) &  &
+                            & \wedge &
+                           (\cvar{c}_{r_t1} & \Rightarrow & \cvar{c}_{l_r0}) &  & \\
+                & \wedge & (\cvar{c}_{r_r0} \Rightarrow \cvar{r}_r = \lleaf) &  &
+                            & \wedge &
+                           (\cvar{c}_{r_t1} & \Rightarrow & \cvar{c}_{r_r0}) &  & \\
+\end{aligned}$
+
 
 # NOTES
 
