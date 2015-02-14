@@ -742,8 +742,9 @@ Functions that take a natural number and increment it by one
 
 # Refinement Types: Applications
 
-- Traditionally used for program verification
-- We show that refinement types can also be viewed as exhaustive test-suite
+Traditionally used for program verification
+
+We show that refinement types can also be viewed as exhaustive test-suite
 
 . . .
 
@@ -761,8 +762,9 @@ Generates tests from refinement types via query-decode-check loop
 
 . . .
 
-- Exhaustively checks all inputs up to a given depth-bound
-- Like SmallCheck with a smarter generator
+Exhaustively checks all inputs up to a given depth-bound
+
+> Like SmallCheck with a smarter generator
 
 # Primitive Types: Query
 
@@ -813,8 +815,7 @@ maps to a concrete test case
 rescale 1 1 0 == 0
 ```
 
-> - Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
-> - After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$
+Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
 
 # Primitive Types: Check
 
@@ -834,8 +835,31 @@ maps to a concrete test case
 rescale 1 1 0 == 0
 ```
 
-- Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
-- After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
+Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+
+After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$
+
+# Primitive Types: Check
+
+```haskell
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
+rescale r1 r2 s = s * (r2 `div` r1)
+```
+
+Embed primitive constraints directly in logic
+
+$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
+
+A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
+maps to a concrete test case
+
+```haskell
+rescale 1 1 0 == 0
+```
+
+Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+
+After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
 
 . . .
 
@@ -852,9 +876,7 @@ rescale r1 r2 s = s * (r2 `div` r1)
 
 Embed primitive constraints directly in logic
 
-$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
-
-$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
+$\cstr{C_1} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 
 A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
 maps to a concrete test case
@@ -876,9 +898,7 @@ rescale r1 r2 s = s * (r2 `div` r1)
 
 Embed primitive constraints directly in logic
 
-$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
-
-$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
+$\cstr{C_1} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 
 A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
 maps to a concrete test case
@@ -954,7 +974,7 @@ $\begin{aligned}
                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
 \end{aligned}$
 
-$\cstr{C_{list}}$ encodes the **structure** of all lists with at most 3 elements.
+Encodes the **structure** of all lists with at most 3 elements.
 
 # Containers: Encoding Lists of Depth 3
 
@@ -977,7 +997,7 @@ $\begin{aligned}
                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
 \end{aligned}$
 
-$\cstr{C_{list}}$ encodes the **structure** of all lists with at most 3 elements.
+Encodes the **structure** of all lists with at most 3 elements.
 
 <!-- $\cstr{C_{data}} \defeq \cvar{c}_{i1} \Rightarrow \cvar{x}_{i+1} = \ltup{\cvar{w}_{i+1}}{\cvar{s}_{i+1}} \ \wedge\ 0 < \cvar{w}_{i+1} \ \wedge\ 0 \leq \cvar{s}_{i+1} < 100$ -->
 $\begin{aligned}
@@ -986,7 +1006,7 @@ $\begin{aligned}
                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
 \end{aligned}$
 
-$\cstr{C_{data}}$ encodes the constraints on the **elements** of $\cstr{C_{list}}$.
+Encodes the constraints on the **elements** of $\cstr{C_{list}}$.
 
 # Containers: Decode
 
@@ -1099,7 +1119,7 @@ Prohibits generation of valid inputs, e.g. `[2,3]`
 # Structured Containers
 
 ```haskell
-best :: k:Nat -> {v:[Score] | k <= len v} -> {v:[Score] | k = len v}
+best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
 `best` takes a `Nat` and a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
@@ -1119,7 +1139,7 @@ len (x:xs)  = 1 + len xs
 # Structured Containers: Query
 
 ```haskell
-best :: k:Nat -> {v:[Score] | k <= len v} -> {v:[Score] | k = len v}
+best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
 `best` takes a `Nat` and a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
