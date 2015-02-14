@@ -78,7 +78,7 @@ a lot of effort to produce a "complete" test-suite!
 # This Talk: Techniques for Automatic Unit-Testing
 
 <!-- 1. Human-generated tests -->
-- Existing
+- Existing Techniques
 1. **Black-box testing**
 2. White-box testing
 - Our contribution
@@ -396,17 +396,32 @@ prop_insert_bst x (BST xs)
 2. Are we sampling from uniform distribution?
 3. Must define a new type/generator for **each** precondition!
 
-# Recap
+# Black-box testing
+
+<!-- - Given a *specification* of expected behavior -->
+<!--     - but no knowledge of internals -->
+<!-- - Generate many inputs and validate against spec -->
+
+<!-- . . . -->
+
+1. How to **provide** inputs?
+    - machine (randomly) enumerates based on **specification**
+2. How to **check** outputs?
+    - programmer supplies **oracle**
+
+. . .
+
+**Problems**
 
 - Brute-force enumeration of inputs suffers from input explosion
-- Random generation enables testing larger inputs
-- Sampling from a **uniform** distribution provides better case for generalizing outcome
-- But requires custom generators for preconditions
+<!-- - Random generation enables testing larger inputs -->
+<!-- - Sampling from a **uniform** distribution provides better case for generalizing outcome -->
+- Random enumeration requires custom generators for preconditions
 
 # This Talk: Techniques for Automatic Unit-Testing
 
 <!-- 1. Human-generated tests -->
-- Existing
+- Existing Techniques
 1. Black-box testing
 2. **White-box testing**
 - Our contribution
@@ -594,8 +609,7 @@ insert x t = case t of
 ```haskell
 prop_insert_bst x t =
   if isBST t
-  then let t' = insert x t
-       in assert (isBST t')
+  then assert (isBST (insert x t))
   else True
 ```
 
@@ -636,16 +650,24 @@ isBST t = case t of
 
 > solver enumerates paths through **precondition** instead of function
 
-# Recap
+# White-Box Testing
 
-- Dynamic-symbolic execution avoids input explosion by enumerating paths
-- Can still suffer from **path explosion**
-- Particularly when faced with recursive preconditions
+- Given program **implementation**, make it **crash**
+- Enumerating program paths instead of inputs
+- **Symbolic execution** groups equivalent inputs
+
+. . .
+
+**Problems**
+
+- Symbolic execution suffers from inexpressive logics and path explosion
+- Dynamic-symbolic execution only addresses first issue
+- Path explosion particularly problematic when faced with recursive preconditions
 
 # This Talk: Techniques for Automatic Unit-Testing
 
 <!-- 1. Human-generated tests -->
-- Existing
+- Existing Techniques
 1. Black-box testing
 2. White-box testing
 - Our contribution
@@ -685,33 +707,35 @@ type Rng N = {v:Int | v >= 0 && v < N}
 
 Describe properties of containers and function contracts by refining component types
 
-#### Lists that contain no zeros
 ```haskell
 [{v:Int | v /= 0}]
 ```
 
-#### Functions that take a natural number and increment it by one
+Lists that contain no zeros
+
 ```haskell
 x:Nat -> {v:Nat | v = x + 1}
 ```
+Functions that take a natural number and increment it by one
 
 # Refinement Types: Applications
 
 - Traditionally used for program verification
-- We show that refinement types can also be viewed as *exhaustive test-suite*
+- We show that refinement types can also be viewed as exhaustive test-suite
 
 . . .
 
-## Enables *gradual verification*
+## Enables gradual verification
 1. Write high-level spec as refinement type
 2. Immediate gratification from comprehensive test-suite
 3. Once design has settled, add hints / inductive invariants to allow verification
 
 # Target
-- Generates tests from refinement types via *query-decode-check* loop
-  1. Translate input types into SMT **query**
-  2. **Decode** SMT model into concrete values
-  3. Run function and **check** that result inhabits output type
+Generates tests from refinement types via query-decode-check loop
+
+1. Translate input types into SMT **query**
+2. **Decode** SMT model into concrete values
+3. Run function and **check** that result inhabits output type
 
 . . .
 
@@ -775,7 +799,7 @@ rescale 1 1 0 == 0
 
 . . .
 
-Request another model by *refuting* previous with
+Request another model by **refuting** previous with
 
 $\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 

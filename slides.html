@@ -159,7 +159,7 @@ assertEquals (insert <span class="dv">1</span> (<span class="dt">Node</span> <sp
 <h1>This Talk: Techniques for Automatic Unit-Testing</h1>
 <!-- 1. Human-generated tests -->
 <ul>
-<li>Existing</li>
+<li>Existing Techniques</li>
 </ul>
 <ol style="list-style-type: decimal">
 <li><strong>Black-box testing</strong></li>
@@ -400,20 +400,35 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ol>
 </div>
 </div>
-<div id="recap" class="slide section level1">
-<h1>Recap</h1>
+<div id="black-box-testing-2" class="slide section level1">
+<h1>Black-box testing</h1>
+<!-- - Given a *specification* of expected behavior -->
+<!--     - but no knowledge of internals -->
+<!-- - Generate many inputs and validate against spec -->
+<!-- . . . -->
+<ol style="list-style-type: decimal">
+<li>How to <strong>provide</strong> inputs?
 <ul>
-<li>Brute-force enumeration of inputs suffers from input explosion</li>
-<li>Random generation enables testing larger inputs</li>
-<li>Sampling from a <strong>uniform</strong> distribution provides better case for generalizing outcome</li>
-<li>But requires custom generators for preconditions</li>
+<li>machine (randomly) enumerates based on <strong>specification</strong></li>
+</ul></li>
+<li>How to <strong>check</strong> outputs?
+<ul>
+<li>programmer supplies <strong>oracle</strong></li>
+</ul></li>
+</ol>
+<div class="incremental">
+<p><strong>Problems</strong></p>
+<ul>
+<li>Brute-force enumeration of inputs suffers from input explosion <!-- - Random generation enables testing larger inputs --> <!-- - Sampling from a **uniform** distribution provides better case for generalizing outcome --></li>
+<li>Random enumeration requires custom generators for preconditions</li>
 </ul>
+</div>
 </div>
 <div id="this-talk-techniques-for-automatic-unit-testing-1" class="slide section level1">
 <h1>This Talk: Techniques for Automatic Unit-Testing</h1>
 <!-- 1. Human-generated tests -->
 <ul>
-<li>Existing</li>
+<li>Existing Techniques</li>
 </ul>
 <ol style="list-style-type: decimal">
 <li>Black-box testing</li>
@@ -592,8 +607,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t <span class="fu">=</span>
   <span class="kw">if</span> isBST t
-  <span class="kw">then</span> <span class="kw">let</span> t&#39; <span class="fu">=</span> insert x t
-       <span class="kw">in</span> assert (isBST t&#39;)
+  <span class="kw">then</span> assert (isBST (insert x t))
   <span class="kw">else</span> <span class="dt">True</span></code></pre>
 <div class="incremental">
 <p><strong>PROBLEM</strong>: paths must pass through <code>isBST</code> before reaching <code>insert</code>!</p>
@@ -630,19 +644,27 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </blockquote>
 </div>
 </div>
-<div id="recap-1" class="slide section level1">
-<h1>Recap</h1>
+<div id="white-box-testing-1" class="slide section level1">
+<h1>White-Box Testing</h1>
 <ul>
-<li>Dynamic-symbolic execution avoids input explosion by enumerating paths</li>
-<li>Can still suffer from <strong>path explosion</strong></li>
-<li>Particularly when faced with recursive preconditions</li>
+<li>Given program <strong>implementation</strong>, make it <strong>crash</strong></li>
+<li>Enumerating program paths instead of inputs</li>
+<li><strong>Symbolic execution</strong> groups equivalent inputs</li>
 </ul>
+<div class="incremental">
+<p><strong>Problems</strong></p>
+<ul>
+<li>Symbolic execution suffers from inexpressive logics and path explosion</li>
+<li>Dynamic-symbolic execution only addresses first issue</li>
+<li>Path explosion particularly problematic when faced with recursive preconditions</li>
+</ul>
+</div>
 </div>
 <div id="this-talk-techniques-for-automatic-unit-testing-2" class="slide section level1">
 <h1>This Talk: Techniques for Automatic Unit-Testing</h1>
 <!-- 1. Human-generated tests -->
 <ul>
-<li>Existing</li>
+<li>Existing Techniques</li>
 </ul>
 <ol style="list-style-type: decimal">
 <li>Black-box testing</li>
@@ -686,19 +708,19 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <div id="compound-refinement-types" class="slide section level1">
 <h1>Compound Refinement Types</h1>
 <p>Describe properties of containers and function contracts by refining component types</p>
-<h4 id="lists-that-contain-no-zeros">Lists that contain no zeros</h4>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">[{v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">/=</span> <span class="dv">0</span>}]</code></pre>
-<h4 id="functions-that-take-a-natural-number-and-increment-it-by-one">Functions that take a natural number and increment it by one</h4>
+<p>Lists that contain no zeros</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">x<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> {v<span class="fu">:</span><span class="dt">Nat</span> <span class="fu">|</span> v <span class="fu">=</span> x <span class="fu">+</span> <span class="dv">1</span>}</code></pre>
+<p>Functions that take a natural number and increment it by one</p>
 </div>
 <div id="refinement-types-applications" class="slide section level1">
 <h1>Refinement Types: Applications</h1>
 <ul>
 <li>Traditionally used for program verification</li>
-<li>We show that refinement types can also be viewed as <em>exhaustive test-suite</em></li>
+<li>We show that refinement types can also be viewed as exhaustive test-suite</li>
 </ul>
 <div class="incremental">
-<h2 id="enables-gradual-verification">Enables <em>gradual verification</em></h2>
+<h2 id="enables-gradual-verification">Enables gradual verification</h2>
 <ol style="list-style-type: decimal">
 <li>Write high-level spec as refinement type</li>
 <li>Immediate gratification from comprehensive test-suite</li>
@@ -708,9 +730,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="target" class="slide section level1">
 <h1>Target</h1>
-<ul>
-<li>Generates tests from refinement types via <em>query-decode-check</em> loop</li>
-</ul>
+<p>Generates tests from refinement types via query-decode-check loop</p>
 <ol style="list-style-type: decimal">
 <li>Translate input types into SMT <strong>query</strong></li>
 <li><strong>Decode</strong> SMT model into concrete values</li>
@@ -759,7 +779,7 @@ rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span 
 <li>After substitution:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0 {\ \land\ }0 &lt; 1</annotation></semantics></math>      <strong>VALID</strong></li>
 </ul>
 <div class="incremental">
-<p>Request another model by <em>refuting</em> previous with</p>
+<p>Request another model by <strong>refuting</strong> previous with</p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>1</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mrow><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mn>0</mn></msub></mstyle><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mo>¬</mo><mo stretchy="false" form="prefix">(</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>1</mn></msub></mstyle><mo>=</mo><mn>1</mn><mo>∧</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>2</mn></msub></mstyle><mo>=</mo><mn>1</mn><mo>∧</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo>=</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">{\mathsf{{C_1}}} {\ \doteq\ }{\mathsf{{C_0}}} {\ \land\ }\lnot ({\mathrm{{r_1}}} = 1 \land {\mathrm{{r_2}}} = 1 \land {\mathrm{{s}}} = 0)</annotation></semantics></math></p>
 </div>
 </div>
