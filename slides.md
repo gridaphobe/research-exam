@@ -302,7 +302,7 @@ If the input tree is valid, then the output tree should be valid
 ghci> quickCheck prop_insert_bst
 ```
 
-Test property on random inputs
+Test `prop_insert_bst` on 100 random, **valid** inputs
 
 . . .
 
@@ -327,7 +327,7 @@ If the input tree is valid, then the output tree should be valid
 ghci> quickCheck prop_insert_bst
 ```
 
-Test property on random inputs
+Test `prop_insert_bst` on 100 random, valid inputs, while collecting statistics about inputs
 
 <!-- # QuickCheck: Testing `insert` -->
 
@@ -362,7 +362,7 @@ If the input tree is valid **and** contains more than one element, then the outp
 ghci> quickCheck prop_insert_bst
 ```
 
-Test property on random inputs
+Test `prop_insert_bst` on 100 random, valid inputs
 
 . . .
 

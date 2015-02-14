@@ -338,7 +338,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 <p>If the input tree is valid, then the output tree should be valid</p>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
-<p>Test property on random inputs</p>
+<p>Test <code>prop_insert_bst</code> on 100 random, <strong>valid</strong> inputs</p>
 </div>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">+++</span> <span class="dt">OK</span>, passed <span class="dv">100</span> tests<span class="fu">.</span></code></pre>
@@ -352,7 +352,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
   <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p>If the input tree is valid, then the output tree should be valid</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
-<p>Test property on random inputs</p>
+<p>Test <code>prop_insert_bst</code> on 100 random, valid inputs, while collecting statistics about inputs</p>
 <!-- # QuickCheck: Testing `insert` -->
 <!-- ```haskell -->
 <!-- prop_insert_bst x t -->
@@ -373,7 +373,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
   <span class="fu">=</span> isBST t <span class="fu">&amp;&amp;</span> size t <span class="fu">&gt;</span> <span class="dv">1</span> <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p>If the input tree is valid <strong>and</strong> contains more than one element, then the output tree should be valid</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
-<p>Test property on random inputs</p>
+<p>Test <code>prop_insert_bst</code> on 100 random, valid inputs</p>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">***</span> <span class="dt">Gave</span> up<span class="fu">!</span> <span class="dt">Passed</span> only <span class="dv">37</span> tests<span class="fu">.</span></code></pre>
 <p>Less than 1/10 generated trees were valid</p>
