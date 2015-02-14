@@ -75,19 +75,22 @@ A lot of effort to produce a "complete" test-suite!
 
 <!-- > hope that these tests generalize! -->
 
-# This Talk: Techniques for Automatic Unit-Testing
+# This Talk
 
-<!-- 1. Human-generated tests -->
-- Existing Techniques
+#### Techniques for Automatic Unit-Testing
+
+Existing Techniques
+
 1. **Black-box testing**
 2. White-box testing
-- Our contribution
+
+Our contribution
+
 3. Type-targeted testing
 
 # Black-box testing
 
-- Given a **specification** of expected behavior, but no knowledge of internals
-- Generate many inputs and validate against spec
+Given a **specification** of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
 
 . . .
 
@@ -250,11 +253,7 @@ Exponential blowup in input space confines search to *very small* inputs!
 
 # Black-box testing
 
-<!-- - Given a *specification* of expected behavior -->
-<!--     - but no knowledge of internals -->
-<!-- - Generate many inputs and validate against spec -->
-
-<!-- . . . -->
+Given a **specification** of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
 
 1. How to **provide** inputs?
     - Machine **randomly** enumerates based on **specification**
@@ -398,18 +397,22 @@ prop_insert_bst x (BST xs)
 
 # Black-box testing
 
-<!-- - Given a *specification* of expected behavior -->
-<!--     - but no knowledge of internals -->
-<!-- - Generate many inputs and validate against spec -->
-
-<!-- . . . -->
+Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
 
 1. How to **provide** inputs?
     - Machine (randomly) enumerates based on **specification**
 2. How to **check** outputs?
     - Programmer supplies **oracle**
 
-. . .
+
+# Black-box testing
+
+Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
+
+1. How to **provide** inputs?
+    - Machine (randomly) enumerates based on **specification**
+2. How to **check** outputs?
+    - Programmer supplies **oracle**
 
 ## Problems
 
@@ -418,13 +421,17 @@ prop_insert_bst x (BST xs)
 <!-- - Sampling from a **uniform** distribution provides better case for generalizing outcome -->
 - Random enumeration requires custom generators for preconditions
 
-# This Talk: Techniques for Automatic Unit-Testing
+# This Talk
 
-<!-- 1. Human-generated tests -->
-- Existing Techniques
+#### Techniques for Automatic Unit-Testing
+
+Existing Techniques
+
 1. Black-box testing
 2. **White-box testing**
-- Our contribution
+
+Our contribution
+
 3. Type-targeted testing
 
 # White-Box Testing
@@ -566,9 +573,6 @@ Assertion cannot fail!
 
 1. Relies on constraint solver to reason about path feasibility
     - Many programs are difficult to express in solver's logic
-   <!--  - non-linear arithmetic -->
-   <!--  - floating-point numbers -->
-   <!--  - pointer arithmetic -->
 2. Path-explosion on real-world programs
 
 # Dynamic-Symbolic Execution
@@ -582,9 +586,6 @@ Assertion cannot fail!
 - Combine symbolic and concrete execution
 - Fall back on **concrete** value when symbolic execution fails
 - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
-
-. . .
-
 - Start with random inputs, e.g. $\{x = 1, t = \cstr{Node}\ 2\ \cstr{Leaf}\ \cstr{Leaf}\}$
 
 ```haskell
@@ -662,13 +663,18 @@ isBST t = case t of
 - Dynamic-symbolic execution only addresses first issue
 - Path explosion particularly problematic when faced with recursive preconditions
 
-# This Talk: Techniques for Automatic Unit-Testing
+# This Talk
+
+#### Techniques for Automatic Unit-Testing
 
 <!-- 1. Human-generated tests -->
-- Existing Techniques
+Existing Techniques
+
 1. Black-box testing
 2. White-box testing
-- Our contribution
+
+Our contribution
+
 3. **Type-targeted testing**
 
 # What We Want

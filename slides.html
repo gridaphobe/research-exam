@@ -155,29 +155,22 @@ assertEquals (insert <span class="dv">1</span> (<span class="dt">Node</span> <sp
 <!-- > hope that these tests generalize! -->
 </div>
 </div>
-<div id="this-talk-techniques-for-automatic-unit-testing" class="slide section level1">
-<h1>This Talk: Techniques for Automatic Unit-Testing</h1>
-<!-- 1. Human-generated tests -->
-<ul>
-<li>Existing Techniques</li>
-</ul>
+<div id="this-talk" class="slide section level1">
+<h1>This Talk</h1>
+<h4 id="techniques-for-automatic-unit-testing">Techniques for Automatic Unit-Testing</h4>
+<p>Existing Techniques</p>
 <ol style="list-style-type: decimal">
 <li><strong>Black-box testing</strong></li>
 <li>White-box testing</li>
 </ol>
-<ul>
-<li>Our contribution</li>
-</ul>
+<p>Our contribution</p>
 <ol start="3" style="list-style-type: decimal">
 <li>Type-targeted testing</li>
 </ol>
 </div>
 <div id="black-box-testing" class="slide section level1">
 <h1>Black-box testing</h1>
-<ul>
-<li>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals</li>
-<li>Generate many inputs and validate against spec</li>
-</ul>
+<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
 <div class="incremental">
 <ol style="list-style-type: decimal">
 <li>How to <strong>provide</strong> inputs?
@@ -293,10 +286,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 </div>
 <div id="black-box-testing-1" class="slide section level1">
 <h1>Black-box testing</h1>
-<!-- - Given a *specification* of expected behavior -->
-<!--     - but no knowledge of internals -->
-<!-- - Generate many inputs and validate against spec -->
-<!-- . . . -->
+<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
 <ol style="list-style-type: decimal">
 <li>How to <strong>provide</strong> inputs?
 <ul>
@@ -402,10 +392,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="black-box-testing-2" class="slide section level1">
 <h1>Black-box testing</h1>
-<!-- - Given a *specification* of expected behavior -->
-<!--     - but no knowledge of internals -->
-<!-- - Generate many inputs and validate against spec -->
-<!-- . . . -->
+<p>Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
 <ol style="list-style-type: decimal">
 <li>How to <strong>provide</strong> inputs?
 <ul>
@@ -416,27 +403,35 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>Programmer supplies <strong>oracle</strong></li>
 </ul></li>
 </ol>
-<div class="incremental">
+</div>
+<div id="black-box-testing-3" class="slide section level1">
+<h1>Black-box testing</h1>
+<p>Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
+<ol style="list-style-type: decimal">
+<li>How to <strong>provide</strong> inputs?
+<ul>
+<li>Machine (randomly) enumerates based on <strong>specification</strong></li>
+</ul></li>
+<li>How to <strong>check</strong> outputs?
+<ul>
+<li>Programmer supplies <strong>oracle</strong></li>
+</ul></li>
+</ol>
 <h2 id="problems">Problems</h2>
 <ul>
 <li>Brute-force enumeration of inputs suffers from input explosion <!-- - Random generation enables testing larger inputs --> <!-- - Sampling from a **uniform** distribution provides better case for generalizing outcome --></li>
 <li>Random enumeration requires custom generators for preconditions</li>
 </ul>
 </div>
-</div>
-<div id="this-talk-techniques-for-automatic-unit-testing-1" class="slide section level1">
-<h1>This Talk: Techniques for Automatic Unit-Testing</h1>
-<!-- 1. Human-generated tests -->
-<ul>
-<li>Existing Techniques</li>
-</ul>
+<div id="this-talk-1" class="slide section level1">
+<h1>This Talk</h1>
+<h4 id="techniques-for-automatic-unit-testing-1">Techniques for Automatic Unit-Testing</h4>
+<p>Existing Techniques</p>
 <ol style="list-style-type: decimal">
 <li>Black-box testing</li>
 <li><strong>White-box testing</strong></li>
 </ol>
-<ul>
-<li>Our contribution</li>
-</ul>
+<p>Our contribution</p>
 <ol start="3" style="list-style-type: decimal">
 <li>Type-targeted testing</li>
 </ol>
@@ -557,7 +552,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <ol style="list-style-type: decimal">
 <li>Relies on constraint solver to reason about path feasibility
 <ul>
-<li>Many programs are difficult to express in solver’s logic <!--  - non-linear arithmetic --> <!--  - floating-point numbers --> <!--  - pointer arithmetic --></li>
+<li>Many programs are difficult to express in solver’s logic</li>
 </ul></li>
 <li>Path-explosion on real-world programs</li>
 </ol>
@@ -576,9 +571,6 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>Combine symbolic and concrete execution</li>
 <li>Fall back on <strong>concrete</strong> value when symbolic execution fails</li>
 <li>DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)</li>
-</ul>
-<div class="incremental">
-<ul>
 <li>Start with random inputs, e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>t</mi><mo>=</mo><mstyle mathvariant="sans-serif"><mi>𝖭</mi><mi>𝗈</mi><mi>𝖽</mi><mi>𝖾</mi></mstyle><mspace width="0.222em"></mspace><mn>2</mn><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝖫</mi><mi>𝖾</mi><mi>𝖺</mi><mi>𝖿</mi></mstyle><mspace width="0.222em"></mspace><mstyle mathvariant="sans-serif"><mi>𝖫</mi><mi>𝖾</mi><mi>𝖺</mi><mi>𝖿</mi></mstyle><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{x = 1, t = {\mathsf{{Node}}}\ 2\ {\mathsf{{Leaf}}}\ {\mathsf{{Leaf}}}\}</annotation></semantics></math></li>
 </ul>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">insert x t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
@@ -592,7 +584,6 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>Choose new path by negating path condition and solving for new inputs, e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mstyle mathvariant="sans-serif"><mi>𝖭</mi><mi>𝗈</mi><mi>𝖽</mi><mi>𝖾</mi></mstyle><mspace width="0.222em"></mspace><mi>y</mi><mspace width="0.222em"></mspace><mi>l</mi><mspace width="0.222em"></mspace><mi>r</mi><mo>∧</mo><mo>¬</mo><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>&lt;</mo><mi>y</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">t = {\mathsf{{Node}}}\ y\ l\ r \land \lnot (x &lt; y)</annotation></semantics></math></li>
 <li>Many more sophisticated search techniques have been explored</li>
 </ul>
-</div>
 </div>
 <div id="dynamic-symbolic-execution-specifications" class="slide section level1">
 <h1>Dynamic-Symbolic Execution: Specifications</h1>
@@ -650,19 +641,16 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul>
 </div>
 </div>
-<div id="this-talk-techniques-for-automatic-unit-testing-2" class="slide section level1">
-<h1>This Talk: Techniques for Automatic Unit-Testing</h1>
+<div id="this-talk-2" class="slide section level1">
+<h1>This Talk</h1>
+<h4 id="techniques-for-automatic-unit-testing-2">Techniques for Automatic Unit-Testing</h4>
 <!-- 1. Human-generated tests -->
-<ul>
-<li>Existing Techniques</li>
-</ul>
+<p>Existing Techniques</p>
 <ol style="list-style-type: decimal">
 <li>Black-box testing</li>
 <li>White-box testing</li>
 </ol>
-<ul>
-<li>Our contribution</li>
-</ul>
+<p>Our contribution</p>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Type-targeted testing</strong></li>
 </ol>
