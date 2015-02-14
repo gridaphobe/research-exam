@@ -602,7 +602,7 @@ insert x t = case t of
 
 # Dynamic-Symbolic Execution: Specifications
 
-- `insert` will never crash on its own, need to check specification
+`insert` will never crash on its own, need to check specification
 
 ```haskell
 prop_insert_bst x t =
@@ -615,7 +615,7 @@ prop_insert_bst x t =
 
 **Problem**: paths must pass through `isBST` before reaching `insert`!
 
-# Dynamic-Symbolic Execution: Preconditions
+<!-- # Dynamic-Symbolic Execution: Preconditions -->
 
 ```haskell
 isBST t = case t of
