@@ -67,7 +67,7 @@ assertEquals (insert 1 (Node 2 Leaf Leaf)) (Node 1 Leaf (Node 2 Leaf Leaf))
 
 . . .
 
-a lot of effort to produce a "complete" test-suite!
+A lot of effort to produce a "complete" test-suite!
 
 <!-- But this is tiresome... -->
 
@@ -92,9 +92,9 @@ a lot of effort to produce a "complete" test-suite!
 . . .
 
 1. How to **provide** inputs?
-    - machine enumerates based on **specification**
+    - Machine enumerates based on **specification**
 2. How to **check** outputs?
-    - programmer supplies **oracle**
+    - Programmer supplies **oracle**
 
 <!-- . . . -->
 
@@ -257,9 +257,9 @@ Exponential blowup in input space confines search to *very small* inputs!
 <!-- . . . -->
 
 1. How to **provide** inputs?
-    - machine **randomly** enumerates based on **specification**
+    - Machine **randomly** enumerates based on **specification**
 2. How to **check** outputs?
-    - programmer supplies **oracle**
+    - Programmer supplies **oracle**
 
 # Providing Inputs by Random Enumeration
 
@@ -405,9 +405,9 @@ prop_insert_bst x (BST xs)
 <!-- . . . -->
 
 1. How to **provide** inputs?
-    - machine (randomly) enumerates based on **specification**
+    - Machine (randomly) enumerates based on **specification**
 2. How to **check** outputs?
-    - programmer supplies **oracle**
+    - Programmer supplies **oracle**
 
 . . .
 
@@ -646,7 +646,7 @@ isBST t = case t of
 
 . . .
 
-> solver enumerates paths through **precondition** instead of function
+> Solver enumerates paths through **precondition** instead of function
 
 # White-Box Testing
 
@@ -691,9 +691,9 @@ Use **refinement types** as unified specification mechanism for input-generation
 
 ## `{v:t | p}`
 
-> the set of values `v` of type `t` satisfying a predicate `p`
+> The set of values `v` of type `t` satisfying a predicate `p`
 
-# Simple Refinement Types
+### Simple Refinement Types
 
 ```haskell
 type Nat   = {v:Int | v >= 0}
@@ -701,7 +701,7 @@ type Pos   = {v:Int | v >  0}
 type Rng N = {v:Int | v >= 0 && v < N}
 ```
 
-# Compound Refinement Types
+### Compound Refinement Types
 
 Describe properties of containers and function contracts by refining component types
 
@@ -760,6 +760,10 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
+Embed primitive constraints directly in logic
+
+$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
+
 A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
@@ -774,6 +778,13 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
+Embed primitive constraints directly in logic
+
+$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
+
+A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
+maps to a concrete test case
+
 ```haskell
 rescale 1 1 0 == 0
 ```
@@ -787,6 +798,13 @@ rescale 1 1 0 == 0
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
+
+Embed primitive constraints directly in logic
+
+$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
+
+A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
+maps to a concrete test case
 
 ```haskell
 rescale 1 1 0 == 0
@@ -808,9 +826,14 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-$[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
+Embed primitive constraints directly in logic
 
-becomes
+$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
+
+$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
+
+A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
+maps to a concrete test case
 
 ```haskell
 rescale 1 0 0 == 0
@@ -827,9 +850,14 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-$[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
+Embed primitive constraints directly in logic
 
-becomes
+$\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
+
+$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
+
+A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
+maps to a concrete test case
 
 ```haskell
 rescale 1 0 0 == 0
@@ -849,59 +877,67 @@ After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$&nb
 ```haskell
 type Weight = Pos
 type Score  = Rng 100
-
 average :: [(Weight, Score)] -> Score
 ```
-<!-- average []  = 0 -->
-<!-- average wxs = total `div` n -->
-<!--   where -->
-<!--     total   = sum [w * x | (w, x) <- wxs ] -->
-<!--     n       = sum [w     | (w, _) <- wxs ] -->
 
 How to encode structured data in SMT formula?
 
 # Containers: Query
 
-Generate a *single* set of constraints describing *all possible* inputs.
+Generate a **single** set of constraints describing **all possible** inputs.
 
 <img height=400px src="skeleton.png">
 
 Let solver choose path through skeleton.
 
-# Choice Variables
+# Containers: Choice Variables
 
-Propositional variables that *guard* other constraints
+```haskell
+type Weight = Pos
+type Score  = Rng 100
+average :: [(Weight, Score)] -> Score
+```
+
+How to encode structured data in SMT formula?
 
 $(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1})$
+
+Choice variables $\cvar{c}$ **guard** other constraints
 
 . . .
 
 Force solver to choose one with $\cvar{c}_{00} \oplus \cvar{c}_{01}$
 
 
-# Encoding Lists of Depth 3
+# Containers: Encoding Lists of Depth 3
 
 $\begin{aligned}
-\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
-                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
-                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
-                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
-                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
-                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
-                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
+\cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge
+                           (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\
+                & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\
 \end{aligned}$
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge & -->
+<!--                            & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge & -->
+<!--                            (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge & -->
+<!--                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge & -->
+<!--                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & & -->
+<!-- \end{aligned}$ -->
 
 . . .
 
-$\begin{aligned}
-\cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\
-                & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
-                & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
-\end{aligned}$
+$\cstr{C_{data}} \defeq \cvar{c}_{i1} \Rightarrow \cvar{x}_{i+1} = \ltup{\cvar{w}_{i+1}}{\cvar{s}_{i+1}} \ \wedge\ 0 < \cvar{w}_{i+1} \ \wedge\ 0 \leq \cvar{s}_{i+1} < 100$
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\ -->
+<!--                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\ -->
+<!--                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100) -->
+<!-- \end{aligned}$ -->
 
 # Containers: Decode
 
@@ -914,16 +950,24 @@ $[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \
 
 follow the choice variables!
 
-- $\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil$ 
-- $\cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
+$\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil\ \land\ \cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
 
-Result:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`[(1,2)]`
+Realized value:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`[(1,2)]`
 
-# Refuting Containers
+# Containers: Refuting
 
-Key optimization:
+To build a list from a model
 
-- Refute only constraints that contribute to *realized* value
+$[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
+1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
+
+follow the choice variables!
+
+$\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil\ \land\ \cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
+
+Realized value:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`[(1,2)]`
+
+**Only** refute constraints that contribute to **realized** value
 
 . . .
 
@@ -945,9 +989,20 @@ data Sorted a = []
                     }
 ```
 
-Recursive refinement relates the `head` with *each* element of the `tail`.
+Recursive refinement relates the `head` with **each** element of the `tail`.
 
 # Ordered Containers: Query
+
+```haskell
+insert :: a -> Sorted a -> Sorted a
+```
+
+```haskell
+data Sorted a = []
+              | (:) { h :: a, t :: Sorted {v:a | h < v} }
+```
+
+Recursive refinement relates the `head` with **each** element of the `tail`.
 
 Instantiate recursive refinement each time we unfold `(:)`
 
@@ -961,7 +1016,23 @@ $\begin{aligned}
                    \wedge   (\cvar{c}_{21} \Rightarrow \cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3)
 \end{aligned}$
 
-# Aside: The Importance of Guards
+# Ordered Containers: Guards
+
+```haskell
+insert :: a -> Sorted a -> Sorted a
+```
+
+```haskell
+data Sorted a = []
+              | (:) { h :: a, t :: Sorted {v:a | h < v} }
+```
+
+Recursive refinement relates the `head` with **each** element of the `tail`.
+
+Instantiate recursive refinement each time we unfold `(:)`
+
+- Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2`
+- Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3`
 
 $\begin{aligned}
 \cstr{C_{ord'}}   & \defeq & (\cvar{x}_1 < \cvar{x}_2)
@@ -970,7 +1041,7 @@ $\begin{aligned}
 
 . . .
 
-Forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ *regardless* of which are in the realized model!
+Forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ **regardless** of which are in the realized model!
 
 . . .
 
@@ -979,16 +1050,38 @@ Prohibits generation of valid inputs, e.g. `[2,3]`
 # Structured Containers
 
 ```haskell
-best :: k:Nat -> {v:[Score] | k <= len v} 
-     -> {v:[Score] | k = len v}
+best :: k:Nat -> {v:[Score] | k <= len v} -> {v:[Score] | k = len v}
+```
 
+`best` takes a `Nat` and a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
+
+. . .
+
+```haskell
 measure len :: [a] -> Nat
 len []      = 0
 len (x:xs)  = 1 + len xs
 ```
+
+`len` is a **logical function** that describes the length of a list.
+
 <!-- best k xs = take k $ reverse $ sort xs -->
 
 # Structured Containers: Query
+
+```haskell
+best :: k:Nat -> {v:[Score] | k <= len v} -> {v:[Score] | k = len v}
+```
+
+`best` takes a `Nat` and a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
+
+```haskell
+measure len :: [a] -> Nat
+len []      = 0
+len (x:xs)  = 1 + len xs
+```
+
+`len` is a **logical function** that describes the length of a list.
 
 Instantiate measure definition each time we unfold `[]` or `(:)`
 
@@ -1011,11 +1104,8 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 - Compared Target against QuickCheck, SmallCheck, Lazy SmallCheck
 - Real libraries: `Data.Map`, `RBTree`, `XMonad.StackSet`
 - No custom generators
-
 - `Data.Map`: checked balancing and ordering invariants
-
 - `RBTree`: checked red-black and ordering invariants
-
 - `XMonad.StackSet`: checked uniqueness of windows
 
 # Evaluation
@@ -1042,9 +1132,9 @@ bar (struct foo *a) {
 }
 ```
 
-- Symbolic executors cannot report with *certainty* that `abort` is reachable
+- Symbolic executors cannot report with **certainty** that `abort` is reachable
 <!-- - pointer arithmetic confuses alias analysis -->
-- Dynamic-Symbolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
+- Dynamic-Symbolic testing need only solve `a->c == 0` to produce **concrete** input that will blow up!
 <!-- - fill gaps in symbolic reasoning with **concrete** value -->
 
 <!-- # Encoding Trees of Depth 2 -->
