@@ -1128,7 +1128,7 @@ Prohibits generation of valid inputs, e.g. `[2,3]`
 best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
-`best` takes a `Nat` and a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
+`best` takes a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
 
 . . .
 
@@ -1148,7 +1148,7 @@ len (x:xs)  = 1 + len xs
 best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
-`best` takes a `Nat` and a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
+`best` takes a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
 
 ```haskell
 measure len :: [a] -> Nat
@@ -1185,6 +1185,8 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 
 # Evaluation
 <img height=500px src="benchmarks.png">
+
+Target can consistently check larger inputs than (Lazy) SmallCheck.
 
 # Takeaway
 > - Target can explore larger input spaces than (Lazy) SmallCheck

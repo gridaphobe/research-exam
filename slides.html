@@ -934,7 +934,7 @@ rescale r1 r2 s <span class="fu">=</span> s <span class="fu">*</span> (r2 <span 
 <div id="structured-containers" class="slide section level1">
 <h1>Structured Containers</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">best ::</span> k<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> {xs<span class="fu">:</span>[<span class="dt">Score</span>] <span class="fu">|</span> k <span class="fu">&lt;=</span> len xs} <span class="ot">-&gt;</span> {v<span class="fu">:</span>[<span class="dt">Score</span>] <span class="fu">|</span> k <span class="fu">=</span> len v}</code></pre>
-<p><code>best</code> takes a <code>Nat</code> and a list of <strong>at least</strong> <code>k</code> scores, and returns a list with <strong>exactly</strong> <code>k</code> scores.</p>
+<p><code>best</code> takes a list of <strong>at least</strong> <code>k</code> scores, and returns a list with <strong>exactly</strong> <code>k</code> scores.</p>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell">measure<span class="ot"> len ::</span> [a] <span class="ot">-&gt;</span> <span class="dt">Nat</span>
 len []      <span class="fu">=</span> <span class="dv">0</span>
@@ -946,7 +946,7 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 <div id="structured-containers-query" class="slide section level1">
 <h1>Structured Containers: Query</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">best ::</span> k<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> {xs<span class="fu">:</span>[<span class="dt">Score</span>] <span class="fu">|</span> k <span class="fu">&lt;=</span> len xs} <span class="ot">-&gt;</span> {v<span class="fu">:</span>[<span class="dt">Score</span>] <span class="fu">|</span> k <span class="fu">=</span> len v}</code></pre>
-<p><code>best</code> takes a <code>Nat</code> and a list of <strong>at least</strong> <code>k</code> scores, and returns a list with <strong>exactly</strong> <code>k</code> scores.</p>
+<p><code>best</code> takes a list of <strong>at least</strong> <code>k</code> scores, and returns a list with <strong>exactly</strong> <code>k</code> scores.</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">measure<span class="ot"> len ::</span> [a] <span class="ot">-&gt;</span> <span class="dt">Nat</span>
 len []      <span class="fu">=</span> <span class="dv">0</span>
 len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1</span> <span class="fu">+</span> len xs</code></pre>
@@ -971,6 +971,7 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 <div id="evaluation-1" class="slide section level1">
 <h1>Evaluation</h1>
 <p><img height=500px src="benchmarks.png"></p>
+<p>Target can consistently check larger inputs than (Lazy) SmallCheck.</p>
 </div>
 <div id="takeaway" class="slide section level1">
 <h1>Takeaway</h1>
