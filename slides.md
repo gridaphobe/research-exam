@@ -62,8 +62,7 @@ Programmer specifies inputs *and* outputs
 ```haskell
 assertEquals (insert 1 Leaf) (Node 1 Leaf Leaf)
 
-insert 1 (Node 2 Leaf Leaf)
-  == Node 1 Leaf (Node 2 Leaf Leaf)
+assertEquals (insert 1 (Node 2 Leaf Leaf)) (Node 1 Leaf (Node 2 Leaf Leaf))
 ```
 
 . . .
@@ -76,9 +75,7 @@ a lot of effort to produce a "complete" test-suite!
 
 <!-- > hope that these tests generalize! -->
 
-# This Talk
-
-## Techniques for Automated Unit-Testing
+# This Talk: Techniques for Automatic Unit-Testing
 
 <!-- 1. Human-generated tests -->
 - Existing
@@ -89,35 +86,46 @@ a lot of effort to produce a "complete" test-suite!
 
 # Black-box testing
 
-- Given a *specification* of expected behavior
-    - but no knowledge of internals
+- Given a **specification** of expected behavior, but no knowledge of internals
 - Generate many inputs and validate against spec
 
 . . .
 
 1. How to **provide** inputs?
-   - machine enumerates based on spec
+    - machine enumerates based on **specification**
 2. How to **check** outputs?
-   - programmer-supplied oracle
+    - programmer supplies **oracle**
 
-1 is harder, start with 2
+<!-- . . . -->
+
+<!-- 1 is harder, start with 2 -->
 
 <!-- - Machine enumerates many inputs -->
 <!-- - Programmer specifies oracle to check outputs -->
 
-. . .
+<!-- . . . -->
 
-MOVE THIS LATER, SHOW iSBST
+<!-- MOVE THIS LATER, SHOW iSBST -->
+<!-- ```haskell -->
+<!-- prop_insert_elem x t = x `elem` insert x t -->
+<!-- prop_insert_bst  x t = isBST (insert x t) -->
+<!-- ``` -->
+
+# Checking Outputs with Oracles
+
 ```haskell
-prop_insert_elem x t = x `elem` insert x t
-prop_insert_bst  x t = isBST (insert x t)
+isBST t = case t of
+  Leaf -> True
+  Node y l r -> abs (height l - height r) <= 1
+             && all (< y) l && all (> y) r
+             && isBST l     && isBST r
 ```
+
+`isBST` **checks** whether a tree satisfies the balancing and ordering invariants
 
 # Providing Inputs by Enumeration
 
-"Small-scope hypothesis"
-
-> if a counterexample exists, a "small" counterexample probably exists too
+**Small-scope hypothesis**: if a counterexample exists, a "small" counterexample probably exists too
 
 - TestEra (2001), Korat (2004), SmallCheck (2008)
 
@@ -134,59 +142,94 @@ prop_insert_bst  x t = isBST (insert x t)
 
 <!-- . . . -->
 
-ENUMERAUTE ALL SMALL INPUTS
+<!-- ENUMERAUTE ALL SMALL INPUTS -->
 
-WHAT ARE INPUTS AND OUTPUTS
+Given a **property**, SmallCheck enumerates all inputs (up to some depth) and runs the property
+
+<!-- WHAT ARE INPUTS AND OUTPUTS -->
+. . .
 
 ```haskell
-prop_insert_bst  x t = isBST (insert x t)
+prop_insert_bst :: Int -> Tree -> Bool
+prop_insert_bst x t = isBST (insert x t)
 ```
+
+`prop_insert_bst` states that `insert` should return a **valid** tree
 
 . . .
 
-HOW TO RUN IT
+<!-- HOW TO RUN IT -->
 ```haskell
 ghci> smallCheck 3 prop_insert_bst
 ```
 
+Test all integers in range `[-3,3]` and all trees of depth 3
+
 . . .
 
-WHAT IS OUTPUT
+<!-- WHAT IS OUTPUT -->
 ```haskell
 Failed test no. 4.
 there exist 0, Node 0 Leaf (Node 0 Leaf Leaf) such that
   condition is false
 ```
 
+4th test produces **invalid** tree as output
+
 . . .
 
-property does not hold for **all** trees
+Property does not hold for **all** trees!
 
-# SmallCheck: Preconditions
+# SmallCheck: Adding Preconditions
+
+Given a **property**, SmallCheck enumerates all inputs (up to some depth) and runs the property
 
 ```haskell
-prop_insert_bst x t
-  = isBST t ==> isBST (insert x t)
+prop_insert_bst :: Int -> Tree -> Bool
+prop_insert_bst x t = isBST t ==> isBST (insert x t)
 ```
 
+**If** the input tree is valid, **then** the output tree should be valid
+
+<!-- HOW TO RUN IT -->
+```haskell
+ghci> smallCheck 3 prop_insert_bst
+```
+
+Test all integers in range `[-3,3]` and all trees of depth 3
+
 . . .
 
 ```haskell
-ghci> smallCheck 3 prop_insert_bst
 Completed 567 tests without failure.
 But 434 did not meet ==> condition.
 ```
 
-# How small?
+Only 133 input trees were valid!
 
+# SmallCheck: How small?
+
+Given a **property**, SmallCheck enumerates all inputs (up to some depth) and runs the property
+
+```haskell
+prop_insert_bst :: Int -> Tree -> Bool
+prop_insert_bst x t = isBST t ==> isBST (insert x t)
+```
+
+**If** the input tree is valid, **then** the output tree should be valid
+
+<!-- HOW TO RUN IT -->
 ```haskell
 ghci> smallCheck 4 prop_insert_bst
 ```
 
-# How small?
+Test all integers in range `[-4,4]` and all trees of depth 4
+
+<!-- # SmallCheck: How small? -->
+
+. . .
 
 ```haskell
-ghci> smallCheck 4 prop_insert_bst
 ..........................................................
 ```
 
@@ -198,84 +241,142 @@ Exponential blowup in input space confines search to *very small* inputs!
 
 . . .
 
-- heuristics to prune "equivalent" inputs (Lazy SmallCheck, Korat)
-- can be brittle in practice
+- Heuristics to prune "equivalent" inputs (Lazy SmallCheck, Korat)
+- Can be brittle in practice
     <!-- - but must be careful how you structure precondition -->
     <!-- - e.g. should binary-search tree check ordering or balancing first? -->
 
-POP BACK TO BLACK-BOX, STRIKEOUT ALL, REPLACE WITH RANDOM
+<!-- POP BACK TO BLACK-BOX, STRIKEOUT ALL, REPLACE WITH RANDOM -->
 
-# Alternative: Randomly Generate Inputs
+# Black-box testing
 
-- random sampling from all possible inputs
-    - enables checking larger inputs
-    - no guarantee of minimal counterexample
+<!-- - Given a *specification* of expected behavior -->
+<!--     - but no knowledge of internals -->
+<!-- - Generate many inputs and validate against spec -->
+
+<!-- . . . -->
+
+1. How to **provide** inputs?
+    - machine **randomly** enumerates based on **specification**
+2. How to **check** outputs?
+    - programmer supplies **oracle**
+
+# Providing Inputs by Random Enumeration
+
+- Sample random inputs from **entire domain**
+- Enables checking larger inputs
+- No guarantee of minimal counterexample
 - QuickCheck (2000), JCrasher (2004), Randoop (2007)
+
+<!-- # QuickCheck -->
+
+<!-- - provides DSL for writing random value generators -->
+
+<!-- <\!-- ```haskell -\-> -->
+<!-- <\!-- instance Arbitrary Tree where -\-> -->
+<!-- <\!--   arbitrary = oneof [ leaf, node ] -\-> -->
+<!-- <\!--     where -\-> -->
+<!-- <\!--     leaf = return Leaf -\-> -->
+<!-- <\!--     node = do x <- arbitrary -\-> -->
+<!-- <\!--               l <- arbitrary -\-> -->
+<!-- <\!--               r <- arbitrary -\-> -->
+<!-- <\!--               return (Node x l r) -\-> -->
+<!-- <\!-- ``` -\-> -->
+
+<!-- - properties specified as with SmallCheck -->
 
 # QuickCheck
 
-- provides DSL for writing random value generators
-
-```haskell
-instance Arbitrary Tree where
-  arbitrary = oneof [ leaf, node ]
-    where
-    leaf = return Leaf
-    node = do x <- arbitrary
-              l <- arbitrary
-              r <- arbitrary
-              return (Node x l r)
-```
-
-- properties specified as with SmallCheck
-
-# Testing `insert`: QuickCheck
-
-```haskell
-ghci> quickCheck prop_insert_bst
-+++ OK, passed 100 tests.
-```
-
-. . .
-
-How is this possible? SmallCheck showed that input domain is *very* sparse!
-
-# Testing `insert`: QuickCheck
+Given a property, QuickCheck enumerates **random** inputs and runs the property
 
 ```haskell
 prop_insert_bst x t
-  = isBST t ==> collect (size t) (isBST (insert x t))
+  = isBST t ==> isBST (insert x t)
 ```
+
+If the input tree is valid, then the output tree should be valid
 
 . . .
 
 ```haskell
 ghci> quickCheck prop_insert_bst
+```
+
+Test property on random inputs
+
+. . .
+
+```haskell
++++ OK, passed 100 tests.
+```
+
+How is this possible? SmallCheck showed that input domain is *very* sparse!
+
+# QuickCheck: With Statistics
+
+Given a property, QuickCheck enumerates **random** inputs and runs the property
+
+```haskell
+prop_insert_bst x t
+  = isBST t ==> isBST (insert x t)
+```
+
+If the input tree is valid, then the output tree should be valid
+
+```haskell
+ghci> quickCheck prop_insert_bst
+```
+
+Test property on random inputs
+
+<!-- # QuickCheck: Testing `insert` -->
+
+<!-- ```haskell -->
+<!-- prop_insert_bst x t -->
+<!--   = isBST t ==> collect (size t) (isBST (insert x t)) -->
+<!-- ``` -->
+
+. . .
+
+```haskell
 +++ OK, passed 100 tests:
 73% 0
 21% 1
  6% 2
 ```
 
-# Testing `insert`: QuickCheck
+73% of the trees were **empty** and 21% had only one element
+
+# QuickCheck: With Non-Trivial Inputs
+
+Given a property, QuickCheck enumerates **random** inputs and runs the property
 
 ```haskell
-prop_insert_bst_nontrivial x t
-  = isBST t && size t > 1 ==> collect (size t) (isBST (insert x t))
+prop_insert_bst x t
+  = isBST t && size t > 1 ==> isBST (insert x t)
 ```
+
+If the input tree is valid **and** contains more than one element, then the output tree should be valid
+
+```haskell
+ghci> quickCheck prop_insert_bst
+```
+
+Test property on random inputs
 
 . . .
 
 ```haskell
-ghci> quickCheck prop_insert_bst
-*** Gave up! Passed only 37 tests (100% 2).
+*** Gave up! Passed only 37 tests.
 ```
+
+Less than 1/10 generated trees were valid
 
 . . .
 
 Input domain is too sparse, QuickCheck cannot generate trees with more than 2 elements!
 
-# Testing `insert`: Custom Generators
+# QuickCheck: Custom Generators
 
 ```haskell
 newtype BST = Tree
@@ -289,29 +390,33 @@ prop_insert_bst x (BST xs)
 
 . . .
 
-1. how to generate?
-2. are we generating uniformly?
-3. Must define a new type/generator for *each* precondition!
+**Problem**
+
+1. How to generate random **valid** trees?
+2. Are we sampling from uniform distribution?
+3. Must define a new type/generator for **each** precondition!
 
 # Recap
 
-- brute-force enumeration of inputs suffers from input explosion
-- random generation enables testing larger inputs
-    - sampling from a **uniform** distribution provides better case for generalizing outcome
-    - but requires custom generators for preconditions
+- Brute-force enumeration of inputs suffers from input explosion
+- Random generation enables testing larger inputs
+- Sampling from a **uniform** distribution provides better case for generalizing outcome
+- But requires custom generators for preconditions
 
-# Outline
+# This Talk: Techniques for Automatic Unit-Testing
 
 <!-- 1. Human-generated tests -->
+- Existing
 1. Black-box testing
 2. **White-box testing**
+- Our contribution
 3. Type-targeted testing
 
 # White-Box Testing
 
-- Given program *implementation*, make it *crash*
-- enumerating program paths instead of inputs
-- **symbolic execution** groups equivalent inputs
+- Given program **implementation**, make it **crash**
+- Enumerating program paths instead of inputs
+- **Symbolic execution** groups equivalent inputs
 <!-- - aim for 100% coverage as quickly as possible -->
 
 <!-- # Dynamic-Symbolic Testing -->
@@ -322,86 +427,86 @@ prop_insert_bst x (BST xs)
 
 <!-- - search for inputs that make the program crash -->
 
-# WHITE-BOX TESTING VIA Symbolic Execution
+# White-Box Testing Via Symbolic Execution
 
-- originally envisioned as static-analysis technique
-- map variables to symbolic expressions instead of concrete values
-- construct *path condition* describing constraints to trigger current path
+- Originally envisioned as static-analysis technique
+- Program memory $M$ maps variables to symbolic expressions
+- Construct **path condition** $P$ describing constraints to trigger current path
 
 ```haskell
 f x y
   = let z = y + 1
     in if z > 0
-       then assert (z!=0)
-       else x
+       then assert (z==0)
+       else True
 ```
 
-# A Primer on Symbolic Execution
+# White-Box Testing Via Symbolic Execution
 
-- originally envisioned as static-analysis technique
-- map variables to symbolic expressions instead of concrete values
-- construct *path condition* describing constraints to trigger current path
+- Originally envisioned as static-analysis technique
+- Program memory $M$ maps variables to symbolic expressions
+- Construct **path condition** $P$ describing constraints to trigger current path
 
 ```haskell
-f x y                -- 0
+f x y                     -- 0
   = let z = y + 1
     in if z > 0
-       then x / z
-       else x
+       then assert (z==0)
+       else True
 ```
 
 $M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}$
 
 $P_0 = \langle \rangle$
 
-# A Primer on Symbolic Execution
+# White-Box Testing Via Symbolic Execution
 
-- originally envisioned as static-analysis technique
-- map variables to symbolic expressions instead of concrete values
-- construct *path condition* describing constraints to trigger current path
+- Originally envisioned as static-analysis technique
+- Program memory $M$ maps variables to symbolic expressions
+- Construct **path condition** $P$ describing constraints to trigger current path
 
 ```haskell
-f x y                -- 0
-  = let z = y + 1    -- 1
+f x y                     -- 0
+  = let z = y + 1         -- 1
     in if z > 0
-       then x / z
-       else x
+       then assert (z==0)
+       else True
 ```
 
 $M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
 
 $P_1 = \langle \rangle$
 
-# A Primer on Symbolic Execution
+# White-Box Testing Via Symbolic Execution
 
-- originally envisioned as static-analysis technique
-- map variables to symbolic expressions instead of concrete values
-- construct *path condition* describing constraints to trigger current path
+- Originally envisioned as static-analysis technique
+- Program memory $M$ maps variables to symbolic expressions
+- Construct **path condition** $P$ describing constraints to trigger current path
 
 ```haskell
-f x y                -- 0
-  = let z = y + 1    -- 1
-    in if z > 0      -- 2
-       then x / z
-       else x
+f x y                     -- 0
+  = let z = y + 1         -- 1
+    in if z > 0           -- 2
+       then assert (z==0)
+       else True
 ```
 
 $M_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
 
 $P_2 = \langle \rangle$
 
-# A Primer on Symbolic Execution
+# White-Box Testing Via Symbolic Execution
 
-- originally envisioned as static-analysis technique
-- map variables to symbolic expressions instead of concrete values
-- construct *path condition* describing constraints to trigger current path
+- Originally envisioned as static-analysis technique
+- Program memory $M$ maps variables to symbolic expressions
+- Construct **path condition** $P$ describing constraints to trigger current path
 
 ```haskell
-f x y                -- 0
-  = let z = y + 1    -- 1
-    in if z > 0      -- 2
-       then x / z    -- 3
-       else x
+f x y                     -- 0
+  = let z = y + 1         -- 1
+    in if z > 0           -- 2
+       then assert (z==0) -- 3
+       else True
 ```
 
 $M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
@@ -411,89 +516,88 @@ $P_3 = \langle z > 0 \rangle$
 . . .
 
 - Want to ensure `z!=0` to prevent divide-by-zero
-    - conjoin with path condition to check feasibility of **implicit** branch
+- Conjoin with path condition to check feasibility of **implicit** branch
 
 . . .
 
 Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z = 0$
 
-# A Primer on Symbolic Execution
+# White-Box Testing Via Symbolic Execution
 
-- originally envisioned as static-analysis technique
-- map variables to symbolic expressions instead of concrete values
-- construct *path condition* describing constraints to trigger current path
+- Originally envisioned as static-analysis technique
+- Program memory $M$ maps variables to symbolic expressions
+- Construct **path condition** $P$ describing constraints to trigger current path
 
 ```haskell
-f x y                -- 0
-  = let z = y + 1    -- 1
-    in if z > 0      -- 2
-       then x / z    -- 3
-       else x
+f x y                     -- 0
+  = let z = y + 1         -- 1
+    in if z > 0           -- 2
+       then assert (z==0) -- 3
+       else True
 ```
 
 $M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
 
 $P_3 = \langle z > 0 \rangle$
 
-- Want to ensure `z!=0` to prevent divide-by-zero
-    - conjoin with path condition to check feasibility of **implicit** branch
+- Want to ensure `z==0` to prevent divide-by-zero
+- conjoin with path condition to check feasibility of **implicit** branch
 
 Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$M_3 \land P_3 \land z = 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**UNSAT**
 
 . . .
 
-Divide-by-zero is impossible!
+Assertion cannot fail!
 
 # The Problem With Symbolic Execution
 
-- relies on constraint solver to reason about path feasibility
-- many programs are difficult to express in solver's logic
-    - non-linear arithmetic
-    - floating-point numbers
-    - pointer arithmetic
-
-
-# Dynamic-Symbolic Testing
-
-- combine symbolic and concrete execution
-    - fall back on **concrete** value when symbolic execution fails
-    - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
+1. Relies on constraint solver to reason about path feasibility
+    - many programs are difficult to express in solver's logic
+   <!--  - non-linear arithmetic -->
+   <!--  - floating-point numbers -->
+   <!--  - pointer arithmetic -->
+2. Path-explosion on real-world programs
 
 # Dynamic-Symbolic Testing
 
-- combine symbolic and concrete execution
-    - fall back on **concrete** value when symbolic execution fails
-    - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
+- Combine symbolic and concrete execution
+- Fall back on **concrete** value when symbolic execution fails
+- DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
+
+# Dynamic-Symbolic Testing
+
+- Combine symbolic and concrete execution
+- Fall back on **concrete** value when symbolic execution fails
+- DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
 
 . . .
 
-- start with random inputs, e.g. $\{x \mapsto 1, t \mapsto \cstr{Node}\ 2\ \cstr{Leaf}\ \cstr{Leaf}\}$
+- Start with random inputs, e.g. $\{x = 1, t = \cstr{Node}\ 2\ \cstr{Leaf}\ \cstr{Leaf}\}$
 
 ```haskell
 insert x t = case t of
-  Leaf -> singleton x
-  Node y l r -> case compare x y of
-    LT -> bal y (insert x l) r
-    GT -> bal y l (insert x r)
-    EQ -> t
+  Leaf       -> singleton x
+  Node y l r
+    | x <  y -> bal y (insert x l) r
+    | x >  y -> bal y l (insert x r)
+    | x == y -> t
 ```
 
-> - at `LT` branch, we have $P_{LT} = \langle t = \cstr{Node}\ y\ l\ r, x < y \rangle$
-> - choose new path by negating path condition and solving for new inputs, e.g. $t = \cstr{Node}\ y\ l\ r \land \lnot (x < y)$
-    - (many more sophisticated search techniques have been explored)
+> - At `LT` branch, we have $P_{LT} = \langle t = \cstr{Node}\ y\ l\ r, x < y \rangle$
+> - Choose new path by negating path condition and solving for new inputs, e.g. $t = \cstr{Node}\ y\ l\ r \land \lnot (x < y)$
+> - Many more sophisticated search techniques have been explored
 
 # Dynamic-Symbolic Testing: Specifications
 
 - `insert` will never crash on its own, need to check specification
 
 ```haskell
-prop_insert_bst x t = do
-  assume (isBST t)
-  let t' = insert x t
-  assert (isBST t')
+prop_insert_bst x t =
+  if isBST t
+  then let t' = insert x t
+       in assert (isBST t')
+  else True
 ```
-REPLACE ASSUME WITH IF THEN ELSE
-- `assume` is a variant of `assert` that test-harness will not consider an error
 
 . . .
 
@@ -526,23 +630,25 @@ isBST t = case t of
 . . .
 
 - 5 possible paths for *invalid* node, only 1 for *valid* node
-    - compounds as execution unfolds recursive datatype
+- Compounds as execution unfolds recursive datatype
 
 . . .
 
-> executable specification causes solver to enumerate paths through **precondition** instead of function
+> solver enumerates paths through **precondition** instead of function
 
 # Recap
 
-- dynamic-symbolic execution avoids input explosion by enumerating paths
-    - can still suffer from **path** explosion
-    - particularly when faced with recursive preconditions
+- Dynamic-symbolic execution avoids input explosion by enumerating paths
+- Can still suffer from **path explosion**
+- Particularly when faced with recursive preconditions
 
-# Outline
+# This Talk: Techniques for Automatic Unit-Testing
 
 <!-- 1. Human-generated tests -->
+- Existing
 1. Black-box testing
 2. White-box testing
+- Our contribution
 3. **Type-targeted testing**
 
 # What We Want
@@ -597,20 +703,20 @@ x:Nat -> {v:Nat | v = x + 1}
 . . .
 
 ## Enables *gradual verification*
-1. write high-level spec as refinement type
-2. immediate gratification from comprehensive test-suite
-3. once design has settled, add hints / inductive invariants to allow verification
+1. Write high-level spec as refinement type
+2. Immediate gratification from comprehensive test-suite
+3. Once design has settled, add hints / inductive invariants to allow verification
 
 # Target
-- generates tests from refinement types via *query-decode-check* loop
-  1. translate input types into SMT **query**
-  2. **decode** SMT model into concrete values
-  3. run function and **check** that result inhabits output type
+- Generates tests from refinement types via *query-decode-check* loop
+  1. Translate input types into SMT **query**
+  2. **Decode** SMT model into concrete values
+  3. Run function and **check** that result inhabits output type
 
 . . .
 
-- exhaustively checks all inputs up to a given depth-bound
-    - like SmallCheck with a smarter generator
+- Exhaustively checks all inputs up to a given depth-bound
+- Like SmallCheck with a smarter generator
 
 # Primitive Types: Query
 
@@ -793,9 +899,9 @@ Result:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`[(1,2)]`
 
 # Refuting Containers
 
-Key optimization
+Key optimization:
 
-- refute only constraints that contribute to *realized* value
+- Refute only constraints that contribute to *realized* value
 
 . . .
 
@@ -842,7 +948,7 @@ $\begin{aligned}
 
 . . .
 
-forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ *regardless* of which are in the realized model!
+Forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ *regardless* of which are in the realized model!
 
 . . .
 
@@ -880,18 +986,15 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 
 # Evaluation
 
-- compared Target against QuickCheck, SmallCheck, Lazy SmallCheck
-    - `Data.Map`, `RBTree`, `XMonad.StackSet`
-    - no custom generators
+- Compared Target against QuickCheck, SmallCheck, Lazy SmallCheck
+- Real libraries: `Data.Map`, `RBTree`, `XMonad.StackSet`
+- No custom generators
 
-- `Data.Map`
-    - checked balancing and ordering invariants
+- `Data.Map`: checked balancing and ordering invariants
 
-- `RBTree`
-    - checked red-black and ordering invariants
+- `RBTree`: checked red-black and ordering invariants
 
-- `XMonad.StackSet`
-    - checked uniqueness of windows
+- `XMonad.StackSet`: checked uniqueness of windows
 
 # Evaluation
 <img height=500px src="benchmarks.png">
@@ -917,36 +1020,36 @@ bar (struct foo *a) {
 }
 ```
 
-> - Symbolic executors cannot report with *certainty* that `abort` is reachable
-    - pointer arithmetic confuses alias analysis
-> - Dynamic-Symbolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
-    - fill gaps in symbolic reasoning with **concrete** value
+- Symbolic executors cannot report with *certainty* that `abort` is reachable
+<!-- - pointer arithmetic confuses alias analysis -->
+- Dynamic-Symbolic testing need only solve `a->c == 0` to produce *concrete* input that will blow up!
+<!-- - fill gaps in symbolic reasoning with **concrete** value -->
 
-# Encoding Trees of Depth 2
+<!-- # Encoding Trees of Depth 2 -->
 
-$\begin{aligned}
-\cstr{C_{tree}} & \defeq & (\cvar{c}_{t0} \Rightarrow \cvar{t} = \lleaf) & \wedge &
-                           (\cvar{c}_{t1} \Rightarrow \cvar{t} = \lnode{\cvar{x}_t}{\cvar{l}_t}{\cvar{r}_t}) & \wedge &
-                           & & (\cvar{c}_{t0} & \oplus & \cvar{c}_{t1}) \\
-                & \wedge & (\cvar{c}_{l_t0} \Rightarrow \cvar{l}_t = \lleaf) & \wedge &
-                           (\cvar{c}_{l_t1} \Rightarrow \cvar{l}_t = \lnode{\cvar{x}_l}{\cvar{l}_l}{\cvar{r}_l}) & \wedge &
-                           (\cvar{c}_{t1} & \Rightarrow & \cvar{c}_{l_t0} & \oplus & \cvar{c}_{l_t1}) \\
-                & \wedge & (\cvar{c}_{r_t0} \Rightarrow \cvar{r}_t = \lleaf) & \wedge &
-                           (\cvar{c}_{r_t1} \Rightarrow \cvar{r}_t = \lnode{\cvar{x}_r}{\cvar{l}_r}{\cvar{r}_r}) & \wedge &
-                           (\cvar{c}_{t1} & \Rightarrow & \cvar{c}_{r_t0} & \oplus & \cvar{c}_{r_t1}) \\
-                & \wedge & (\cvar{c}_{l_l0} \Rightarrow \cvar{l}_l = \lleaf) &  &
-                            & \wedge &
-                           (\cvar{c}_{l_t1} & \Rightarrow & \cvar{c}_{l_l0}) &  & \\
-                & \wedge & (\cvar{c}_{r_l0} \Rightarrow \cvar{r}_l = \lleaf) &  &
-                            & \wedge &
-                           (\cvar{c}_{l_t1} & \Rightarrow & \cvar{c}_{r_l0}) &  & \\
-                & \wedge & (\cvar{c}_{l_r0} \Rightarrow \cvar{l}_r = \lleaf) &  &
-                            & \wedge &
-                           (\cvar{c}_{r_t1} & \Rightarrow & \cvar{c}_{l_r0}) &  & \\
-                & \wedge & (\cvar{c}_{r_r0} \Rightarrow \cvar{r}_r = \lleaf) &  &
-                            & \wedge &
-                           (\cvar{c}_{r_t1} & \Rightarrow & \cvar{c}_{r_r0}) &  & \\
-\end{aligned}$
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{tree}} & \defeq & (\cvar{c}_{t0} \Rightarrow \cvar{t} = \lleaf) & \wedge & -->
+<!--                            (\cvar{c}_{t1} \Rightarrow \cvar{t} = \lnode{\cvar{x}_t}{\cvar{l}_t}{\cvar{r}_t}) & \wedge & -->
+<!--                            & & (\cvar{c}_{t0} & \oplus & \cvar{c}_{t1}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{l_t0} \Rightarrow \cvar{l}_t = \lleaf) & \wedge & -->
+<!--                            (\cvar{c}_{l_t1} \Rightarrow \cvar{l}_t = \lnode{\cvar{x}_l}{\cvar{l}_l}{\cvar{r}_l}) & \wedge & -->
+<!--                            (\cvar{c}_{t1} & \Rightarrow & \cvar{c}_{l_t0} & \oplus & \cvar{c}_{l_t1}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{r_t0} \Rightarrow \cvar{r}_t = \lleaf) & \wedge & -->
+<!--                            (\cvar{c}_{r_t1} \Rightarrow \cvar{r}_t = \lnode{\cvar{x}_r}{\cvar{l}_r}{\cvar{r}_r}) & \wedge & -->
+<!--                            (\cvar{c}_{t1} & \Rightarrow & \cvar{c}_{r_t0} & \oplus & \cvar{c}_{r_t1}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{l_l0} \Rightarrow \cvar{l}_l = \lleaf) &  & -->
+<!--                             & \wedge & -->
+<!--                            (\cvar{c}_{l_t1} & \Rightarrow & \cvar{c}_{l_l0}) &  & \\ -->
+<!--                 & \wedge & (\cvar{c}_{r_l0} \Rightarrow \cvar{r}_l = \lleaf) &  & -->
+<!--                             & \wedge & -->
+<!--                            (\cvar{c}_{l_t1} & \Rightarrow & \cvar{c}_{r_l0}) &  & \\ -->
+<!--                 & \wedge & (\cvar{c}_{l_r0} \Rightarrow \cvar{l}_r = \lleaf) &  & -->
+<!--                             & \wedge & -->
+<!--                            (\cvar{c}_{r_t1} & \Rightarrow & \cvar{c}_{l_r0}) &  & \\ -->
+<!--                 & \wedge & (\cvar{c}_{r_r0} \Rightarrow \cvar{r}_r = \lleaf) &  & -->
+<!--                             & \wedge & -->
+<!--                            (\cvar{c}_{r_t1} & \Rightarrow & \cvar{c}_{r_r0}) &  & \\ -->
+<!-- \end{aligned}$ -->
 
 
 # NOTES
@@ -963,20 +1066,20 @@ $\begin{aligned}
 - [ ] more comparisons!!
 - [X] un-demorgan refutations
 - [X] clarify that we use a single set of constraints to represent all possible inputs
-- [ ] no sub-bullets or just bold
+- [X] no sub-bullets or just bold
 - [ ] more consistent slide titles
 - [ ] explain all code with english
 - [ ] RECAP: re-use black-box slides with PROBLEM section
 
 
-# Questions
-- do we need base types in refinements (i.e. why not assertions?)
-    - we use base types to implicitly quantify over elements of containers
-    - avoid recursive assertions, which are difficult to reason about
-- is theory of inductive datatypes decidable?
-    - theory is decidable, but NP-complete
-    - Arrays: QF is decidable (NP-complete), w/ quals undecidable
-    - Integers: QF is NP-complete, w/ quals undecidable
-    - contrast to QF_EUF, which is polynomial
-- studies validating small-scope hypothesis?
-    - 2003 (unpublished) study of java collections framework claims validity
+<!-- # Questions -->
+<!-- - do we need base types in refinements (i.e. why not assertions?) -->
+<!--     - we use base types to implicitly quantify over elements of containers -->
+<!--     - avoid recursive assertions, which are difficult to reason about -->
+<!-- - is theory of inductive datatypes decidable? -->
+<!--     - theory is decidable, but NP-complete -->
+<!--     - Arrays: QF is decidable (NP-complete), w/ quals undecidable -->
+<!--     - Integers: QF is NP-complete, w/ quals undecidable -->
+<!--     - contrast to QF_EUF, which is polynomial -->
+<!-- - studies validating small-scope hypothesis? -->
+<!--     - 2003 (unpublished) study of java collections framework claims validity -->
