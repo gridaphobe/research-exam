@@ -1239,24 +1239,24 @@ bar (struct foo *a) {
 <!-- \end{aligned}$ -->
 
 
-# NOTES
+<!-- # NOTES -->
 
-- [ ] perhaps start with demo
-- [ ] intro is abrupt
-- [X] monomorphic tree
-- [ ] don't show class isntances
-- [X] fix smallcheck/quickcheck examples
-- [ ] preface symbolic execution better (why?)
-- [X] keep rescale def around
-- [X] kill questions slide
-- [ ] maybe start with `average`
-- [ ] more comparisons!!
-- [X] un-demorgan refutations
-- [X] clarify that we use a single set of constraints to represent all possible inputs
-- [X] no sub-bullets or just bold
-- [ ] more consistent slide titles
-- [ ] explain all code with english
-- [ ] RECAP: re-use black-box slides with PROBLEM section
+<!-- - [ ] perhaps start with demo -->
+<!-- - [ ] intro is abrupt -->
+<!-- - [X] monomorphic tree -->
+<!-- - [ ] don't show class isntances -->
+<!-- - [X] fix smallcheck/quickcheck examples -->
+<!-- - [ ] preface symbolic execution better (why?) -->
+<!-- - [X] keep rescale def around -->
+<!-- - [X] kill questions slide -->
+<!-- - [ ] maybe start with `average` -->
+<!-- - [ ] more comparisons!! -->
+<!-- - [X] un-demorgan refutations -->
+<!-- - [X] clarify that we use a single set of constraints to represent all possible inputs -->
+<!-- - [X] no sub-bullets or just bold -->
+<!-- - [ ] more consistent slide titles -->
+<!-- - [ ] explain all code with english -->
+<!-- - [ ] RECAP: re-use black-box slides with PROBLEM section -->
 
 
 <!-- # Questions -->
