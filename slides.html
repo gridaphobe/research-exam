@@ -417,7 +417,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul></li>
 </ol>
 <div class="incremental">
-<p><strong>Problems</strong></p>
+<h2 id="problems">Problems</h2>
 <ul>
 <li>Brute-force enumeration of inputs suffers from input explosion <!-- - Random generation enables testing larger inputs --> <!-- - Sampling from a **uniform** distribution provides better case for generalizing outcome --></li>
 <li>Random enumeration requires custom generators for preconditions</li>
@@ -463,7 +463,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y
   <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>
     <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
-       <span class="kw">then</span> assert (z<span class="fu">==</span><span class="dv">0</span>)
+       <span class="kw">then</span> assert (z<span class="fu">!=</span><span class="dv">0</span>)
        <span class="kw">else</span> <span class="dt">True</span></code></pre>
 </div>
 <div id="white-box-testing-via-symbolic-execution-1" class="slide section level1">
@@ -476,7 +476,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                     <span class="co">-- 0</span>
   <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>
     <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
-       <span class="kw">then</span> assert (z<span class="fu">==</span><span class="dv">0</span>)
+       <span class="kw">then</span> assert (z<span class="fu">!=</span><span class="dv">0</span>)
        <span class="kw">else</span> <span class="dt">True</span></code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_0 = \{x \mapsto \alpha_1, y \mapsto \alpha_2\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>0</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_0 = \langle \rangle</annotation></semantics></math></p>
@@ -491,7 +491,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                     <span class="co">-- 0</span>
   <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>         <span class="co">-- 1</span>
     <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>
-       <span class="kw">then</span> assert (z<span class="fu">==</span><span class="dv">0</span>)
+       <span class="kw">then</span> assert (z<span class="fu">!=</span><span class="dv">0</span>)
        <span class="kw">else</span> <span class="dt">True</span></code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_1 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>1</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_1 = \langle \rangle</annotation></semantics></math></p>
@@ -506,7 +506,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                     <span class="co">-- 0</span>
   <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>         <span class="co">-- 1</span>
     <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>           <span class="co">-- 2</span>
-       <span class="kw">then</span> assert (z<span class="fu">==</span><span class="dv">0</span>)
+       <span class="kw">then</span> assert (z<span class="fu">!=</span><span class="dv">0</span>)
        <span class="kw">else</span> <span class="dt">True</span></code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_2 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>2</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_2 = \langle \rangle</annotation></semantics></math></p>
@@ -521,18 +521,15 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                     <span class="co">-- 0</span>
   <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>         <span class="co">-- 1</span>
     <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>           <span class="co">-- 2</span>
-       <span class="kw">then</span> assert (z<span class="fu">==</span><span class="dv">0</span>) <span class="co">-- 3</span>
+       <span class="kw">then</span> assert (z<span class="fu">!=</span><span class="dv">0</span>) <span class="co">-- 3</span>
        <span class="kw">else</span> <span class="dt">True</span></code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_3 = \langle z &gt; 0 \rangle</annotation></semantics></math></p>
 <div class="incremental">
-<ul>
-<li>Want to ensure <code>z!=0</code> to prevent divide-by-zero</li>
-<li>Conjoin with path condition to check feasibility of <strong>implicit</strong> branch</li>
-</ul>
+<p><strong>Implicit</strong> branch condition <code>z==0</code> would trigger assertion failure</p>
 </div>
 <div class="incremental">
-<p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo>∧</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">z = \alpha_2 + 1 \land z &gt; 0 \land z = 0</annotation></semantics></math></p>
+<p>Check satisfiability of:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>∧</mo><msub><mi>P</mi><mn>3</mn></msub><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">M_3 \land P_3 \land z = 0</annotation></semantics></math></p>
 </div>
 </div>
 <div id="white-box-testing-via-symbolic-execution-5" class="slide section level1">
@@ -545,15 +542,12 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <pre class="sourceCode haskell"><code class="sourceCode haskell">f x y                     <span class="co">-- 0</span>
   <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> y <span class="fu">+</span> <span class="dv">1</span>         <span class="co">-- 1</span>
     <span class="kw">in</span> <span class="kw">if</span> z <span class="fu">&gt;</span> <span class="dv">0</span>           <span class="co">-- 2</span>
-       <span class="kw">then</span> assert (z<span class="fu">==</span><span class="dv">0</span>) <span class="co">-- 3</span>
+       <span class="kw">then</span> assert (z<span class="fu">!=</span><span class="dv">0</span>) <span class="co">-- 3</span>
        <span class="kw">else</span> <span class="dt">True</span></code></pre>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>1</mn></msub><mo>,</mo><mi>y</mi><mo accent="false">↦</mo><msub><mi>α</mi><mn>2</mn></msub><mo>,</mo><mi>z</mi><mo accent="false">↦</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>α</mi><mn>2</mn></msub><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}</annotation></semantics></math></p>
 <p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mn>3</mn></msub><mo>=</mo><mo stretchy="false" form="prefix">⟨</mo><mi>z</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false" form="postfix">⟩</mo></mrow><annotation encoding="application/x-tex">P_3 = \langle z &gt; 0 \rangle</annotation></semantics></math></p>
-<ul>
-<li>Want to ensure <code>z==0</code> to prevent divide-by-zero</li>
-<li>conjoin with path condition to check feasibility of <strong>implicit</strong> branch</li>
-</ul>
-<p>Check:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>∧</mo><msub><mi>P</mi><mn>3</mn></msub><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">M_3 \land P_3 \land z = 0</annotation></semantics></math>      <strong>UNSAT</strong></p>
+<p><strong>Implicit</strong> branch condition <code>z==0</code> would trigger assertion failure</p>
+<p>Check satisfiability of:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mn>3</mn></msub><mo>∧</mo><msub><mi>P</mi><mn>3</mn></msub><mo>∧</mo><mi>z</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">M_3 \land P_3 \land z = 0</annotation></semantics></math>      <strong>UNSAT</strong></p>
 <div class="incremental">
 <p>Assertion cannot fail!</p>
 </div>
@@ -563,21 +557,21 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <ol style="list-style-type: decimal">
 <li>Relies on constraint solver to reason about path feasibility
 <ul>
-<li>many programs are difficult to express in solver’s logic <!--  - non-linear arithmetic --> <!--  - floating-point numbers --> <!--  - pointer arithmetic --></li>
+<li>Many programs are difficult to express in solver’s logic <!--  - non-linear arithmetic --> <!--  - floating-point numbers --> <!--  - pointer arithmetic --></li>
 </ul></li>
 <li>Path-explosion on real-world programs</li>
 </ol>
 </div>
-<div id="dynamic-symbolic-testing" class="slide section level1">
-<h1>Dynamic-Symbolic Testing</h1>
+<div id="dynamic-symbolic-execution" class="slide section level1">
+<h1>Dynamic-Symbolic Execution</h1>
 <ul>
 <li>Combine symbolic and concrete execution</li>
 <li>Fall back on <strong>concrete</strong> value when symbolic execution fails</li>
 <li>DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)</li>
 </ul>
 </div>
-<div id="dynamic-symbolic-testing-1" class="slide section level1">
-<h1>Dynamic-Symbolic Testing</h1>
+<div id="dynamic-symbolic-execution-1" class="slide section level1">
+<h1>Dynamic-Symbolic Execution</h1>
 <ul>
 <li>Combine symbolic and concrete execution</li>
 <li>Fall back on <strong>concrete</strong> value when symbolic execution fails</li>
@@ -600,8 +594,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </ul>
 </div>
 </div>
-<div id="dynamic-symbolic-testing-specifications" class="slide section level1">
-<h1>Dynamic-Symbolic Testing: Specifications</h1>
+<div id="dynamic-symbolic-execution-specifications" class="slide section level1">
+<h1>Dynamic-Symbolic Execution: Specifications</h1>
 <ul>
 <li><code>insert</code> will never crash on its own, need to check specification</li>
 </ul>
@@ -610,19 +604,19 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
   <span class="kw">then</span> assert (isBST (insert x t))
   <span class="kw">else</span> <span class="dt">True</span></code></pre>
 <div class="incremental">
-<p><strong>PROBLEM</strong>: paths must pass through <code>isBST</code> before reaching <code>insert</code>!</p>
+<p><strong>Problem</strong>: paths must pass through <code>isBST</code> before reaching <code>insert</code>!</p>
 </div>
 </div>
-<div id="dynamic-symbolic-testing-preconditions" class="slide section level1">
-<h1>Dynamic-Symbolic Testing: Preconditions</h1>
+<div id="dynamic-symbolic-execution-preconditions" class="slide section level1">
+<h1>Dynamic-Symbolic Execution: Preconditions</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">isBST t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
   <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
   <span class="dt">Node</span> y l r <span class="ot">-&gt;</span> abs (height l <span class="fu">-</span> height r) <span class="fu">&lt;=</span> <span class="dv">1</span>
              <span class="fu">&amp;&amp;</span> all (<span class="fu">&lt;</span> y) l <span class="fu">&amp;&amp;</span> all (<span class="fu">&gt;</span> y) r
              <span class="fu">&amp;&amp;</span> isBST l     <span class="fu">&amp;&amp;</span> isBST r</code></pre>
 </div>
-<div id="dynamic-symbolic-testing-preconditions-1" class="slide section level1">
-<h1>Dynamic-Symbolic Testing: Preconditions</h1>
+<div id="dynamic-symbolic-execution-preconditions-1" class="slide section level1">
+<h1>Dynamic-Symbolic Execution: Preconditions</h1>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">isBST t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span>
   <span class="dt">Leaf</span> <span class="ot">-&gt;</span> <span class="dt">True</span>
   <span class="dt">Node</span> y l r <span class="ot">-&gt;</span>
@@ -652,7 +646,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li><strong>Symbolic execution</strong> groups equivalent inputs</li>
 </ul>
 <div class="incremental">
-<p><strong>Problems</strong></p>
+<h2 id="problems-1">Problems</h2>
 <ul>
 <li>Symbolic execution suffers from inexpressive logics and path explosion</li>
 <li>Dynamic-symbolic execution only addresses first issue</li>
@@ -936,7 +930,7 @@ len (x<span class="fu">:</span>xs)  <span class="fu">=</span> <span class="dv">1
 <ul class="incremental">
 <li>Target can explore larger input spaces than (Lazy) SmallCheck</li>
 <li>QuickCheck requires custom generators for functions with complex preconditions</li>
-<li>Dynamic-symbolic testing gets stuck on precondition path-explosion</li>
+<li>Dynamic-symbolic execution gets stuck on precondition path-explosion</li>
 <li>Target specs are amenable to future formal verification</li>
 </ul>
 </div>

@@ -411,7 +411,7 @@ prop_insert_bst x (BST xs)
 
 . . .
 
-**Problems**
+## Problems
 
 - Brute-force enumeration of inputs suffers from input explosion
 <!-- - Random generation enables testing larger inputs -->
@@ -452,7 +452,7 @@ prop_insert_bst x (BST xs)
 f x y
   = let z = y + 1
     in if z > 0
-       then assert (z==0)
+       then assert (z!=0)
        else True
 ```
 
@@ -466,7 +466,7 @@ f x y
 f x y                     -- 0
   = let z = y + 1
     in if z > 0
-       then assert (z==0)
+       then assert (z!=0)
        else True
 ```
 
@@ -484,7 +484,7 @@ $P_0 = \langle \rangle$
 f x y                     -- 0
   = let z = y + 1         -- 1
     in if z > 0
-       then assert (z==0)
+       then assert (z!=0)
        else True
 ```
 
@@ -502,7 +502,7 @@ $P_1 = \langle \rangle$
 f x y                     -- 0
   = let z = y + 1         -- 1
     in if z > 0           -- 2
-       then assert (z==0)
+       then assert (z!=0)
        else True
 ```
 
@@ -520,7 +520,7 @@ $P_2 = \langle \rangle$
 f x y                     -- 0
   = let z = y + 1         -- 1
     in if z > 0           -- 2
-       then assert (z==0) -- 3
+       then assert (z!=0) -- 3
        else True
 ```
 
@@ -530,12 +530,11 @@ $P_3 = \langle z > 0 \rangle$
 
 . . .
 
-- Want to ensure `z!=0` to prevent divide-by-zero
-- Conjoin with path condition to check feasibility of **implicit** branch
+**Implicit** branch condition `z==0` would trigger assertion failure
 
 . . .
 
-Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z = 0$
+Check satisfiability of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$M_3 \land P_3 \land z = 0$
 
 # White-Box Testing Via Symbolic Execution
 
@@ -547,7 +546,7 @@ Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$z = \alpha_2 + 1 \land z > 0 \land z 
 f x y                     -- 0
   = let z = y + 1         -- 1
     in if z > 0           -- 2
-       then assert (z==0) -- 3
+       then assert (z!=0) -- 3
        else True
 ```
 
@@ -555,10 +554,9 @@ $M_3 = \{x \mapsto \alpha_1, y \mapsto \alpha_2, z \mapsto (\alpha_2 + 1)\}$
 
 $P_3 = \langle z > 0 \rangle$
 
-- Want to ensure `z==0` to prevent divide-by-zero
-- conjoin with path condition to check feasibility of **implicit** branch
+**Implicit** branch condition `z==0` would trigger assertion failure
 
-Check:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$M_3 \land P_3 \land z = 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**UNSAT**
+Check satisfiability of:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$M_3 \land P_3 \land z = 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**UNSAT**
 
 . . .
 
@@ -567,19 +565,19 @@ Assertion cannot fail!
 # The Problem With Symbolic Execution
 
 1. Relies on constraint solver to reason about path feasibility
-    - many programs are difficult to express in solver's logic
+    - Many programs are difficult to express in solver's logic
    <!--  - non-linear arithmetic -->
    <!--  - floating-point numbers -->
    <!--  - pointer arithmetic -->
 2. Path-explosion on real-world programs
 
-# Dynamic-Symbolic Testing
+# Dynamic-Symbolic Execution
 
 - Combine symbolic and concrete execution
 - Fall back on **concrete** value when symbolic execution fails
 - DART (2005), CUTE (2006), EXE (2006), PEX (2008), KLEE (2008)
 
-# Dynamic-Symbolic Testing
+# Dynamic-Symbolic Execution
 
 - Combine symbolic and concrete execution
 - Fall back on **concrete** value when symbolic execution fails
@@ -602,7 +600,7 @@ insert x t = case t of
 > - Choose new path by negating path condition and solving for new inputs, e.g. $t = \cstr{Node}\ y\ l\ r \land \lnot (x < y)$
 > - Many more sophisticated search techniques have been explored
 
-# Dynamic-Symbolic Testing: Specifications
+# Dynamic-Symbolic Execution: Specifications
 
 - `insert` will never crash on its own, need to check specification
 
@@ -615,9 +613,9 @@ prop_insert_bst x t =
 
 . . .
 
-**PROBLEM**: paths must pass through `isBST` before reaching `insert`!
+**Problem**: paths must pass through `isBST` before reaching `insert`!
 
-# Dynamic-Symbolic Testing: Preconditions
+# Dynamic-Symbolic Execution: Preconditions
 
 ```haskell
 isBST t = case t of
@@ -627,7 +625,7 @@ isBST t = case t of
              && isBST l     && isBST r
 ```
 
-# Dynamic-Symbolic Testing: Preconditions
+# Dynamic-Symbolic Execution: Preconditions
 
 ```haskell
 isBST t = case t of
@@ -658,7 +656,7 @@ isBST t = case t of
 
 . . .
 
-**Problems**
+## Problems
 
 - Symbolic execution suffers from inexpressive logics and path explosion
 - Dynamic-symbolic execution only addresses first issue
@@ -1026,7 +1024,7 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
 # Takeaway
 > - Target can explore larger input spaces than (Lazy) SmallCheck
 > - QuickCheck requires custom generators for functions with complex preconditions
-> - Dynamic-symbolic testing gets stuck on precondition path-explosion
+> - Dynamic-symbolic execution gets stuck on precondition path-explosion
 > - Target specs are amenable to future formal verification
 
 # Backup Slides
