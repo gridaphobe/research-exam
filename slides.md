@@ -693,6 +693,12 @@ Use **refinement types** as unified specification mechanism for input-generation
 
 > The set of values `v` of type `t` satisfying a predicate `p`
 
+# Refinement Types
+
+## `{v:t | p}`
+
+> The set of values `v` of type `t` satisfying a predicate `p`
+
 ### Simple Refinement Types
 
 ```haskell
@@ -701,15 +707,33 @@ type Pos   = {v:Int | v >  0}
 type Rng N = {v:Int | v >= 0 && v < N}
 ```
 
+The natural numbers, positive integers, and integers in the range $[0,N)$
+
+# Refinement Types
+
+## `{v:t | p}`
+
+> The set of values `v` of type `t` satisfying a predicate `p`
+
+### Simple Refinement Types
+
+```haskell
+type Nat   = {v:Int | v >= 0}
+type Pos   = {v:Int | v >  0}
+type Rng N = {v:Int | v >= 0 && v < N}
+```
+
+The natural numbers, positive integers, and integers in the range $[0,N)$
+
 ### Compound Refinement Types
 
 Describe properties of containers and function contracts by refining component types
 
-```haskell
-[{v:Int | v /= 0}]
-```
+<!-- ```haskell -->
+<!-- [{v:Int | v /= 0}] -->
+<!-- ``` -->
 
-Lists that contain no zeros
+<!-- Lists that contain no zeros -->
 
 ```haskell
 x:Nat -> {v:Nat | v = x + 1}
@@ -911,33 +935,58 @@ Force solver to choose one with $\cvar{c}_{00} \oplus \cvar{c}_{01}$
 
 # Containers: Encoding Lists of Depth 3
 
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -->
+<!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -->
+<!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -->
+<!-- \end{aligned}$ -->
 $\begin{aligned}
-\cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge
-                           (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\
-                & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
+                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
 \end{aligned}$
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge & -->
-<!--                            & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge & -->
-<!--                            (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge & -->
-<!--                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge & -->
-<!--                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & & -->
-<!-- \end{aligned}$ -->
 
-. . .
+$\cstr{C_{list}}$ encodes the **structure** of all lists with at most 3 elements.
 
-$\cstr{C_{data}} \defeq \cvar{c}_{i1} \Rightarrow \cvar{x}_{i+1} = \ltup{\cvar{w}_{i+1}}{\cvar{s}_{i+1}} \ \wedge\ 0 < \cvar{w}_{i+1} \ \wedge\ 0 \leq \cvar{s}_{i+1} < 100$
+# Containers: Encoding Lists of Depth 3
+
 <!-- $\begin{aligned} -->
-<!-- \cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\ -->
-<!--                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\ -->
-<!--                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100) -->
+<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -->
+<!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -->
+<!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -->
 <!-- \end{aligned}$ -->
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
+                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
+\end{aligned}$
+
+$\cstr{C_{list}}$ encodes the **structure** of all lists with at most 3 elements.
+
+<!-- $\cstr{C_{data}} \defeq \cvar{c}_{i1} \Rightarrow \cvar{x}_{i+1} = \ltup{\cvar{w}_{i+1}}{\cvar{s}_{i+1}} \ \wedge\ 0 < \cvar{w}_{i+1} \ \wedge\ 0 \leq \cvar{s}_{i+1} < 100$ -->
+$\begin{aligned}
+\cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\
+                & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
+                & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
+\end{aligned}$
+
+$\cstr{C_{data}}$ encodes the constraints on the **elements** of $\cstr{C_{list}}$.
 
 # Containers: Decode
 
@@ -982,11 +1031,11 @@ $\lnot (\cvar{c_{00}} = \tfalse \land \cvar{c_{01}} = \ttrue \land \cvar{w_1} = 
 
 ```haskell
 insert :: a -> Sorted a -> Sorted a
+```
 
+```haskell
 data Sorted a = []
-              | (:) { h :: a
-                    , t :: Sorted {v:a | h < v}
-                    }
+              | (:) { h :: a, t :: Sorted {v:a | h < v} }
 ```
 
 Recursive refinement relates the `head` with **each** element of the `tail`.
