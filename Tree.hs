@@ -1,38 +1,76 @@
+{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 module Tree where
 
 import GHC.Generics
 
-import Test.SmallCheck
+import Test.Target
+import Test.Target.Targetable
+import Test.SmallCheck        as SC
 import Test.SmallCheck.Series
--- import Test.QuickCheck
--- import Test.QuickCheck.Gen
+import Test.QuickCheck        as QC
+import Test.QuickCheck.Gen
 
 data Tree
   = Leaf
   | Node Int Tree Tree
   deriving (Show, Generic)
 
-instance Serial IO Tree where
-  series = cons0 Leaf \/ cons3 Node
+{-@ type BST = {v:Tree | Balanced v} @-}
 
--- instance Arbitrary Tree where
---   arbitrary = oneof [ leaf, node ]
---     where
---     leaf = return Leaf
---     node = do x <- arbitrary
---               l <- arbitrary
---               r <- arbitrary
---               return (Node x l r)
+{-@ predicate Balanced T = (-1) <= bFac T && bFac T <= 1 @-}
 
-insert :: Int -> Tree -> Tree
+{-@ insert :: Int -> BST -> BST @-}
 insert x t = case t of
   Leaf -> singleton x
   Node y l r -> case compare x y of
     LT -> bal y (insert x l) r
     GT -> bal y l (insert x r)
     EQ -> t
+
+{-@ insert' :: Int -> BST -> BST @-}
+insert' x t = case t of
+  Leaf -> singleton x
+  Node y l r -> case compare x y of
+    LT -> Node y (insert x l) r
+    GT -> bal y l (insert x r)
+    EQ -> t
+
+prop_insert_bst_qc  x t = isBST t && size t > 1 QC.==> collect (size t) $ isBST (insert x t)
+prop_insert_bst_sc  x t = isBST t SC.==> isBST (insert x t)
+
+
+{-@ data Tree <p :: Int -> Prop> =
+        Leaf
+      | Node { x :: Int<p>
+             , l :: TreeL x
+             , r :: TreeR x
+             }
+  @-}
+
+{-@ type TreeL X = Tree <{\v -> v < X}> @-}
+{-@ type TreeR X = Tree <{\v -> v > X}> @-}
+
+
+
+
+
+
+instance Targetable Tree
+
+instance Serial IO Tree where
+  series = cons0 Leaf \/ cons3 Node
+
+instance Arbitrary Tree where
+  arbitrary = oneof [ leaf, node ]
+    where
+    leaf = return Leaf
+    node = do x <- arbitrary
+              l <- arbitrary
+              r <- arbitrary
+              return (Node x l r)
+
 
 isBST t = case t of
   Leaf -> True
@@ -43,30 +81,6 @@ isBST t = case t of
     | not (isBST l)           -> False
     | not (isBST r)           -> False
     | otherwise               -> True
-
-
-allT p Leaf = True
-allT p (Node x l r) = p x && allT p l && allT p r
-
-prop_insert_bst  x t = isBST t ==> isBST (insert x t)
--- prop_insert_bst  x t = isBST t && size t > 1 ==> collect (size t) $ isBST (insert x t)
-
-size Leaf         = 0
-size (Node _ l r) = 1 + size l + size r
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 bal v l r
@@ -88,37 +102,41 @@ tree = Node
 
 singleton x = Node x Leaf Leaf
 
+{-@ measure getHeight @-}
+getHeight :: Tree -> Int
 getHeight Leaf         = 0
-getHeight (Node _ l r) = 1 + max hl hr
+getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
   where
     hl        = getHeight l
     hr        = getHeight r
 
+{-@ measure bFac @-}
+bFac :: Tree -> Int
 bFac Leaf         = 0
 bFac (Node _ l r) = getHeight l - getHeight r 
 
 htDiff l r = getHeight l - getHeight r
 
-{-@ balL0 :: x:a -> l:{AVLL a x | NoHeavy l} -> r:{AVLR a x | HtDiff l r 2} -> {t:AVL a | realHeight t = realHeight l + 1 } @-}
+size Leaf         = 0
+size (Node _ l r) = 1 + size l + size r
+
+allT p Leaf = True
+allT p (Node x l r) = p x && allT p l && allT p r
+
 balL0 v (Node lv ll lr) r
   = tree lv ll (tree v lr r)
 
-{-@ balLL :: x:a -> l:{AVLL a x | LeftHeavy l } -> r:{AVLR a x | HtDiff l r 2} -> {t:AVL a | EqHt t l} @-}
 balLL v (Node lv ll lr) r
   = tree lv ll (tree v lr r)
 
-{-@ balLR :: x:a -> l:{AVLL a x | RightHeavy l } -> r:{AVLR a x | HtDiff l r 2} -> {t: AVL a | EqHt t l } @-}
 balLR v (Node lv ll (Node lrv lrl lrr)) r
   = tree lrv (tree lv ll lrl) (tree v lrr r)
 
-{-@ balR0 :: x:a -> l: AVLL a x -> r: {AVLR a x | NoHeavy r && HtDiff r l 2 } -> {t: AVL a | realHeight t = realHeight r + 1} @-}
 balR0 v l (Node rv rl rr)
   = tree rv (tree v l rl) rr
 
-{-@ balRR :: x:a -> l: AVLL a x -> r:{AVLR a x | RightHeavy r && HtDiff r l 2 } -> {t: AVL a | EqHt t r } @-}
 balRR v l (Node rv rl rr)
   = tree rv (tree v l rl) rr
 
-{-@ balRL :: x:a -> l: AVLL a x -> r:{AVLR a x | LeftHeavy r && HtDiff r l 2} -> {t: AVL a | EqHt t r } @-}
 balRL v l (Node rv (Node rlv rll rlr) rr)
   = tree rlv (tree v l rll) (tree rv rlr rr) 
