@@ -1,7 +1,10 @@
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 module Tree where
+
+import Prelude hiding (abs)
 
 import GHC.Generics
 
@@ -12,16 +15,17 @@ import Test.SmallCheck.Series
 import Test.QuickCheck        as QC
 import Test.QuickCheck.Gen
 
-data Tree
+data Tree a
   = Leaf
-  | Node Int Tree Tree
+  | Node a (Tree a) (Tree a)
   deriving (Show, Generic)
 
-{-@ type BST = {v:Tree | Balanced v} @-}
+{-@ type BST a = {v:Tree <{\root v -> v < root}, {\root v -> v > root}> a | balanced v} @-}
 
 {-@ predicate Balanced T = (-1) <= bFac T && bFac T <= 1 @-}
 
-{-@ insert :: Int -> BST -> BST @-}
+{-@ insert :: Int -> BST Int -> BST Int @-}
+insert :: Int -> Tree Int -> Tree Int
 insert x t = case t of
   Leaf -> singleton x
   Node y l r -> case compare x y of
@@ -29,7 +33,8 @@ insert x t = case t of
     GT -> bal y l (insert x r)
     EQ -> t
 
-{-@ insert' :: Int -> BST -> BST @-}
+{-@ insert' :: Int -> BST Int -> BST Int @-}
+insert' :: Int -> Tree Int -> Tree Int
 insert' x t = case t of
   Leaf -> singleton x
   Node y l r -> case compare x y of
@@ -41,7 +46,19 @@ prop_insert_bst_qc  x t = isBST t && size t > 1 QC.==> collect (size t) $ isBST 
 prop_insert_bst_sc  x t = isBST t SC.==> isBST (insert x t)
 
 
-{-@ data Tree <p :: Int -> Prop> =
+{-@ data Tree a <pl :: Int -> Int -> Prop, pr :: Int -> Int -> Prop> =
+        Leaf
+      | Node { x :: a
+             , l :: Tree <pl,pr> (a<pl x>)
+             , r :: Tree <pl,pr> (a<pr x>)
+             }
+  @-}
+
+{- type TreeL X = Tree <{\v -> v < X}> @-}
+{- type TreeR X = Tree <{\v -> v > X}> @-}
+
+
+{- data Tree <p :: Int -> Prop> =
         Leaf
       | Node { x :: Int<p>
              , l :: TreeL x
@@ -49,20 +66,18 @@ prop_insert_bst_sc  x t = isBST t SC.==> isBST (insert x t)
              }
   @-}
 
-{-@ type TreeL X = Tree <{\v -> v < X}> @-}
-{-@ type TreeR X = Tree <{\v -> v > X}> @-}
+{- type TreeL X = Tree <{\v -> v < X}> @-}
+{- type TreeR X = Tree <{\v -> v > X}> @-}
 
 
 
 
+instance Targetable a => Targetable (Tree a)
 
-
-instance Targetable Tree
-
-instance Serial IO Tree where
+instance Serial IO a => Serial IO (Tree a) where
   series = cons0 Leaf \/ cons3 Node
 
-instance Arbitrary Tree where
+instance Arbitrary a => Arbitrary (Tree a) where
   arbitrary = oneof [ leaf, node ]
     where
     leaf = return Leaf
@@ -102,8 +117,13 @@ tree = Node
 
 singleton x = Node x Leaf Leaf
 
+{-@ measure balanced @-}
+balanced :: Tree a -> Bool
+balanced Leaf = True
+balanced (Node _ l r) = abs (getHeight l - getHeight r) <= 1 && balanced l && balanced r
+
 {-@ measure getHeight @-}
-getHeight :: Tree -> Int
+getHeight :: Tree a -> Int
 getHeight Leaf         = 0
 getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
   where
@@ -111,9 +131,13 @@ getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
     hr        = getHeight r
 
 {-@ measure bFac @-}
-bFac :: Tree -> Int
+bFac :: Tree a -> Int
 bFac Leaf         = 0
 bFac (Node _ l r) = getHeight l - getHeight r 
+
+{-@ inline abs @-}
+abs :: Int -> Int
+abs x = if x < 0 then 0 - x else x
 
 htDiff l r = getHeight l - getHeight r
 
