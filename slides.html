@@ -170,7 +170,8 @@ assertEquals (insert <span class="dv">1</span> (<span class="dt">Node</span> <sp
 </div>
 <div id="black-box-testing" class="slide section level1">
 <h1>Black-box testing</h1>
-<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
+<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals</p>
+<p>Generate many inputs and validate against spec</p>
 <div class="incremental">
 <ol style="list-style-type: decimal">
 <li>How to <strong>provide</strong> inputs?
@@ -205,7 +206,7 @@ assertEquals (insert <span class="dv">1</span> (<span class="dt">Node</span> <sp
 </div>
 <div id="providing-inputs-by-enumeration" class="slide section level1">
 <h1>Providing Inputs by Enumeration</h1>
-<p><strong>Small-scope hypothesis</strong>: if a counterexample exists, a “small” counterexample probably exists too</p>
+<p><strong>Small-scope hypothesis</strong>: if a bug exists, a “small” input will probably trigger it</p>
 <ul>
 <li>TestEra (2001), Korat (2004), SmallCheck (2008)</li>
 </ul>
@@ -221,7 +222,7 @@ assertEquals (insert <span class="dv">1</span> (<span class="dt">Node</span> <sp
 <!-- ``` -->
 <!-- . . . -->
 <!-- ENUMERAUTE ALL SMALL INPUTS -->
-<p>Given a <strong>property</strong>, SmallCheck enumerates all inputs (up to some depth) and runs the property</p>
+<p>Given a <strong>property</strong>, SmallCheck enumerates all “small” inputs and runs the property</p>
 <!-- WHAT ARE INPUTS AND OUTPUTS -->
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">prop_insert_bst ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
@@ -246,7 +247,7 @@ there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class=
 </div>
 <div id="smallcheck-adding-preconditions" class="slide section level1">
 <h1>SmallCheck: Adding Preconditions</h1>
-<p>Given a <strong>property</strong>, SmallCheck enumerates all inputs (up to some depth) and runs the property</p>
+<p>Given a <strong>property</strong>, SmallCheck enumerates all “small” inputs and runs the property</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">prop_insert_bst ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p><strong>If</strong> the input tree is valid, <strong>then</strong> the output tree should be valid</p>
@@ -261,7 +262,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 </div>
 <div id="smallcheck-how-small" class="slide section level1">
 <h1>SmallCheck: How small?</h1>
-<p>Given a <strong>property</strong>, SmallCheck enumerates all inputs (up to some depth) and runs the property</p>
+<p>Given a <strong>property</strong>, SmallCheck enumerates all “small” inputs and runs the property</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">prop_insert_bst ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span>
 prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p><strong>If</strong> the input tree is valid, <strong>then</strong> the output tree should be valid</p>
@@ -273,7 +274,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">..........................................................</span></code></pre>
 </div>
 <div class="incremental">
-<p>Exponential blowup in input space confines search to <em>very small</em> inputs!</p>
+<p>Exponential blowup in input space confines search to <strong>very small</strong> inputs!</p>
 <!-- (Again, custom generators are a standard solution to increase feasible search depth) -->
 </div>
 <div class="incremental">
@@ -286,11 +287,12 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 </div>
 <div id="black-box-testing-1" class="slide section level1">
 <h1>Black-box testing</h1>
-<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
+<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals</p>
+<p>Generate many inputs and validate against spec</p>
 <ol style="list-style-type: decimal">
 <li>How to <strong>provide</strong> inputs?
 <ul>
-<li>Machine <strong>randomly</strong> enumerates based on <strong>specification</strong></li>
+<li>Machine <del>enumerates</del> <strong>randomly samples</strong> based on <strong>specification</strong></li>
 </ul></li>
 <li>How to <strong>check</strong> outputs?
 <ul>
@@ -298,10 +300,10 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 </ul></li>
 </ol>
 </div>
-<div id="providing-inputs-by-random-enumeration" class="slide section level1">
-<h1>Providing Inputs by Random Enumeration</h1>
+<div id="providing-inputs-by-random-sampling" class="slide section level1">
+<h1>Providing Inputs by Random Sampling</h1>
 <ul>
-<li>Sample random inputs from <strong>entire domain</strong></li>
+<li>Choose <strong>random</strong> inputs from <strong>entire domain</strong></li>
 <li>Enables checking larger inputs</li>
 <li>No guarantee of minimal counterexample</li>
 <li>QuickCheck (2000), JCrasher (2004), Randoop (2007)</li>
@@ -322,7 +324,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 </div>
 <div id="quickcheck" class="slide section level1">
 <h1>QuickCheck</h1>
-<p>Given a property, QuickCheck enumerates <strong>random</strong> inputs and runs the property</p>
+<p>Given a property, QuickCheck samples random inputs and runs the property</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
   <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p>If the input tree is valid, then the output tree should be valid</p>
@@ -337,12 +339,12 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 </div>
 <div id="quickcheck-with-statistics" class="slide section level1">
 <h1>QuickCheck: With Statistics</h1>
-<p>Given a property, QuickCheck enumerates <strong>random</strong> inputs and runs the property</p>
+<p>Given a property, QuickCheck samples random inputs and runs the property</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
   <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p>If the input tree is valid, then the output tree should be valid</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
-<p>Test <code>prop_insert_bst</code> on 100 random, valid inputs, while collecting statistics about inputs</p>
+<p>Test <code>prop_insert_bst</code> on 100 random, valid inputs, while collecting statistics</p>
 <!-- # QuickCheck: Testing `insert` -->
 <!-- ```haskell -->
 <!-- prop_insert_bst x t -->
@@ -358,10 +360,10 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 </div>
 <div id="quickcheck-with-non-trivial-inputs" class="slide section level1">
 <h1>QuickCheck: With Non-Trivial Inputs</h1>
-<p>Given a property, QuickCheck enumerates <strong>random</strong> inputs and runs the property</p>
+<p>Given a property, QuickCheck samples random inputs and runs the property</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
   <span class="fu">=</span> isBST t <span class="fu">&amp;&amp;</span> size t <span class="fu">&gt;</span> <span class="dv">1</span> <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
-<p>If the input tree is valid <strong>and</strong> contains more than one element, then the output tree should be valid</p>
+<p>If the input tree is valid <strong>and</strong> has more than one element, then the output tree should be valid</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
 <p>Test <code>prop_insert_bst</code> on 100 random, valid inputs</p>
 <div class="incremental">
@@ -381,7 +383,16 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 
 prop_insert_bst x (<span class="dt">BST</span> xs)
   <span class="fu">=</span> isBST (insert x xs)</code></pre>
-<div class="incremental">
+</div>
+<div id="quickcheck-custom-generators-1" class="slide section level1">
+<h1>QuickCheck: Custom Generators</h1>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">BST</span> <span class="fu">=</span> <span class="dt">Tree</span>
+
+<span class="kw">instance</span> <span class="dt">Arbitrary</span> <span class="dt">BST</span> <span class="kw">where</span>
+  arbitrary <span class="fu">=</span> <span class="fu">...</span>
+
+prop_insert_bst x (<span class="dt">BST</span> xs)
+  <span class="fu">=</span> isBST (insert x xs)</code></pre>
 <p><strong>Problem</strong></p>
 <ol style="list-style-type: decimal">
 <li>How to generate random <strong>valid</strong> trees?</li>
@@ -389,14 +400,14 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>Must define a new type/generator for <strong>each</strong> precondition!</li>
 </ol>
 </div>
-</div>
 <div id="black-box-testing-2" class="slide section level1">
 <h1>Black-box testing</h1>
-<p>Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
+<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals</p>
+<p>Generate many inputs and validate against spec</p>
 <ol style="list-style-type: decimal">
 <li>How to <strong>provide</strong> inputs?
 <ul>
-<li>Machine (randomly) enumerates based on <strong>specification</strong></li>
+<li>Machine enumerates (or samples) based on <strong>specification</strong></li>
 </ul></li>
 <li>How to <strong>check</strong> outputs?
 <ul>
@@ -406,11 +417,12 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="black-box-testing-3" class="slide section level1">
 <h1>Black-box testing</h1>
-<p>Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec</p>
+<p>Given a <strong>specification</strong> of expected behavior, but no knowledge of internals</p>
+<p>Generate many inputs and validate against spec</p>
 <ol style="list-style-type: decimal">
 <li>How to <strong>provide</strong> inputs?
 <ul>
-<li>Machine (randomly) enumerates based on <strong>specification</strong></li>
+<li>Machine enumerates (or samples) based on <strong>specification</strong></li>
 </ul></li>
 <li>How to <strong>check</strong> outputs?
 <ul>
@@ -420,7 +432,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <h2 id="problems">Problems</h2>
 <ul>
 <li>Brute-force enumeration of inputs suffers from input explosion <!-- - Random generation enables testing larger inputs --> <!-- - Sampling from a **uniform** distribution provides better case for generalizing outcome --></li>
-<li>Random enumeration requires custom generators for preconditions</li>
+<li>Random sampling requires custom generators for preconditions</li>
 </ul>
 </div>
 <div id="this-talk-1" class="slide section level1">
@@ -632,14 +644,20 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <li>Enumerating program paths instead of inputs</li>
 <li><strong>Symbolic execution</strong> groups equivalent inputs</li>
 </ul>
-<div class="incremental">
+</div>
+<div id="white-box-testing-2" class="slide section level1">
+<h1>White-Box Testing</h1>
+<ul>
+<li>Given program <strong>implementation</strong>, make it <strong>crash</strong></li>
+<li>Enumerating program paths instead of inputs</li>
+<li><strong>Symbolic execution</strong> groups equivalent inputs</li>
+</ul>
 <h2 id="problems-1">Problems</h2>
 <ul>
 <li>Symbolic execution suffers from inexpressive logics and path explosion</li>
 <li>Dynamic-symbolic execution only addresses first issue</li>
 <li>Path explosion particularly problematic when faced with recursive preconditions</li>
 </ul>
-</div>
 </div>
 <div id="this-talk-2" class="slide section level1">
 <h1>This Talk</h1>
@@ -704,9 +722,9 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>The set of values <code>v</code> of type <code>t</code> satisfying a predicate <code>p</code></p>
 </blockquote>
 <h3 id="simple-refinement-types">Simple Refinement Types</h3>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Pos</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;</span>  <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Pos</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;</span>  v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}</code></pre>
 <p>The natural numbers, positive integers, and integers in the range <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mi>N</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">[0,N)</annotation></semantics></math></p>
 </div>
 <div id="refinement-types-2" class="slide section level1">
@@ -716,9 +734,9 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>The set of values <code>v</code> of type <code>t</code> satisfying a predicate <code>p</code></p>
 </blockquote>
 <h3 id="simple-refinement-types-1">Simple Refinement Types</h3>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Pos</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;</span>  <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Pos</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;</span>  v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}</code></pre>
 <p>The natural numbers, positive integers, and integers in the range <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mi>N</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">[0,N)</annotation></semantics></math></p>
 <h3 id="compound-refinement-types">Compound Refinement Types</h3>
 <p>Describe properties of containers and function contracts by refining component types</p>
@@ -731,7 +749,7 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="target-1" class="slide section level1">
 <h1>Target</h1>
-<p>Generates tests from <strong>refinement types</strong> via query-decode-check loop</p>
+<p>Generates tests from refinement types via query-decode-check loop</p>
 <ol style="list-style-type: decimal">
 <li>Translate input types into SMT <strong>query</strong></li>
 <li><strong>Decode</strong> SMT model into concrete values</li>
@@ -740,8 +758,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="step-1-query" class="slide section level1">
 <h1>Step 1: Query</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
 
 <span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2</code></pre>
 <div class="incremental">
@@ -751,8 +769,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="step-2-decode" class="slide section level1">
 <h1>Step 2: Decode</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
 
 <span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2</code></pre>
 <p>Represent preconditions in logic</p>
@@ -762,8 +780,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="step-3-check" class="slide section level1">
 <h1>Step 3: Check</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
 
 <span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2</code></pre>
 <p>Represent preconditions in logic</p>
@@ -771,12 +789,12 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>A model <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>1</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>2</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathrm{{r_1}}} \mapsto 1, {\mathrm{{r_2}}} \mapsto 1, {\mathrm{{s}}} \mapsto 0]</annotation></semantics></math> maps to a concrete test case</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span>
 <span class="dv">0</span></code></pre>
-<p>Postcondition is:   <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></p>
+<p>Postcondition is:   <code>{v:Int | 0 &lt;= v &amp;&amp; v &lt; r2}</code></p>
 </div>
 <div id="step-3-check-1" class="slide section level1">
 <h1>Step 3: Check</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
 
 <span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2</code></pre>
 <p>Represent preconditions in logic</p>
@@ -784,13 +802,13 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>A model <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>1</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>2</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathrm{{r_1}}} \mapsto 1, {\mathrm{{r_2}}} \mapsto 1, {\mathrm{{s}}} \mapsto 0]</annotation></semantics></math> maps to a concrete test case</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span>
 <span class="dv">0</span></code></pre>
-<p>Postcondition is:   <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></p>
-<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0\quad\ {\ \land\ }\quad 0 &lt; 1</annotation></semantics></math></p>
+<p>Postcondition is:   <code>{v:Int | 0 &lt;= v &amp;&amp; v &lt; r2}</code></p>
+<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \leq 0\quad\ {\ \land\ }\quad 0 &lt; 1</annotation></semantics></math></p>
 </div>
 <div id="step-3-check-2" class="slide section level1">
 <h1>Step 3: Check</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
 
 <span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2</code></pre>
 <p>Represent preconditions in logic</p>
@@ -798,16 +816,16 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>A model <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>1</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>2</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathrm{{r_1}}} \mapsto 1, {\mathrm{{r_2}}} \mapsto 1, {\mathrm{{s}}} \mapsto 0]</annotation></semantics></math> maps to a concrete test case</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> rescale <span class="dv">1</span> <span class="dv">1</span> <span class="dv">0</span>
 <span class="dv">0</span></code></pre>
-<p>Postcondition is:   <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></p>
-<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \geq 0\quad\ {\ \land\ }\quad 0 &lt; 1</annotation></semantics></math>      <strong>VALID</strong></p>
+<p>Postcondition is:   <code>{v:Int | 0 &lt;= v &amp;&amp; v &lt; r2}</code></p>
+<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 \leq 0\quad\ {\ \land\ }\quad 0 &lt; 1</annotation></semantics></math>      <strong>VALID</strong></p>
 <div class="incremental">
 <p>Force new test by adding refutation constraint <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>¬</mo><mo stretchy="false" form="prefix">(</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>1</mn></msub></mstyle><mo>=</mo><mn>1</mn><mo>∧</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>2</mn></msub></mstyle><mo>=</mo><mn>1</mn><mo>∧</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo>=</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\lnot ({\mathrm{{r_1}}} = 1 \land {\mathrm{{r_2}}} = 1 \land {\mathrm{{s}}} = 0)</annotation></semantics></math></p>
 </div>
 </div>
 <div id="repeat-with-new-test" class="slide section level1">
 <h1>Repeat With New Test</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
 
 <span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2</code></pre>
 <p>Represent preconditions in logic, excluding 1st test</p>
@@ -818,14 +836,14 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <span class="dv">0</span></code></pre>
 </div>
 <div class="incremental">
-<p>Postcondition is:   <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></p>
-<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">0 \geq 0\quad\ {\ \land\ }\quad 0 &lt; 0</annotation></semantics></math></p>
+<p>Postcondition is:   <code>{v:Int | 0 &lt;= v &amp;&amp; v &lt; r2}</code></p>
+<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">0 \leq 0\quad\ {\ \land\ }\quad 0 &lt; 0</annotation></semantics></math></p>
 </div>
 </div>
 <div id="repeat-with-new-test-1" class="slide section level1">
 <h1>Repeat With New Test</h1>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span>}
-<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> v <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Nat</span>   <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v}
+<span class="kw">type</span> <span class="dt">Rng</span> <span class="dt">N</span> <span class="fu">=</span> {v<span class="fu">:</span><span class="dt">Int</span> <span class="fu">|</span> <span class="dv">0</span> <span class="fu">&lt;=</span> v <span class="fu">&amp;&amp;</span> v <span class="fu">&lt;</span> <span class="dt">N</span>}
 
 <span class="ot">rescale ::</span> r1<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> r2<span class="fu">:</span><span class="dt">Nat</span> <span class="ot">-&gt;</span> s<span class="fu">:</span><span class="dt">Rng</span> r1 <span class="ot">-&gt;</span> <span class="dt">Rng</span> r2</code></pre>
 <p>Represent preconditions in logic, excluding 1st test</p>
@@ -833,8 +851,8 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 <p>A model <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>1</mn></msub></mstyle><mo accent="false">↦</mo><mn>1</mn><mo>,</mo><mstyle mathvariant="normal"><msub><mi>r</mi><mn>2</mn></msub></mstyle><mo accent="false">↦</mo><mn>0</mn><mo>,</mo><mstyle mathvariant="normal"><mi>s</mi></mstyle><mo accent="false">↦</mo><mn>0</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[{\mathrm{{r_1}}} \mapsto 1, {\mathrm{{r_2}}} \mapsto 0, {\mathrm{{s}}} \mapsto 0]</annotation></semantics></math> maps to a concrete test case</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> rescale <span class="dv">1</span> <span class="dv">0</span> <span class="dv">0</span>
 <span class="dv">0</span></code></pre>
-<p>Postcondition is:   <code>{v:Int | v &gt;= 0 &amp;&amp; v &lt; r2}</code></p>
-<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≥</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">0 \geq 0\quad\ {\ \land\ }\quad 0 &lt; 0</annotation></semantics></math>      <strong>INVALID</strong></p>
+<p>Postcondition is:   <code>{v:Int | 0 &lt;= v &amp;&amp; v &lt; r2}</code></p>
+<p>After substituting <code>v</code> and <code>r2</code>:      <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mn>0</mn><mspace width="1.0em"></mspace><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="1.0em"></mspace><mn>0</mn><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">0 \leq 0\quad\ {\ \land\ }\quad 0 &lt; 0</annotation></semantics></math>      <strong>INVALID</strong></p>
 <p><code>rescale 1 0 0</code> fails the postcondition check!</p>
 <!-- ```haskell -->
 <!-- rescale :: r1:Pos -> r2:Pos -> s:Rng r1 -> Rng r2 -->
@@ -843,19 +861,126 @@ prop_insert_bst x (<span class="dt">BST</span> xs)
 </div>
 <div id="containers" class="slide section level1">
 <h1>Containers</h1>
-<p>ANIMATE ENITRE SECTION</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Weight</span> <span class="fu">=</span> <span class="dt">Pos</span>
 <span class="kw">type</span> <span class="dt">Score</span>  <span class="fu">=</span> <span class="dt">Rng</span> <span class="dv">100</span>
 
 <span class="ot">average ::</span> [(<span class="dt">Weight</span>, <span class="dt">Score</span>)] <span class="ot">-&gt;</span> <span class="dt">Score</span></code></pre>
-<p>How to encode structured data in SMT formula?</p>
+<p>How to generate lists via SMT solver?</p>
 </div>
 <div id="containers-query" class="slide section level1">
 <h1>Containers: Query</h1>
-<p>ANIMATE TWICE: 2ND WITH CVARS</p>
-<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs.</p>
-<p><img height=400px src="skeleton.png"></p>
-<p>Let solver choose path through skeleton.</p>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-1.png">
+<div style="float:left;">
+
+</div>
+</div>
+</div>
+<div id="containers-query-1" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-2.png">
+<div style="float:left;">
+
+</div>
+</div>
+</div>
+<div id="containers-query-2" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-3.png">
+<div style="float:left;">
+
+</div>
+</div>
+</div>
+<div id="containers-query-3" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-4.png">
+<div style="float:left;">
+
+</div>
+</div>
+</div>
+<div id="containers-query-4" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<div style="float:left;">
+
+</div>
+</div>
+</div>
+<div id="containers-query-5" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-1.png">
+<div style="float:left; font-size: 12pt;">
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mrow><mi>𝗅</mi><mi>𝗂</mi><mi>𝗌</mi><mi>𝗍</mi></mrow></msub></mstyle></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mtd><mtd></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} {\mathsf{{C_{list}}}} &amp; {\ \doteq\ }&amp; \\ \end{aligned}</annotation></semantics></math></p>
+</div>
+</div>
+</div>
+<div id="containers-query-6" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-2.png">
+<div style="float:left; font-size: 12pt;">
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mrow><mi>𝗅</mi><mi>𝗂</mi><mi>𝗌</mi><mi>𝗍</mi></mrow></msub></mstyle></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>1</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd></mtd><mtd></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} {\mathsf{{C_{list}}}} &amp; {\ \doteq\ }&amp; ({\mathrm{{c}}}_{00} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{{{\mathrm{{x}}}_1}:{{\mathrm{{xs}}}_1}}}) &amp; {\ \land\ }&amp;  &amp; &amp; ({\mathrm{{c}}}_{00} &amp; \oplus &amp; {\mathrm{{c}}}_{01}) \\ \end{aligned}</annotation></semantics></math></p>
+</div>
+</div>
+</div>
+<div id="containers-query-7" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-3.png">
+<div style="float:left; font-size: 12pt;">
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mrow><mi>𝗅</mi><mi>𝗂</mi><mi>𝗌</mi><mi>𝗍</mi></mrow></msub></mstyle></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>1</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd></mtd><mtd></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>2</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} {\mathsf{{C_{list}}}} &amp; {\ \doteq\ }&amp; ({\mathrm{{c}}}_{00} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{{{\mathrm{{x}}}_1}:{{\mathrm{{xs}}}_1}}}) &amp; {\ \land\ }&amp;  &amp; &amp; ({\mathrm{{c}}}_{00} &amp; \oplus &amp; {\mathrm{{c}}}_{01}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{10} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{11} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{{{\mathrm{{x}}}_2}:{{\mathrm{{xs}}}_2}}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{10} &amp; \oplus &amp; {\mathrm{{c}}}_{11}) \\ \end{aligned}</annotation></semantics></math></p>
+</div>
+</div>
+</div>
+<div id="containers-query-8" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-4.png">
+<div style="float:left; font-size: 12pt;">
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mrow><mi>𝗅</mi><mi>𝗂</mi><mi>𝗌</mi><mi>𝗍</mi></mrow></msub></mstyle></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>1</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd></mtd><mtd></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>2</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>20</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>3</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>3</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>20</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} {\mathsf{{C_{list}}}} &amp; {\ \doteq\ }&amp; ({\mathrm{{c}}}_{00} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{{{\mathrm{{x}}}_1}:{{\mathrm{{xs}}}_1}}}) &amp; {\ \land\ }&amp;  &amp; &amp; ({\mathrm{{c}}}_{00} &amp; \oplus &amp; {\mathrm{{c}}}_{01}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{10} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{11} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{{{\mathrm{{x}}}_2}:{{\mathrm{{xs}}}_2}}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{10} &amp; \oplus &amp; {\mathrm{{c}}}_{11}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{20} \Rightarrow {\mathrm{{xs}}}_2 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{21} \Rightarrow {\mathrm{{xs}}}_2 = {\mathrm{{{\mathrm{{x}}}_3}:{{\mathrm{{xs}}}_3}}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{11} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{20} &amp; \oplus &amp; {\mathrm{{c}}}_{21}) \\ \end{aligned}</annotation></semantics></math></p>
+</div>
+</div>
+</div>
+<div id="containers-query-9" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<div style="float:left; font-size: 12pt;">
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mrow><mi>𝗅</mi><mi>𝗂</mi><mi>𝗌</mi><mi>𝗍</mi></mrow></msub></mstyle></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>1</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd></mtd><mtd></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>2</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>20</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>3</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>3</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>20</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>30</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>3</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd></mtd><mtd></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>30</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd><mtd></mtd><mtd></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} {\mathsf{{C_{list}}}} &amp; {\ \doteq\ }&amp; ({\mathrm{{c}}}_{00} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{{{\mathrm{{x}}}_1}:{{\mathrm{{xs}}}_1}}}) &amp; {\ \land\ }&amp;  &amp; &amp; ({\mathrm{{c}}}_{00} &amp; \oplus &amp; {\mathrm{{c}}}_{01}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{10} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{11} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{{{\mathrm{{x}}}_2}:{{\mathrm{{xs}}}_2}}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{10} &amp; \oplus &amp; {\mathrm{{c}}}_{11}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{20} \Rightarrow {\mathrm{{xs}}}_2 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{21} \Rightarrow {\mathrm{{xs}}}_2 = {\mathrm{{{\mathrm{{x}}}_3}:{{\mathrm{{xs}}}_3}}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{11} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{20} &amp; \oplus &amp; {\mathrm{{c}}}_{21}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{30} \Rightarrow {\mathrm{{xs}}}_3 = {\mathrm{[]}}) &amp; &amp; &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{21} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{30}) &amp; &amp;\\ \end{aligned}</annotation></semantics></math></p>
+</div>
+</div>
+</div>
+<div id="containers-query-10" class="slide section level1">
+<h1>Containers: Query</h1>
+<p>Generate a <strong>single</strong> set of constraints describing <strong>all possible</strong> inputs</p>
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<div style="float:left; font-size: 12pt;">
+<div>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mrow><mi>𝗅</mi><mi>𝗂</mi><mi>𝗌</mi><mi>𝗍</mi></mrow></msub></mstyle></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>0</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>1</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd></mtd><mtd></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>00</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>2</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>10</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>20</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>2</mn></msub><mo>=</mo><mstyle mathvariant="normal"><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>3</mn></msub><mo>:</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>3</mn></msub></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>20</mn></msub></mtd><mtd><mo>⊕</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>30</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi><mi>s</mi></mstyle><mn>3</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">[</mo><mo stretchy="false" form="postfix">]</mo></mstyle><mo stretchy="false" form="postfix">)</mo></mtd><mtd></mtd><mtd></mtd><mtd><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub></mtd><mtd><mo accent="false">⇒</mo></mtd><mtd><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>30</mn></msub><mo stretchy="false" form="postfix">)</mo></mtd><mtd></mtd><mtd></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} {\mathsf{{C_{list}}}} &amp; {\ \doteq\ }&amp; ({\mathrm{{c}}}_{00} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} \Rightarrow {\mathrm{{xs}}}_0 = {\mathrm{{{\mathrm{{x}}}_1}:{{\mathrm{{xs}}}_1}}}) &amp; {\ \land\ }&amp;  &amp; &amp; ({\mathrm{{c}}}_{00} &amp; \oplus &amp; {\mathrm{{c}}}_{01}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{10} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{11} \Rightarrow {\mathrm{{xs}}}_1 = {\mathrm{{{\mathrm{{x}}}_2}:{{\mathrm{{xs}}}_2}}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{01} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{10} &amp; \oplus &amp; {\mathrm{{c}}}_{11}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{20} \Rightarrow {\mathrm{{xs}}}_2 = {\mathrm{[]}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{21} \Rightarrow {\mathrm{{xs}}}_2 = {\mathrm{{{\mathrm{{x}}}_3}:{{\mathrm{{xs}}}_3}}}) &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{11} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{20} &amp; \oplus &amp; {\mathrm{{c}}}_{21}) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{30} \Rightarrow {\mathrm{{xs}}}_3 = {\mathrm{[]}}) &amp; &amp; &amp; {\ \land\ }&amp;  ({\mathrm{{c}}}_{21} &amp; \Rightarrow &amp; {\mathrm{{c}}}_{30}) &amp; &amp;\\ \end{aligned}</annotation></semantics></math></p>
+</div>
+<div>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right"><mstyle mathvariant="sans-serif"><msub><mi>𝖢</mi><mrow><mi>𝖽</mi><mi>𝖺</mi><mi>𝗍</mi><mi>𝖺</mi></mrow></msub></mstyle></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>≐</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>01</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>1</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>w</mi></mstyle><mn>1</mn></msub><mo>,</mo><msub><mstyle mathvariant="normal"><mi>s</mi></mstyle><mn>1</mn></msub><mo stretchy="false" form="postfix">)</mo></mstyle><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="0.222em"></mspace><mn>0</mn><mo>&lt;</mo><msub><mstyle mathvariant="normal"><mi>w</mi></mstyle><mn>1</mn></msub><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="0.222em"></mspace><mn>0</mn><mo>≤</mo><msub><mstyle mathvariant="normal"><mi>s</mi></mstyle><mn>1</mn></msub><mo>&lt;</mo><mn>100</mn><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>11</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>2</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>w</mi></mstyle><mn>2</mn></msub><mo>,</mo><msub><mstyle mathvariant="normal"><mi>s</mi></mstyle><mn>2</mn></msub><mo stretchy="false" form="postfix">)</mo></mstyle><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="0.222em"></mspace><mn>0</mn><mo>&lt;</mo><msub><mstyle mathvariant="normal"><mi>w</mi></mstyle><mn>2</mn></msub><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="0.222em"></mspace><mn>0</mn><mo>≤</mo><msub><mstyle mathvariant="normal"><mi>s</mi></mstyle><mn>2</mn></msub><mo>&lt;</mo><mn>100</mn><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right"></mtd><mtd columnalign="left"><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mtd><mtd><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>c</mi></mstyle><mn>21</mn></msub><mo accent="false">⇒</mo><msub><mstyle mathvariant="normal"><mi>x</mi></mstyle><mn>3</mn></msub><mo>=</mo><mstyle mathvariant="normal"><mo stretchy="false" form="prefix">(</mo><msub><mstyle mathvariant="normal"><mi>w</mi></mstyle><mn>3</mn></msub><mo>,</mo><msub><mstyle mathvariant="normal"><mi>s</mi></mstyle><mn>3</mn></msub><mo stretchy="false" form="postfix">)</mo></mstyle><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="0.222em"></mspace><mn>0</mn><mo>&lt;</mo><msub><mstyle mathvariant="normal"><mi>w</mi></mstyle><mn>3</mn></msub><mspace width="0.222em"></mspace><mrow><mspace width="0.222em"></mspace><mo>∧</mo><mspace width="0.222em"></mspace></mrow><mspace width="0.222em"></mspace><mn>0</mn><mo>≤</mo><msub><mstyle mathvariant="normal"><mi>s</mi></mstyle><mn>3</mn></msub><mo>&lt;</mo><mn>100</mn><mo stretchy="false" form="postfix">)</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned} {\mathsf{{C_{data}}}} &amp; {\ \doteq\ }&amp; ({\mathrm{{c}}}_{01} \Rightarrow {\mathrm{{x}}}_1 = {\mathrm{({{\mathrm{{w}}}_1},{{\mathrm{{s}}}_1})}} \ {\ \land\ }\ 0 &lt; {\mathrm{{w}}}_1 \ {\ \land\ }\ 0 \leq {\mathrm{{s}}}_1 &lt; 100) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{11} \Rightarrow {\mathrm{{x}}}_2 = {\mathrm{({{\mathrm{{w}}}_2},{{\mathrm{{s}}}_2})}} \ {\ \land\ }\ 0 &lt; {\mathrm{{w}}}_2 \ {\ \land\ }\ 0 \leq {\mathrm{{s}}}_2 &lt; 100) \\  &amp; {\ \land\ }&amp; ({\mathrm{{c}}}_{21} \Rightarrow {\mathrm{{x}}}_3 = {\mathrm{({{\mathrm{{w}}}_3},{{\mathrm{{s}}}_3})}} \ {\ \land\ }\ 0 &lt; {\mathrm{{w}}}_3 \ {\ \land\ }\ 0 \leq {\mathrm{{s}}}_3 &lt; 100) \end{aligned}</annotation></semantics></math></p>
+</div>
+</div>
+</div>
 </div>
 <div id="containers-choice-variables" class="slide section level1">
 <h1>Containers: Choice Variables</h1>

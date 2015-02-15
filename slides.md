@@ -90,7 +90,9 @@ Our contribution
 
 # Black-box testing
 
-Given a **specification** of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
+Given a **specification** of expected behavior, but no knowledge of internals
+
+Generate many inputs and validate against spec
 
 . . .
 
@@ -128,7 +130,7 @@ isBST t = case t of
 
 # Providing Inputs by Enumeration
 
-**Small-scope hypothesis**: if a counterexample exists, a "small" counterexample probably exists too
+**Small-scope hypothesis**: if a bug exists, a "small" input will probably trigger it
 
 - TestEra (2001), Korat (2004), SmallCheck (2008)
 
@@ -147,7 +149,7 @@ isBST t = case t of
 
 <!-- ENUMERAUTE ALL SMALL INPUTS -->
 
-Given a **property**, SmallCheck enumerates all inputs (up to some depth) and runs the property
+Given a **property**, SmallCheck enumerates all "small" inputs and runs the property
 
 <!-- WHAT ARE INPUTS AND OUTPUTS -->
 . . .
@@ -185,7 +187,7 @@ Property does not hold for **all** trees!
 
 # SmallCheck: Adding Preconditions
 
-Given a **property**, SmallCheck enumerates all inputs (up to some depth) and runs the property
+Given a **property**, SmallCheck enumerates all "small" inputs and runs the property
 
 ```haskell
 prop_insert_bst :: Int -> Tree -> Bool
@@ -212,7 +214,7 @@ Only 133 input trees were valid!
 
 # SmallCheck: How small?
 
-Given a **property**, SmallCheck enumerates all inputs (up to some depth) and runs the property
+Given a **property**, SmallCheck enumerates all "small" inputs and runs the property
 
 ```haskell
 prop_insert_bst :: Int -> Tree -> Bool
@@ -238,7 +240,7 @@ Test all integers in range `[-4,4]` and all trees of depth 4
 
 . . .
 
-Exponential blowup in input space confines search to *very small* inputs!
+Exponential blowup in input space confines search to **very small** inputs!
 
 <!-- (Again, custom generators are a standard solution to increase feasible search depth) -->
 
@@ -253,16 +255,18 @@ Exponential blowup in input space confines search to *very small* inputs!
 
 # Black-box testing
 
-Given a **specification** of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
+Given a **specification** of expected behavior, but no knowledge of internals
+
+Generate many inputs and validate against spec
 
 1. How to **provide** inputs?
-    - Machine **randomly** enumerates based on **specification**
+    - Machine ~~enumerates~~ **randomly samples** based on **specification**
 2. How to **check** outputs?
     - Programmer supplies **oracle**
 
-# Providing Inputs by Random Enumeration
+# Providing Inputs by Random Sampling
 
-- Sample random inputs from **entire domain**
+- Choose **random** inputs from **entire domain**
 - Enables checking larger inputs
 - No guarantee of minimal counterexample
 - QuickCheck (2000), JCrasher (2004), Randoop (2007)
@@ -286,7 +290,7 @@ Given a **specification** of expected behavior, but no knowledge of internals, g
 
 # QuickCheck
 
-Given a property, QuickCheck enumerates **random** inputs and runs the property
+Given a property, QuickCheck samples random inputs and runs the property
 
 ```haskell
 prop_insert_bst x t
@@ -313,7 +317,7 @@ How is this possible? SmallCheck showed that input domain is *very* sparse!
 
 # QuickCheck: With Statistics
 
-Given a property, QuickCheck enumerates **random** inputs and runs the property
+Given a property, QuickCheck samples random inputs and runs the property
 
 ```haskell
 prop_insert_bst x t
@@ -326,7 +330,7 @@ If the input tree is valid, then the output tree should be valid
 ghci> quickCheck prop_insert_bst
 ```
 
-Test `prop_insert_bst` on 100 random, valid inputs, while collecting statistics about inputs
+Test `prop_insert_bst` on 100 random, valid inputs, while collecting statistics
 
 <!-- # QuickCheck: Testing `insert` -->
 
@@ -348,14 +352,14 @@ Test `prop_insert_bst` on 100 random, valid inputs, while collecting statistics 
 
 # QuickCheck: With Non-Trivial Inputs
 
-Given a property, QuickCheck enumerates **random** inputs and runs the property
+Given a property, QuickCheck samples random inputs and runs the property
 
 ```haskell
 prop_insert_bst x t
   = isBST t && size t > 1 ==> isBST (insert x t)
 ```
 
-If the input tree is valid **and** contains more than one element, then the output tree should be valid
+If the input tree is valid **and** has more than one element, then the output tree should be valid
 
 ```haskell
 ghci> quickCheck prop_insert_bst
@@ -387,7 +391,17 @@ prop_insert_bst x (BST xs)
   = isBST (insert x xs)
 ```
 
-. . .
+# QuickCheck: Custom Generators
+
+```haskell
+newtype BST = Tree
+
+instance Arbitrary BST where
+  arbitrary = ...
+
+prop_insert_bst x (BST xs)
+  = isBST (insert x xs)
+```
 
 **Problem**
 
@@ -397,20 +411,24 @@ prop_insert_bst x (BST xs)
 
 # Black-box testing
 
-Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
+Given a **specification** of expected behavior, but no knowledge of internals
+
+Generate many inputs and validate against spec
 
 1. How to **provide** inputs?
-    - Machine (randomly) enumerates based on **specification**
+    - Machine enumerates (or samples) based on **specification**
 2. How to **check** outputs?
     - Programmer supplies **oracle**
 
 
 # Black-box testing
 
-Given a specification of expected behavior, but no knowledge of internals, generate many inputs and validate against spec
+Given a **specification** of expected behavior, but no knowledge of internals
+
+Generate many inputs and validate against spec
 
 1. How to **provide** inputs?
-    - Machine (randomly) enumerates based on **specification**
+    - Machine enumerates (or samples) based on **specification**
 2. How to **check** outputs?
     - Programmer supplies **oracle**
 
@@ -419,7 +437,7 @@ Given a specification of expected behavior, but no knowledge of internals, gener
 - Brute-force enumeration of inputs suffers from input explosion
 <!-- - Random generation enables testing larger inputs -->
 <!-- - Sampling from a **uniform** distribution provides better case for generalizing outcome -->
-- Random enumeration requires custom generators for preconditions
+- Random sampling requires custom generators for preconditions
 
 # This Talk
 
@@ -655,7 +673,11 @@ isBST t = case t of
 - Enumerating program paths instead of inputs
 - **Symbolic execution** groups equivalent inputs
 
-. . .
+# White-Box Testing
+
+- Given program **implementation**, make it **crash**
+- Enumerating program paths instead of inputs
+- **Symbolic execution** groups equivalent inputs
 
 ## Problems
 
@@ -729,9 +751,9 @@ Exhaustively checks all inputs up to a given depth-bound
 ### Simple Refinement Types
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Pos   = {v:Int | v >  0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Pos   = {v:Int | 0 <  v}
+type Rng N = {v:Int | 0 <= v && v < N}
 ```
 
 The natural numbers, positive integers, and integers in the range $[0,N)$
@@ -745,9 +767,9 @@ The natural numbers, positive integers, and integers in the range $[0,N)$
 ### Simple Refinement Types
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Pos   = {v:Int | v >  0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Pos   = {v:Int | 0 <  v}
+type Rng N = {v:Int | 0 <= v && v < N}
 ```
 
 The natural numbers, positive integers, and integers in the range $[0,N)$
@@ -768,7 +790,7 @@ x:Nat -> {v:Nat | v = x + 1}
 Functions that take a natural number and increment it by one
 
 # Target
-Generates tests from **refinement types** via query-decode-check loop
+Generates tests from refinement types via query-decode-check loop
 
 1. Translate input types into SMT **query**
 2. **Decode** SMT model into concrete values
@@ -777,8 +799,8 @@ Generates tests from **refinement types** via query-decode-check loop
 # Step 1: Query
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Rng N = {v:Int | 0 <= v && v < N}
 
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
@@ -792,8 +814,8 @@ $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < 
 # Step 2: Decode
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Rng N = {v:Int | 0 <= v && v < N}
 
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
@@ -812,8 +834,8 @@ maps to a concrete test case
 # Step 3: Check
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Rng N = {v:Int | 0 <= v && v < N}
 
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
@@ -830,13 +852,13 @@ maps to a concrete test case
 0
 ```
 
-Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | 0 <= v && v < r2}`
 
 # Step 3: Check
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Rng N = {v:Int | 0 <= v && v < N}
 
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
@@ -853,15 +875,15 @@ maps to a concrete test case
 0
 ```
 
-Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | 0 <= v && v < r2}`
 
-After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 1$
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \leq 0\quad\ \wedge\quad 0 < 1$
 
 # Step 3: Check
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Rng N = {v:Int | 0 <= v && v < N}
 
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
@@ -878,9 +900,9 @@ maps to a concrete test case
 0
 ```
 
-Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | 0 <= v && v < r2}`
 
-After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \leq 0\quad\ \wedge\quad 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
 
 . . .
 
@@ -889,8 +911,8 @@ Force new test by adding refutation constraint $\lnot (\cvar{r_1} = 1 \land \cva
 # Repeat With New Test
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Rng N = {v:Int | 0 <= v && v < N}
 
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
@@ -911,15 +933,15 @@ maps to a concrete test case
 
 . . .
 
-Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | 0 <= v && v < r2}`
 
-After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 0$
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \leq 0\quad\ \wedge\quad 0 < 0$
 
 # Repeat With New Test
 
 ```haskell
-type Nat   = {v:Int | v >= 0}
-type Rng N = {v:Int | v >= 0 && v < N}
+type Nat   = {v:Int | 0 <= v}
+type Rng N = {v:Int | 0 <= v && v < N}
 
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
@@ -936,9 +958,9 @@ maps to a concrete test case
 0
 ```
 
-Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | 0 <= v && v < r2}`
 
-After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**INVALID**
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \leq 0\quad\ \wedge\quad 0 < 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**INVALID**
 
 `rescale 1 0 0` fails the postcondition check!
 
@@ -948,7 +970,6 @@ After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\qu
 <!-- ``` -->
 
 # Containers
- ANIMATE ENITRE SECTION
 
 ```haskell
 type Weight = Pos
@@ -957,44 +978,132 @@ type Score  = Rng 100
 average :: [(Weight, Score)] -> Score
 ```
 
-How to encode structured data in SMT formula?
+How to generate lists via SMT solver?
 
 # Containers: Query
 
-ANIMATE TWICE: 2ND WITH CVARS
+Generate a **single** set of constraints describing **all possible** inputs
 
-Generate a **single** set of constraints describing **all possible** inputs.
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-1.png">
+<div style="float:left;">
+</div>
+</div>
 
-<img height=400px src="skeleton.png">
+# Containers: Query
 
-Let solver choose path through skeleton.
+Generate a **single** set of constraints describing **all possible** inputs
 
-# Containers: Choice Variables
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-2.png">
+<div style="float:left;">
+</div>
+</div>
 
-```haskell
-type Weight = Pos
-type Score  = Rng 100
-average :: [(Weight, Score)] -> Score
-```
+# Containers: Query
 
-How to encode structured data in SMT formula?
+Generate a **single** set of constraints describing **all possible** inputs
 
-$(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1})$
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-3.png">
+<div style="float:left;">
+</div>
+</div>
 
-Choice variables $\cvar{c}$ **guard** other constraints
+# Containers: Query
 
-. . .
+Generate a **single** set of constraints describing **all possible** inputs
 
-Force solver to choose one with $\cvar{c}_{00} \oplus \cvar{c}_{01}$
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-4.png">
+<div style="float:left;">
+</div>
+</div>
 
+# Containers: Query
 
-# Containers: Encoding Lists of Depth 3
+Generate a **single** set of constraints describing **all possible** inputs
 
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -->
-<!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -->
-<!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -->
-<!-- \end{aligned}$ -->
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<div style="float:left;">
+</div>
+</div>
+
+# Containers: Query
+
+Generate a **single** set of constraints describing **all possible** inputs
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-1.png">
+<div style="float:left; font-size: 12pt;">
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & \\
+\end{aligned}$
+</div>
+</div>
+
+# Containers: Query
+
+Generate a **single** set of constraints describing **all possible** inputs
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-2.png">
+<div style="float:left; font-size: 12pt;">
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+\end{aligned}$
+</div>
+</div>
+
+# Containers: Query
+
+Generate a **single** set of constraints describing **all possible** inputs
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-3.png">
+<div style="float:left; font-size: 12pt;">
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+\end{aligned}$
+</div>
+</div>
+
+# Containers: Query
+
+Generate a **single** set of constraints describing **all possible** inputs
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-4.png">
+<div style="float:left; font-size: 12pt;">
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
+                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+\end{aligned}$
+</div>
+</div>
+
+# Containers: Query
+
+Generate a **single** set of constraints describing **all possible** inputs
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<div style="float:left; font-size: 12pt;">
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1006,18 +1115,19 @@ $\begin{aligned}
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
 \end{aligned}$
+</div>
+</div>
 
-Encodes the **structure** of all lists with at most 3 elements.
+# Containers: Query
 
-# Containers: Encoding Lists of Depth 3
+Generate a **single** set of constraints describing **all possible** inputs
 
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -->
-<!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -->
-<!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -->
-<!-- \end{aligned}$ -->
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<div style="float:left; font-size: 12pt;">
+<div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1029,19 +1139,92 @@ $\begin{aligned}
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
 \end{aligned}$
-
-Encodes the **structure** of all lists with at most 3 elements.
-
-<!-- $\cstr{C_{data}} \defeq \cvar{c}_{i1} \Rightarrow \cvar{x}_{i+1} = \ltup{\cvar{w}_{i+1}}{\cvar{s}_{i+1}} \ \wedge\ 0 < \cvar{w}_{i+1} \ \wedge\ 0 \leq \cvar{s}_{i+1} < 100$ -->
+</div>
+<div>
 $\begin{aligned}
 \cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\
                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
 \end{aligned}$
+</div>
+</div>
+</div>
 
-Encodes the constraints on the **elements** of $\cstr{C_{list}}$.
+<!-- # Containers: Choice Variables -->
+
+<!-- ```haskell -->
+<!-- type Weight = Pos -->
+<!-- type Score  = Rng 100 -->
+<!-- average :: [(Weight, Score)] -> Score -->
+<!-- ``` -->
+
+<!-- How to encode structured data in SMT formula? -->
+
+<!-- $(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1})$ -->
+
+<!-- Choice variables $\cvar{c}$ **guard** other constraints -->
+
+<!-- . . . -->
+
+<!-- Force solver to choose one with $\cvar{c}_{00} \oplus \cvar{c}_{01}$ -->
+
+
+<!-- # Containers: Encoding Lists of Depth 3 -->
+
+<!-- <\!-- $\begin{aligned} -\-> -->
+<!-- <\!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -\-> -->
+<!-- <\!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -\-> -->
+<!-- <\!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -\-> -->
+<!-- <\!-- \end{aligned}$ -\-> -->
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge & -->
+<!--                            & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge & -->
+<!--                            (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge & -->
+<!--                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge & -->
+<!--                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & & -->
+<!-- \end{aligned}$ -->
+
+<!-- Encodes the **structure** of all lists with at most 3 elements. -->
+
+<!-- # Containers: Encoding Lists of Depth 3 -->
+
+<!-- <\!-- $\begin{aligned} -\-> -->
+<!-- <\!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -\-> -->
+<!-- <\!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -\-> -->
+<!-- <\!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -\-> -->
+<!-- <\!-- \end{aligned}$ -\-> -->
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge & -->
+<!--                            & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge & -->
+<!--                            (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge & -->
+<!--                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge & -->
+<!--                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\ -->
+<!--                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge & -->
+<!--                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & & -->
+<!-- \end{aligned}$ -->
+
+<!-- Encodes the **structure** of all lists with at most 3 elements. -->
+
+<!-- <\!-- $\cstr{C_{data}} \defeq \cvar{c}_{i1} \Rightarrow \cvar{x}_{i+1} = \ltup{\cvar{w}_{i+1}}{\cvar{s}_{i+1}} \ \wedge\ 0 < \cvar{w}_{i+1} \ \wedge\ 0 \leq \cvar{s}_{i+1} < 100$ -\-> -->
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\ -->
+<!--                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\ -->
+<!--                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100) -->
+<!-- \end{aligned}$ -->
+
+<!-- Encodes the constraints on the **elements** of $\cstr{C_{list}}$. -->
 
 # Containers: Decode
 
