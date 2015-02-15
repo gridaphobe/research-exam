@@ -1034,8 +1034,10 @@ Generate a **single** set of constraints describing **all possible** inputs
 
 Generate a **single** set of constraints describing **all possible** inputs
 
+Choice variables $\cvar{c}$ **guard** other constraints
+
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-1.png">
+<img style="float:left;" height=300px src="dot/skeleton-1-choice.png">
 <div style="float:left; font-size: 12pt;">
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & \\
@@ -1047,8 +1049,10 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
+Choice variables $\cvar{c}$ **guard** other constraints
+
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-2.png">
+<img style="float:left;" height=300px src="dot/skeleton-2-choice.png">
 <div style="float:left; font-size: 12pt;">
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1062,8 +1066,10 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
+Choice variables $\cvar{c}$ **guard** other constraints
+
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-3.png">
+<img style="float:left;" height=300px src="dot/skeleton-3-choice.png">
 <div style="float:left; font-size: 12pt;">
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1080,8 +1086,10 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
+Choice variables $\cvar{c}$ **guard** other constraints
+
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-4.png">
+<img style="float:left;" height=300px src="dot/skeleton-4-choice.png">
 <div style="float:left; font-size: 12pt;">
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1101,8 +1109,10 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
+Choice variables $\cvar{c}$ **guard** other constraints
+
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<img style="float:left;" height=300px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1124,8 +1134,10 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
+Choice variables $\cvar{c}$ **guard** other constraints
+
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<img style="float:left;" height=300px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div>
 $\begin{aligned}
@@ -1148,6 +1160,9 @@ $\begin{aligned}
                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\
                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
 \end{aligned}$
+</div>
+<div style="font-size: 14pt; ">
+Full constraint $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}}$
 </div>
 </div>
 </div>
