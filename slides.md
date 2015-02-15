@@ -969,6 +969,17 @@ After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \leq 0\qu
 <!-- rescale r1 r2 s = s * (r2 `div` r1) -->
 <!-- ``` -->
 
+# Target
+Generates tests from refinement types via query-decode-check loop
+
+1. Translate input types into SMT query
+2. Decode SMT model into concrete values
+3. Run function and check that result inhabits output type
+
+. . .
+
+How should we handle **structured data**?
+
 # Containers
 
 ```haskell
@@ -978,11 +989,13 @@ type Score  = Rng 100
 average :: [(Weight, Score)] -> Score
 ```
 
+. . .
+
 How to generate lists via SMT solver?
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-1.png">
@@ -992,7 +1005,7 @@ Generate a **single** set of constraints describing **all possible** inputs
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-2.png">
@@ -1002,7 +1015,7 @@ Generate a **single** set of constraints describing **all possible** inputs
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-3.png">
@@ -1012,7 +1025,7 @@ Generate a **single** set of constraints describing **all possible** inputs
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-4.png">
@@ -1022,7 +1035,7 @@ Generate a **single** set of constraints describing **all possible** inputs
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-5.png">
@@ -1032,7 +1045,7 @@ Generate a **single** set of constraints describing **all possible** inputs
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-1-choice.png">
@@ -1048,7 +1061,7 @@ $\begin{aligned}
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-2-choice.png">
@@ -1066,7 +1079,7 @@ $\begin{aligned}
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-3-choice.png">
@@ -1087,7 +1100,7 @@ $\begin{aligned}
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-4-choice.png">
@@ -1111,7 +1124,7 @@ $\begin{aligned}
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
@@ -1137,7 +1150,7 @@ $\begin{aligned}
 
 # Containers: Query
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
@@ -1175,7 +1188,7 @@ Full constraint $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}}$
 
 # Containers: Decode
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-1-decode.png">
@@ -1191,7 +1204,7 @@ $\begin{aligned}
 
 # Containers: Decode
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-2-decode.png">
@@ -1209,7 +1222,7 @@ $\begin{aligned}
 
 # Containers: Decode
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
@@ -1228,7 +1241,7 @@ $\begin{aligned}
 
 # Containers: Decode
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
@@ -1249,7 +1262,7 @@ Realized value: `[(1,2)]`
 
 # Containers: Refuting
 
-Generate a **single** set of constraints describing **all possible** inputs
+A **single** set of constraints describes **all possible** inputs
 
 <div>
 <img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
@@ -1429,14 +1442,16 @@ $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}} \land \cstr{C_{size}} \la
 
 # Evaluation
 
-### GOAL
+### Our Claims
 1. Target handles highly structured inputs automatically
-2. Generated tests provide high code coverage
+2. Target generates tests that provide high code coverage
 
-### HOW
+### Benchmarks
 1. `Data.Map`: checked balancing and ordering invariants
 2. `RBTree`: checked red-black and ordering invariants
 3. `XMonad.StackSet`: checked uniqueness of windows
+
+Compare Target against QuickCheck and SmallCheck
     
 <!-- 3. RESULT -->
 
@@ -1446,7 +1461,7 @@ $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}} \land \cstr{C_{size}} \la
 
 <img height=500px src="benchmarks.png">
 
-# Evaluation: Results (2)
+# Evaluation: Results
 
 ### Target provides high coverage with low investment
 
@@ -1454,11 +1469,11 @@ $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}} \land \cstr{C_{size}} \la
 
 # Takeaway
 
-TARGET - new approach for etc etc
+**Target** - a new approach for automatically testing functions with preconditions
 
-VS enumeration:
-VS sampling:
-VS symbolic execution:
+> - vs **enumeration**: Target defers the onset of input explosion
+> - vs **sampling**: Target does not require custom generators
+> - vs **symbolic execution**: Target guarantees that inputs pass the precondition
 
 <!-- > - Target can explore larger input spaces than explicit enumeration -->
 <!-- > - Target does not require custom generators -->
