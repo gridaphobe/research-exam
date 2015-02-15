@@ -740,13 +740,13 @@ Exhaustively checks all inputs up to a given depth-bound
 
 ### `{v:t | p}`
 
-> The set of values `v` of type `t` satisfying a predicate `p`
+> The set of values `v` of type `t` satisfying a logical predicate `p`
 
 # Refinement Types
 
 ### `{v:t | p}`
 
-> The set of values `v` of type `t` satisfying a predicate `p`
+> The set of values `v` of type `t` satisfying a logical predicate `p`
 
 ### Simple Refinement Types
 
@@ -762,7 +762,7 @@ The natural numbers, positive integers, and integers in the range $[0,N)$
 
 ### `{v:t | p}`
 
-> The set of values `v` of type `t` satisfying a predicate `p`
+> The set of values `v` of type `t` satisfying a logical predicate `p`
 
 ### Simple Refinement Types
 
@@ -807,7 +807,7 @@ rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 
 . . .
 
-Represent preconditions in logic
+Represent preconditions directly in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -820,7 +820,7 @@ type Rng N = {v:Int | 0 <= v && v < N}
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
 
-Represent preconditions in logic
+Represent preconditions directly in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -840,7 +840,7 @@ type Rng N = {v:Int | 0 <= v && v < N}
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
 
-Represent preconditions in logic
+Represent preconditions directly in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -863,7 +863,7 @@ type Rng N = {v:Int | 0 <= v && v < N}
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
 
-Represent preconditions in logic
+Represent preconditions directly in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -888,7 +888,7 @@ type Rng N = {v:Int | 0 <= v && v < N}
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
 
-Represent preconditions in logic
+Represent preconditions directly in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -917,7 +917,7 @@ type Rng N = {v:Int | 0 <= v && v < N}
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
 
-Represent preconditions in logic, excluding 1st test
+Represent preconditions directly in logic, excluding 1st test
 
 $\cstr{C_1} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 
@@ -946,7 +946,7 @@ type Rng N = {v:Int | 0 <= v && v < N}
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
 ```
 
-Represent preconditions in logic, excluding 1st test
+Represent preconditions directly in logic, excluding 1st test
 
 $\cstr{C_1} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 
@@ -1034,11 +1034,12 @@ Generate a **single** set of constraints describing **all possible** inputs
 
 Generate a **single** set of constraints describing **all possible** inputs
 
-Choice variables $\cvar{c}$ **guard** other constraints
-
 <div>
-<img style="float:left;" height=300px src="dot/skeleton-1-choice.png">
+<img style="float:left;" height=350px src="dot/skeleton-1-choice.png">
 <div style="float:left; font-size: 12pt;">
+<div style="font-size: 14pt; ">
+Choice variables $\cvar{c}$ **guard** other constraints
+</div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & \\
 \end{aligned}$
@@ -1049,11 +1050,12 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
-Choice variables $\cvar{c}$ **guard** other constraints
-
 <div>
-<img style="float:left;" height=300px src="dot/skeleton-2-choice.png">
+<img style="float:left;" height=350px src="dot/skeleton-2-choice.png">
 <div style="float:left; font-size: 12pt;">
+<div style="font-size: 14pt; ">
+Choice variables $\cvar{c}$ **guard** other constraints
+</div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1066,11 +1068,12 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
-Choice variables $\cvar{c}$ **guard** other constraints
-
 <div>
-<img style="float:left;" height=300px src="dot/skeleton-3-choice.png">
+<img style="float:left;" height=350px src="dot/skeleton-3-choice.png">
 <div style="float:left; font-size: 12pt;">
+<div style="font-size: 14pt; ">
+Choice variables $\cvar{c}$ **guard** other constraints
+</div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1086,11 +1089,12 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
-Choice variables $\cvar{c}$ **guard** other constraints
-
 <div>
-<img style="float:left;" height=300px src="dot/skeleton-4-choice.png">
+<img style="float:left;" height=350px src="dot/skeleton-4-choice.png">
 <div style="float:left; font-size: 12pt;">
+<div style="font-size: 14pt; ">
+Choice variables $\cvar{c}$ **guard** other constraints
+</div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1109,11 +1113,12 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
-Choice variables $\cvar{c}$ **guard** other constraints
-
 <div>
-<img style="float:left;" height=300px src="dot/skeleton-5-choice.png">
+<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
+<div style="font-size: 14pt; ">
+Choice variables $\cvar{c}$ **guard** other constraints
+</div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1134,11 +1139,12 @@ $\begin{aligned}
 
 Generate a **single** set of constraints describing **all possible** inputs
 
-Choice variables $\cvar{c}$ **guard** other constraints
-
 <div>
-<img style="float:left;" height=300px src="dot/skeleton-5-choice.png">
+<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
+<div style="font-size: 14pt; ">
+Choice variables $\cvar{c}$ **guard** other constraints
+</div>
 <div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1167,187 +1173,105 @@ Full constraint $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}}$
 </div>
 </div>
 
-<!-- # Containers: Choice Variables -->
+# Containers: Decode
 
-<!-- ```haskell -->
-<!-- type Weight = Pos -->
-<!-- type Score  = Rng 100 -->
-<!-- average :: [(Weight, Score)] -> Score -->
-<!-- ``` -->
+Generate a **single** set of constraints describing **all possible** inputs
 
-<!-- How to encode structured data in SMT formula? -->
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-1-decode.png">
+<div style="float:left; font-size:14pt;">
+Follow the choice variables to reconstruct the list
 
-<!-- $(\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) \wedge (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1})$ -->
-
-<!-- Choice variables $\cvar{c}$ **guard** other constraints -->
-
-<!-- . . . -->
-
-<!-- Force solver to choose one with $\cvar{c}_{00} \oplus \cvar{c}_{01}$ -->
-
-
-<!-- # Containers: Encoding Lists of Depth 3 -->
-
-<!-- <\!-- $\begin{aligned} -\-> -->
-<!-- <\!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -\-> -->
-<!-- <\!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -\-> -->
-<!-- <\!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -\-> -->
-<!-- <\!-- \end{aligned}$ -\-> -->
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge & -->
-<!--                            & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge & -->
-<!--                            (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge & -->
-<!--                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge & -->
-<!--                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & & -->
-<!-- \end{aligned}$ -->
-
-<!-- Encodes the **structure** of all lists with at most 3 elements. -->
-
-<!-- # Containers: Encoding Lists of Depth 3 -->
-
-<!-- <\!-- $\begin{aligned} -\-> -->
-<!-- <\!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{i0} \Rightarrow \cvar{xs}_i = \lnil) \wedge -\-> -->
-<!-- <\!--                            (\cvar{c}_{i1} \Rightarrow \cvar{xs}_i = \lcons{\cvar{x}_{i+1}}{\cvar{xs}_{i+1}})\\ -\-> -->
-<!-- <\!--                 & \wedge & (\cvar{c}_{i1} \Rightarrow \cvar{c}_{(i+1)0} \oplus \cvar{c}_{(i+1)1})\\ -\-> -->
-<!-- <\!-- \end{aligned}$ -\-> -->
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge & -->
-<!--                            & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge & -->
-<!--                            (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge & -->
-<!--                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge & -->
-<!--                            (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\ -->
-<!--                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge & -->
-<!--                            (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & & -->
-<!-- \end{aligned}$ -->
-
-<!-- Encodes the **structure** of all lists with at most 3 elements. -->
-
-<!-- <\!-- $\cstr{C_{data}} \defeq \cvar{c}_{i1} \Rightarrow \cvar{x}_{i+1} = \ltup{\cvar{w}_{i+1}}{\cvar{s}_{i+1}} \ \wedge\ 0 < \cvar{w}_{i+1} \ \wedge\ 0 \leq \cvar{s}_{i+1} < 100$ -\-> -->
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{data}} & \defeq & (\cvar{c}_{01} \Rightarrow \cvar{x}_1 = \ltup{\cvar{w}_1}{\cvar{s}_1} \ \wedge\ 0 < \cvar{w}_1 \ \wedge\ 0 \leq \cvar{s}_1 < 100) \\ -->
-<!--                 & \wedge & (\cvar{c}_{11} \Rightarrow \cvar{x}_2 = \ltup{\cvar{w}_2}{\cvar{s}_2} \ \wedge\ 0 < \cvar{w}_2 \ \wedge\ 0 \leq \cvar{s}_2 < 100) \\ -->
-<!--                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100) -->
-<!-- \end{aligned}$ -->
-
-<!-- Encodes the constraints on the **elements** of $\cstr{C_{list}}$. -->
+$\begin{aligned}
+[&\cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{x_1} \mapsto \ltup{\cvar{w_1}}{\cvar{s_1}},\ \cvar{w_1} \mapsto 1,\ \cvar{s_1} \mapsto 2, &\\
+&\cvar{c_{10}} \mapsto\ \ttrue,\ \cvar{c_{11}} \mapsto\ \tfalse,\ \cvar{x_2} \mapsto \ltup{\cvar{w_2}}{\cvar{s_2}},\ \cvar{w_2} \mapsto 3,\ \cvar{s_2} \mapsto 4, \ldots &]\\
+\end{aligned}$
+</div>
+</div>
 
 # Containers: Decode
 
-To build a list from a model
+Generate a **single** set of constraints describing **all possible** inputs
 
-$[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
-1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-2-decode.png">
+<div style="float:left; font-size:14pt;">
+Follow the choice variables to reconstruct the list
 
-. . .
+$\begin{aligned}
+[&\cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{x_1} \mapsto \ltup{\cvar{w_1}}{\cvar{s_1}},\ \cvar{w_1} \mapsto 1,\ \cvar{s_1} \mapsto 2, &\\
+&\cvar{c_{10}} \mapsto\ \ttrue,\ \cvar{c_{11}} \mapsto\ \tfalse,\ \cvar{x_2} \mapsto \ltup{\cvar{w_2}}{\cvar{s_2}},\ \cvar{w_2} \mapsto 3,\ \cvar{s_2} \mapsto 4, \ldots &]\\
+\end{aligned}$
 
-follow the choice variables!
+- $\cvar{c_{01}} \mapsto\ \ttrue \Rightarrow \cvar{xs_0} = \lcons{\cvar{x_1}}{\cvar{xs_1}}$
+</div>
+</div>
 
-$\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil\ \land\ \cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
+# Containers: Decode
 
-Realized value:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`[(1,2)]`
+Generate a **single** set of constraints describing **all possible** inputs
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
+<div style="float:left; font-size:14pt;">
+Follow the choice variables to reconstruct the list
+
+$\begin{aligned}
+[&\cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{x_1} \mapsto \ltup{\cvar{w_1}}{\cvar{s_1}},\ \cvar{w_1} \mapsto 1,\ \cvar{s_1} \mapsto 2, &\\
+&\cvar{c_{10}} \mapsto\ \ttrue,\ \cvar{c_{11}} \mapsto\ \tfalse,\ \cvar{x_2} \mapsto \ltup{\cvar{w_2}}{\cvar{s_2}},\ \cvar{w_2} \mapsto 3,\ \cvar{s_2} \mapsto 4, \ldots &]\\
+\end{aligned}$
+
+- $\cvar{c_{01}} \mapsto\ \ttrue \Rightarrow \cvar{xs_0} = \lcons{\cvar{x_1}}{\cvar{xs_1}}$
+- $\cvar{c_{10}} \mapsto\ \ttrue \Rightarrow \cvar{xs_1} = \lnil$
+</div>
+</div>
+
+# Containers: Decode
+
+Generate a **single** set of constraints describing **all possible** inputs
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
+<div style="float:left; font-size:14pt;">
+Follow the choice variables to reconstruct the list
+
+$\begin{aligned}
+[&\cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{x_1} \mapsto \ltup{\cvar{w_1}}{\cvar{s_1}},\ \cvar{w_1} \mapsto 1,\ \cvar{s_1} \mapsto 2, &\\
+&\cvar{c_{10}} \mapsto\ \ttrue,\ \cvar{c_{11}} \mapsto\ \tfalse,\ \cvar{x_2} \mapsto \ltup{\cvar{w_2}}{\cvar{s_2}},\ \cvar{w_2} \mapsto 3,\ \cvar{s_2} \mapsto 4, \ldots &]\\
+\end{aligned}$
+
+- $\cvar{c_{01}} \mapsto\ \ttrue \Rightarrow \cvar{xs_0} = \lcons{\cvar{x_1}}{\cvar{xs_1}}$
+- $\cvar{c_{10}} \mapsto\ \ttrue \Rightarrow \cvar{xs_1} = \lnil$
+
+Realized value: `[(1,2)]`
+</div>
+</div>
 
 # Containers: Refuting
 
-To build a list from a model
+Generate a **single** set of constraints describing **all possible** inputs
 
-$[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
-1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
+<div style="float:left; font-size:14pt;">
+Follow the choice variables to reconstruct the list
 
-follow the choice variables!
+$\begin{aligned}
+[&\cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{x_1} \mapsto \ltup{\cvar{w_1}}{\cvar{s_1}},\ \cvar{w_1} \mapsto 1,\ \cvar{s_1} \mapsto 2, &\\
+&\cvar{c_{10}} \mapsto\ \ttrue,\ \cvar{c_{11}} \mapsto\ \tfalse,\ \cvar{x_2} \mapsto \ltup{\cvar{w_2}}{\cvar{s_2}},\ \cvar{w_2} \mapsto 3,\ \cvar{s_2} \mapsto 4, \ldots &]\\
+\end{aligned}$
 
-$\cvar{c_{i0}} \mapsto \ttrue \imp \cvar{xs_i} = \lnil\ \land\ \cvar{c_{i1}} \mapsto \ttrue \imp \cvar{xs_i} = \lcons{x_{i+1}}{xs_{i+1}}$
+- $\cvar{c_{01}} \mapsto\ \ttrue \Rightarrow \cvar{xs_0} = \lcons{\cvar{x_1}}{\cvar{xs_1}}$
+- $\cvar{c_{10}} \mapsto\ \ttrue \Rightarrow \cvar{xs_1} = \lnil$
 
-Realized value:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`[(1,2)]`
+Realized value: `[(1,2)]`
 
 **Only** refute constraints that contribute to **realized** value
 
-. . .
+$\lnot (\cvar{c_{00}} = \tfalse \land \cvar{c_{01}} = \ttrue \land \cvar{x_1} = \ltup{\cvar{w_1}}{\cvar{s_1}} \land \cvar{w_1} = 1 \land \cvar{s_1} = 2 \land \cvar{c_{10}} = \ttrue)$
+</div>
+</div>
 
-$[ \cvar{c_{00}} \mapsto\ \tfalse,\ \cvar{c_{01}} \mapsto\ \ttrue,\ \cvar{w_1} \mapsto
-1,\ \cvar{s_1} \mapsto 2,\ \cvar{c_{10}} \mapsto\ \ttrue, \ldots\ ]$
-
-is refuted by
-
-$\lnot (\cvar{c_{00}} = \tfalse \land \cvar{c_{01}} = \ttrue \land \cvar{w_1} = 1 \land \cvar{s_1} = 2 \land \cvar{c_{10}} = \ttrue)$
-
-<!-- # Ordered Containers -->
-
-<!-- ```haskell -->
-<!-- insert :: a -> Sorted a -> Sorted a -->
-<!-- ``` -->
-
-<!-- ```haskell -->
-<!-- data Sorted a = [] -->
-<!--               | (:) { h :: a, t :: Sorted {v:a | h < v} } -->
-<!-- ``` -->
-
-<!-- Recursive refinement relates the `head` with **each** element of the `tail`. -->
-
-<!-- # Ordered Containers: Query -->
-
-<!-- ```haskell -->
-<!-- insert :: a -> Sorted a -> Sorted a -->
-<!-- ``` -->
-
-<!-- ```haskell -->
-<!-- data Sorted a = [] -->
-<!--               | (:) { h :: a, t :: Sorted {v:a | h < v} } -->
-<!-- ``` -->
-
-<!-- Recursive refinement relates the `head` with **each** element of the `tail`. -->
-
-<!-- Instantiate recursive refinement each time we unfold `(:)` -->
-
-<!-- > - Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2` -->
-<!-- > - Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3` -->
-
-<!-- . . . -->
-
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2) -->
-<!--                    \wedge   (\cvar{c}_{21} \Rightarrow \cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3) -->
-<!-- \end{aligned}$ -->
-
-<!-- # Ordered Containers: Guards -->
-
-<!-- ```haskell -->
-<!-- insert :: a -> Sorted a -> Sorted a -->
-<!-- ``` -->
-
-<!-- ```haskell -->
-<!-- data Sorted a = [] -->
-<!--               | (:) { h :: a, t :: Sorted {v:a | h < v} } -->
-<!-- ``` -->
-
-<!-- Recursive refinement relates the `head` with **each** element of the `tail`. -->
-
-<!-- Instantiate recursive refinement each time we unfold `(:)` -->
-
-<!-- - Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2` -->
-<!-- - Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3` -->
-
-<!-- $\begin{aligned} -->
-<!-- \cstr{C_{ord'}}   & \defeq & (\cvar{x}_1 < \cvar{x}_2) -->
-<!--                     \wedge   (\cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3) -->
-<!-- \end{aligned}$ -->
-
-<!-- . . . -->
-
-<!-- Forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ **regardless** of which are in the realized model! -->
-
-<!-- . . . -->
-
-<!-- Prohibits generation of valid inputs, e.g. `[2,3]` -->
 
 # Structured Containers
 
@@ -1357,7 +1281,13 @@ best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 
 `best` takes a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
 
-. . .
+# Structured Containers
+
+```haskell
+best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
+```
+
+`best` takes a list of **at least** `k` scores, and returns a list with **exactly** `k` scores.
 
 ```haskell
 measure len :: [a] -> Nat
@@ -1387,6 +1317,58 @@ len (x:xs)  = 1 + len xs
 
 Instantiate measure definition each time we unfold `[]` or `(:)`
 
+# Structured Containers: Query
+
+```haskell
+best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
+```
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<div style="float:left; font-size: 12pt;">
+<div>
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
+                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+\end{aligned}$
+</div>
+</div>
+</div>
+
+# Structured Containers: Query
+
+```haskell
+best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
+```
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<div style="float:left; font-size: 12pt;">
+<div>
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
+                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+\end{aligned}$
+</div>
+<div>
 $\begin{aligned}
 \cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
@@ -1396,10 +1378,52 @@ $\begin{aligned}
                            (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0) &        &
 \end{aligned}$
+</div>
+</div>
+</div>
 
-. . .
+# Structured Containers: Query
 
+```haskell
+best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
+```
+
+<div>
+<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<div style="float:left; font-size: 12pt;">
+<div>
+$\begin{aligned}
+\cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
+                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
+                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
+                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
+                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+\end{aligned}$
+</div>
+<div>
+$\begin{aligned}
+\cstr{C_{size}} & \defeq & (\cvar{c}_{00} \Rightarrow \clen{\cvar{xs}_{0}} = 0) & \wedge &
+                           (\cvar{c}_{01} \Rightarrow \clen{\cvar{xs}_{0}} = 1 + \clen{\cvar{xs}_1}) \\
+                & \wedge & (\cvar{c}_{10} \Rightarrow \clen{\cvar{xs}_{1}} = 0) & \wedge &
+                           (\cvar{c}_{11} \Rightarrow \clen{\cvar{xs}_{1}} = 1 + \clen{\cvar{xs}_2}) \\
+                & \wedge & (\cvar{c}_{20} \Rightarrow \clen{\cvar{xs}_{2}} = 0) & \wedge &
+                           (\cvar{c}_{21} \Rightarrow \clen{\cvar{xs}_{2}} = 1 + \clen{\cvar{xs}_3}) \\
+                & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0) &        &
+\end{aligned}$
+</div>
+<div style="font-size: 14pt; ">
 Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{xs}_0}$
+
+$\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}} \land \cstr{C_{size}} \land 0 \leq \cvar{k} \leq \clen{\cvar{xs}_0}$
+</div>
+</div>
+</div>
 
 # DEMO: Targeting Binary Search Trees
 
@@ -1416,12 +1440,17 @@ Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{x
     
 <!-- 3. RESULT -->
 
-# Evaluation: Result
+# Evaluation: Results
 
 ### Target checks larger inputs than brute-force
 
 <img height=500px src="benchmarks.png">
 
+# Evaluation: Results (2)
+
+### Target provides high coverage with low investment
+
+<img height=300px src="coverage.png">
 
 # Takeaway
 

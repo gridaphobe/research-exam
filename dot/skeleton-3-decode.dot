@@ -1,0 +1,20 @@
+digraph G {
+  graph [ fontname = "Latin Modern Math" ];
+  node  [ fontname = "Latin Modern Math" ];
+  edge  [ fontname = "Latin Modern Math" ];
+  xs[label=<xs<SUB>0</SUB>>];
+  nil0[label=<xs<SUB>0</SUB> = []>, style=invis];
+  nil1[label=<xs<SUB>1</SUB> = []>];
+  nil2[label=<xs<SUB>2</SUB> = []>, style=invis];
+  nil3[label=<xs<SUB>3</SUB> = []>, style=invis];
+  cons0[label=<xs<SUB>0</SUB> = x<SUB>1</SUB> : xs<SUB>1</SUB>>];
+  cons1[label=<xs<SUB>1</SUB> = x<SUB>2</SUB> : xs<SUB>2</SUB>>, style=invis];
+  cons2[label=<xs<SUB>2</SUB> = x<SUB>3</SUB> : xs<SUB>3</SUB>>, style=invis];
+  xs -> nil0      [label=< c<SUB>00</SUB>>, style=invis];
+  xs -> cons0     [label=< c<SUB>01</SUB>>];
+  cons0 -> nil1   [label=< c<SUB>10</SUB>>];
+  cons0 -> cons1  [label=< c<SUB>11</SUB>>, style=invis];
+  cons1 -> nil2   [label=< c<SUB>20</SUB>>, style=invis];
+  cons1 -> cons2  [label=< c<SUB>21</SUB>>, style=invis];
+  cons2 -> nil3   [label=< c<SUB>30</SUB>>, style=invis];
+}
