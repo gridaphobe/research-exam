@@ -998,7 +998,7 @@ How to generate lists via SMT solver?
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-1.png">
+<img style="float:left;" width=350px src="dot/skeleton-1.png">
 <div style="float:left;">
 </div>
 </div>
@@ -1008,7 +1008,7 @@ A **single** set of constraints describes **all possible** inputs
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-2.png">
+<img style="float:left;" width=350px src="dot/skeleton-2.png">
 <div style="float:left;">
 </div>
 </div>
@@ -1018,7 +1018,7 @@ A **single** set of constraints describes **all possible** inputs
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-3.png">
+<img style="float:left;" width=350px src="dot/skeleton-3.png">
 <div style="float:left;">
 </div>
 </div>
@@ -1028,7 +1028,7 @@ A **single** set of constraints describes **all possible** inputs
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-4.png">
+<img style="float:left;" width=350px src="dot/skeleton-4.png">
 <div style="float:left;">
 </div>
 </div>
@@ -1038,7 +1038,7 @@ A **single** set of constraints describes **all possible** inputs
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5.png">
+<img style="float:left;" width=350px src="dot/skeleton-5.png">
 <div style="float:left;">
 </div>
 </div>
@@ -1048,7 +1048,7 @@ A **single** set of constraints describes **all possible** inputs
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-1-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-1-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
@@ -1064,7 +1064,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-2-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-2-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
@@ -1082,7 +1082,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-3-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-3-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
@@ -1103,7 +1103,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-4-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-4-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
@@ -1127,7 +1127,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
@@ -1153,7 +1153,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
@@ -1191,7 +1191,7 @@ Full constraint $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}}$
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-1-decode.png">
+<img style="float:left;" width=350px src="dot/skeleton-1-decode.png">
 <div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
@@ -1207,7 +1207,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-2-decode.png">
+<img style="float:left;" width=350px src="dot/skeleton-2-decode.png">
 <div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
@@ -1225,7 +1225,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
+<img style="float:left;" width=350px src="dot/skeleton-3-decode.png">
 <div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
@@ -1244,7 +1244,7 @@ $\begin{aligned}
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
+<img style="float:left;" width=350px src="dot/skeleton-3-decode.png">
 <div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
@@ -1265,7 +1265,7 @@ Realized value: `[(1,2)]`
 A **single** set of constraints describes **all possible** inputs
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-3-decode.png">
+<img style="float:left;" width=350px src="dot/skeleton-3-decode.png">
 <div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
@@ -1337,7 +1337,7 @@ best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div>
 $\begin{aligned}
@@ -1364,7 +1364,7 @@ best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div>
 $\begin{aligned}
@@ -1402,7 +1402,7 @@ best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
 <div>
-<img style="float:left;" height=350px src="dot/skeleton-5-choice.png">
+<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
 <div style="float:left; font-size: 12pt;">
 <div>
 $\begin{aligned}
