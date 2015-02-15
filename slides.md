@@ -165,7 +165,7 @@ prop_insert_bst x t = isBST (insert x t)
 
 <!-- HOW TO RUN IT -->
 ```haskell
-ghci> smallCheck 3 prop_insert_bst
+>>> smallCheck 3 prop_insert_bst
 ```
 
 Test all integers in range `[-3,3]` and all trees of depth 3
@@ -198,7 +198,7 @@ prop_insert_bst x t = isBST t ==> isBST (insert x t)
 
 <!-- HOW TO RUN IT -->
 ```haskell
-ghci> smallCheck 3 prop_insert_bst
+>>> smallCheck 3 prop_insert_bst
 ```
 
 Test all integers in range `[-3,3]` and all trees of depth 3
@@ -225,7 +225,7 @@ prop_insert_bst x t = isBST t ==> isBST (insert x t)
 
 <!-- HOW TO RUN IT -->
 ```haskell
-ghci> smallCheck 4 prop_insert_bst
+>>> smallCheck 4 prop_insert_bst
 ```
 
 Test all integers in range `[-4,4]` and all trees of depth 4
@@ -302,7 +302,7 @@ If the input tree is valid, then the output tree should be valid
 . . .
 
 ```haskell
-ghci> quickCheck prop_insert_bst
+>>> quickCheck prop_insert_bst
 ```
 
 Test `prop_insert_bst` on 100 random, **valid** inputs
@@ -327,7 +327,7 @@ prop_insert_bst x t
 If the input tree is valid, then the output tree should be valid
 
 ```haskell
-ghci> quickCheck prop_insert_bst
+>>> quickCheck prop_insert_bst
 ```
 
 Test `prop_insert_bst` on 100 random, valid inputs, while collecting statistics
@@ -362,7 +362,7 @@ prop_insert_bst x t
 If the input tree is valid **and** has more than one element, then the output tree should be valid
 
 ```haskell
-ghci> quickCheck prop_insert_bst
+>>> quickCheck prop_insert_bst
 ```
 
 Test `prop_insert_bst` on 100 random, valid inputs

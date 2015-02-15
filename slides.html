@@ -231,7 +231,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST (insert x t)</code></pre>
 </div>
 <div class="incremental">
 <!-- HOW TO RUN IT -->
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst</code></pre>
 <p>Test all integers in range <code>[-3,3]</code> and all trees of depth 3</p>
 </div>
 <div class="incremental">
@@ -252,7 +252,7 @@ there exist <span class="dv">0</span>, <span class="dt">Node</span> <span class=
 prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p><strong>If</strong> the input tree is valid, <strong>then</strong> the output tree should be valid</p>
 <!-- HOW TO RUN IT -->
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> smallCheck <span class="dv">3</span> prop_insert_bst</code></pre>
 <p>Test all integers in range <code>[-3,3]</code> and all trees of depth 3</p>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Completed</span> <span class="dv">567</span> tests without failure<span class="fu">.</span>
@@ -267,7 +267,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p><strong>If</strong> the input tree is valid, <strong>then</strong> the output tree should be valid</p>
 <!-- HOW TO RUN IT -->
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> smallCheck <span class="dv">4</span> prop_insert_bst</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> smallCheck <span class="dv">4</span> prop_insert_bst</code></pre>
 <p>Test all integers in range <code>[-4,4]</code> and all trees of depth 4</p>
 <!-- # SmallCheck: How small? -->
 <div class="incremental">
@@ -329,7 +329,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
   <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p>If the input tree is valid, then the output tree should be valid</p>
 <div class="incremental">
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> quickCheck prop_insert_bst</code></pre>
 <p>Test <code>prop_insert_bst</code> on 100 random, <strong>valid</strong> inputs</p>
 </div>
 <div class="incremental">
@@ -343,7 +343,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
   <span class="fu">=</span> isBST t <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p>If the input tree is valid, then the output tree should be valid</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> quickCheck prop_insert_bst</code></pre>
 <p>Test <code>prop_insert_bst</code> on 100 random, valid inputs, while collecting statistics</p>
 <!-- # QuickCheck: Testing `insert` -->
 <!-- ```haskell -->
@@ -364,7 +364,7 @@ prop_insert_bst x t <span class="fu">=</span> isBST t <span class="fu">==&gt;</s
 <pre class="sourceCode haskell"><code class="sourceCode haskell">prop_insert_bst x t
   <span class="fu">=</span> isBST t <span class="fu">&amp;&amp;</span> size t <span class="fu">&gt;</span> <span class="dv">1</span> <span class="fu">==&gt;</span> isBST (insert x t)</code></pre>
 <p>If the input tree is valid <strong>and</strong> has more than one element, then the output tree should be valid</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell">ghci<span class="fu">&gt;</span> quickCheck prop_insert_bst</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;&gt;&gt;</span> quickCheck prop_insert_bst</code></pre>
 <p>Test <code>prop_insert_bst</code> on 100 random, valid inputs</p>
 <div class="incremental">
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">***</span> <span class="dt">Gave</span> up<span class="fu">!</span> <span class="dt">Passed</span> only <span class="dv">37</span> tests<span class="fu">.</span></code></pre>
