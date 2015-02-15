@@ -4,8 +4,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 module Tree where
 
-import Prelude hiding (abs)
-
 import GHC.Generics
 
 import Test.Target
@@ -48,9 +46,9 @@ prop_insert_bst_sc  x t = isBST t SC.==> isBST (insert x t)
 
 {-@ data Tree a <pl :: Int -> Int -> Prop, pr :: Int -> Int -> Prop> =
         Leaf
-      | Node { x :: a
-             , l :: Tree <pl,pr> (a<pl x>)
-             , r :: Tree <pl,pr> (a<pr x>)
+      | Node { xxx :: a
+             , lll :: Tree <pl,pr> (a<pl xxx>)
+             , rrr :: Tree <pl,pr> (a<pr xxx>)
              }
   @-}
 
@@ -117,12 +115,21 @@ tree = Node
 
 singleton x = Node x Leaf Leaf
 
-{-@ measure balanced @-}
+{-@ measure balanced :: Tree a -> Prop
+    balanced (Leaf) = true
+    balanced (Node x l r) = getHeight l - getHeight r <= 1
+                         && getHeight r - getHeight l <= 1
+                         && balanced l && (balanced r)
+  @-}
 balanced :: Tree a -> Bool
 balanced Leaf = True
-balanced (Node _ l r) = abs (getHeight l - getHeight r) <= 1 && balanced l && balanced r
+balanced (Node _ l r) = (-1) <= d && d <= 1 && balanced l && balanced r
+  where d = getHeight l - getHeight r
 
-{-@ measure getHeight @-}
+{-@ measure getHeight :: Tree a -> Int
+    getHeight (Leaf) = 0
+    getHeight (Node x l r) = 1 + if (getHeight l) > (getHeight r) then (getHeight l) else (getHeight r)
+  @-}
 getHeight :: Tree a -> Int
 getHeight Leaf         = 0
 getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
@@ -130,14 +137,9 @@ getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
     hl        = getHeight l
     hr        = getHeight r
 
-{-@ measure bFac @-}
 bFac :: Tree a -> Int
 bFac Leaf         = 0
 bFac (Node _ l r) = getHeight l - getHeight r 
-
-{-@ inline abs @-}
-abs :: Int -> Int
-abs x = if x < 0 then 0 - x else x
 
 htDiff l r = getHeight l - getHeight r
 
