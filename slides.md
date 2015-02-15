@@ -681,7 +681,7 @@ Our contribution
 
 <!-- > Write a single generator per type, that can generate values satisfying different predicates. -->
 
-Systematically generate **valid inputs** that are **guaranteed** to pass the precondition
+Systematically generate **valid inputs** that are guaranteed to **pass the precondition**
 
 . . .
 
@@ -691,17 +691,38 @@ Systematically generate **valid inputs** that are **guaranteed** to pass the pre
 <!-- # Type-Targeted Testing -->
 . . .
 
-Use **refinement types** as unified specification mechanism for input-generation and output-checking
+<!-- SUBPLAN -->
+
+<!-- 1. refinement types -->
+<!-- 2. generate inputs -->
+<!-- 3. run function -->
+<!-- 4. check outputs -->
+
+**Approach**: Use **refinement types** to provide and check
+
+# Target
+Generates tests from **refinement types** via query-decode-check loop
+
+1. Translate input types into SMT **query**
+2. **Decode** SMT model into concrete values
+3. Run function and **check** that result inhabits output type
+
+. . .
+
+Exhaustively checks all inputs up to a given depth-bound
+
+> Like SmallCheck with a smarter generator
+
 
 # Refinement Types
 
-## `{v:t | p}`
+### `{v:t | p}`
 
 > The set of values `v` of type `t` satisfying a predicate `p`
 
 # Refinement Types
 
-## `{v:t | p}`
+### `{v:t | p}`
 
 > The set of values `v` of type `t` satisfying a predicate `p`
 
@@ -717,7 +738,7 @@ The natural numbers, positive integers, and integers in the range $[0,N)$
 
 # Refinement Types
 
-## `{v:t | p}`
+### `{v:t | p}`
 
 > The set of values `v` of type `t` satisfying a predicate `p`
 
@@ -746,53 +767,38 @@ x:Nat -> {v:Nat | v = x + 1}
 ```
 Functions that take a natural number and increment it by one
 
-# Refinement Types: Applications
-
-Traditionally used for program verification
-
-We show that refinement types can also be viewed as exhaustive test-suite
-
-. . .
-
-## Enables gradual verification
-1. Write high-level spec as refinement type
-2. Immediate gratification from comprehensive test-suite
-3. Once design has settled, add hints / inductive invariants to allow verification
-
 # Target
-Generates tests from refinement types via query-decode-check loop
+Generates tests from **refinement types** via query-decode-check loop
 
 1. Translate input types into SMT **query**
 2. **Decode** SMT model into concrete values
 3. Run function and **check** that result inhabits output type
 
-. . .
-
-Exhaustively checks all inputs up to a given depth-bound
-
-> Like SmallCheck with a smarter generator
-
-# Primitive Types: Query
+# Step 1: Query
 
 ```haskell
+type Nat   = {v:Int | v >= 0}
+type Rng N = {v:Int | v >= 0 && v < N}
+
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
 . . .
 
-Embed primitive constraints directly in logic
+Represent preconditions in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
-# Primitive Types: Decode
+# Step 2: Decode
 
 ```haskell
+type Nat   = {v:Int | v >= 0}
+type Rng N = {v:Int | v >= 0 && v < N}
+
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-Embed primitive constraints directly in logic
+Represent preconditions in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -800,17 +806,19 @@ A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
-rescale 1 1 0
+>>> rescale 1 1 0
 ```
 
-# Primitive Types: Check
+# Step 3: Check
 
 ```haskell
+type Nat   = {v:Int | v >= 0}
+type Rng N = {v:Int | v >= 0 && v < N}
+
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-Embed primitive constraints directly in logic
+Represent preconditions in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -818,19 +826,22 @@ A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
-rescale 1 1 0 == 0
+>>> rescale 1 1 0
+0
 ```
 
-Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
 
-# Primitive Types: Check
+# Step 3: Check
 
 ```haskell
+type Nat   = {v:Int | v >= 0}
+type Rng N = {v:Int | v >= 0 && v < N}
+
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-Embed primitive constraints directly in logic
+Represent preconditions in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -838,21 +849,24 @@ A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
-rescale 1 1 0 == 0
+>>> rescale 1 1 0
+0
 ```
 
-Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
 
-After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 1$
 
-# Primitive Types: Check
+# Step 3: Check
 
 ```haskell
+type Nat   = {v:Int | v >= 0}
+type Rng N = {v:Int | v >= 0 && v < N}
+
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-Embed primitive constraints directly in logic
+Represent preconditions in logic
 
 $\cstr{C_0} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1}$
 
@@ -860,27 +874,57 @@ A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 1, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
-rescale 1 1 0 == 0
+>>> rescale 1 1 0
+0
 ```
 
-Postcondition is:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
 
-After substitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 1$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**VALID**
 
 . . .
 
-Request another model by **refuting** previous with
+Force new test by adding refutation constraint $\lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 
-$\cstr{C_1} \defeq \cstr{C_0} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
-
-# Primitive Types: Next model
+# Repeat With New Test
 
 ```haskell
+type Nat   = {v:Int | v >= 0}
+type Rng N = {v:Int | v >= 0 && v < N}
+
 rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
 ```
 
-Embed primitive constraints directly in logic
+Represent preconditions in logic, excluding 1st test
+
+$\cstr{C_1} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
+
+. . .
+
+A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
+maps to a concrete test case
+
+```haskell
+>>> rescale 1 0 0
+0
+```
+
+. . .
+
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
+
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 0$
+
+# Repeat With New Test
+
+```haskell
+type Nat   = {v:Int | v >= 0}
+type Rng N = {v:Int | v >= 0 && v < N}
+
+rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
+```
+
+Represent preconditions in logic, excluding 1st test
 
 $\cstr{C_1} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
 
@@ -888,34 +932,15 @@ A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
 maps to a concrete test case
 
 ```haskell
-rescale 1 0 0 == 0
+>>> rescale 1 0 0
+0
 ```
 
-. . .
+Postcondition is:&nbsp;&nbsp;&nbsp;`{v:Int | v >= 0 && v < r2}`
 
-After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$
+After substituting `v` and `r2`:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0\quad\ \wedge\quad 0 < 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**INVALID**
 
-# Primitive Types: Next model
-
-```haskell
-rescale :: r1:Nat -> r2:Nat -> s:Rng r1 -> Rng r2
-rescale r1 r2 s = s * (r2 `div` r1)
-```
-
-Embed primitive constraints directly in logic
-
-$\cstr{C_1} \defeq 0 \leq \cvar{r_1} \wedge 0 \leq \cvar{r_2} \wedge 0 \leq s < \cvar{r_1} \wedge \lnot (\cvar{r_1} = 1 \land \cvar{r_2} = 1 \land \cvar{s} = 0)$
-
-A model $[\cvar{r_1} \mapsto 1, \cvar{r_2} \mapsto 0, \cvar{s} \mapsto 0]$
-maps to a concrete test case
-
-```haskell
-rescale 1 0 0 == 0
-```
-
-After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**INVALID**
-
-`rescale 1 0 0` is a counterexample!
+`rescale 1 0 0` fails the postcondition check!
 
 <!-- ```haskell -->
 <!-- rescale :: r1:Pos -> r2:Pos -> s:Rng r1 -> Rng r2 -->
@@ -923,16 +948,20 @@ After subsitution:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$0 \geq 0 \wedge 0 < 0$&nb
 <!-- ``` -->
 
 # Containers
+ ANIMATE ENITRE SECTION
 
 ```haskell
 type Weight = Pos
 type Score  = Rng 100
+
 average :: [(Weight, Score)] -> Score
 ```
 
 How to encode structured data in SMT formula?
 
 # Containers: Query
+
+ANIMATE TWICE: 2ND WITH CVARS
 
 Generate a **single** set of constraints describing **all possible** inputs.
 
@@ -1053,74 +1082,74 @@ is refuted by
 
 $\lnot (\cvar{c_{00}} = \tfalse \land \cvar{c_{01}} = \ttrue \land \cvar{w_1} = 1 \land \cvar{s_1} = 2 \land \cvar{c_{10}} = \ttrue)$
 
-# Ordered Containers
+<!-- # Ordered Containers -->
 
-```haskell
-insert :: a -> Sorted a -> Sorted a
-```
+<!-- ```haskell -->
+<!-- insert :: a -> Sorted a -> Sorted a -->
+<!-- ``` -->
 
-```haskell
-data Sorted a = []
-              | (:) { h :: a, t :: Sorted {v:a | h < v} }
-```
+<!-- ```haskell -->
+<!-- data Sorted a = [] -->
+<!--               | (:) { h :: a, t :: Sorted {v:a | h < v} } -->
+<!-- ``` -->
 
-Recursive refinement relates the `head` with **each** element of the `tail`.
+<!-- Recursive refinement relates the `head` with **each** element of the `tail`. -->
 
-# Ordered Containers: Query
+<!-- # Ordered Containers: Query -->
 
-```haskell
-insert :: a -> Sorted a -> Sorted a
-```
+<!-- ```haskell -->
+<!-- insert :: a -> Sorted a -> Sorted a -->
+<!-- ``` -->
 
-```haskell
-data Sorted a = []
-              | (:) { h :: a, t :: Sorted {v:a | h < v} }
-```
+<!-- ```haskell -->
+<!-- data Sorted a = [] -->
+<!--               | (:) { h :: a, t :: Sorted {v:a | h < v} } -->
+<!-- ``` -->
 
-Recursive refinement relates the `head` with **each** element of the `tail`.
+<!-- Recursive refinement relates the `head` with **each** element of the `tail`. -->
 
-Instantiate recursive refinement each time we unfold `(:)`
+<!-- Instantiate recursive refinement each time we unfold `(:)` -->
 
-> - Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2`
-> - Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3`
+<!-- > - Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2` -->
+<!-- > - Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3` -->
 
-. . .
+<!-- . . . -->
 
-$\begin{aligned}
-\cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2)
-                   \wedge   (\cvar{c}_{21} \Rightarrow \cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3)
-\end{aligned}$
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{ord}}   & \defeq & (\cvar{c}_{11} \Rightarrow \cvar{x}_1 < \cvar{x}_2) -->
+<!--                    \wedge   (\cvar{c}_{21} \Rightarrow \cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3) -->
+<!-- \end{aligned}$ -->
 
-# Ordered Containers: Guards
+<!-- # Ordered Containers: Guards -->
 
-```haskell
-insert :: a -> Sorted a -> Sorted a
-```
+<!-- ```haskell -->
+<!-- insert :: a -> Sorted a -> Sorted a -->
+<!-- ``` -->
 
-```haskell
-data Sorted a = []
-              | (:) { h :: a, t :: Sorted {v:a | h < v} }
-```
+<!-- ```haskell -->
+<!-- data Sorted a = [] -->
+<!--               | (:) { h :: a, t :: Sorted {v:a | h < v} } -->
+<!-- ``` -->
 
-Recursive refinement relates the `head` with **each** element of the `tail`.
+<!-- Recursive refinement relates the `head` with **each** element of the `tail`. -->
 
-Instantiate recursive refinement each time we unfold `(:)`
+<!-- Instantiate recursive refinement each time we unfold `(:)` -->
 
-- Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2`
-- Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3`
+<!-- - Level 2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x2` -->
+<!-- - Level 3:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`x1 < x3 && x2 < x3` -->
 
-$\begin{aligned}
-\cstr{C_{ord'}}   & \defeq & (\cvar{x}_1 < \cvar{x}_2)
-                    \wedge   (\cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3)
-\end{aligned}$
+<!-- $\begin{aligned} -->
+<!-- \cstr{C_{ord'}}   & \defeq & (\cvar{x}_1 < \cvar{x}_2) -->
+<!--                     \wedge   (\cvar{x}_1 < \cvar{x}_3\ \wedge\ \cvar{x}_2 < \cvar{x}_3) -->
+<!-- \end{aligned}$ -->
 
-. . .
+<!-- . . . -->
 
-Forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ **regardless** of which are in the realized model!
+<!-- Forces $\cvar{x}_1 < \cvar{x}_2 < \cvar{x}_3$ **regardless** of which are in the realized model! -->
 
-. . .
+<!-- . . . -->
 
-Prohibits generation of valid inputs, e.g. `[2,3]`
+<!-- Prohibits generation of valid inputs, e.g. `[2,3]` -->
 
 # Structured Containers
 
@@ -1174,25 +1203,40 @@ $\begin{aligned}
 
 Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{xs}_0}$
 
-# Evaluation
-
-- Compared Target against QuickCheck, SmallCheck, Lazy SmallCheck
-- Real libraries: `Data.Map`, `RBTree`, `XMonad.StackSet`
-- No custom generators
-- `Data.Map`: checked balancing and ordering invariants
-- `RBTree`: checked red-black and ordering invariants
-- `XMonad.StackSet`: checked uniqueness of windows
+# DEMO: Targeting Binary Search Trees
 
 # Evaluation
+
+### GOAL
+1. Target handles highly structured inputs automatically
+2. Generated tests provide high code coverage
+
+### HOW
+1. `Data.Map`: checked balancing and ordering invariants
+2. `RBTree`: checked red-black and ordering invariants
+3. `XMonad.StackSet`: checked uniqueness of windows
+    
+<!-- 3. RESULT -->
+
+# Evaluation: Result
+
+### Target checks larger inputs than brute-force
+
 <img height=500px src="benchmarks.png">
 
-Target can consistently check larger inputs than (Lazy) SmallCheck.
 
 # Takeaway
-> - Target can explore larger input spaces than (Lazy) SmallCheck
-> - QuickCheck requires custom generators for functions with complex preconditions
-> - Dynamic-symbolic execution gets stuck on precondition path-explosion
-> - Target specs are amenable to future formal verification
+
+TARGET - new approach for etc etc
+
+VS enumeration:
+VS sampling:
+VS symbolic execution:
+
+<!-- > - Target can explore larger input spaces than explicit enumeration -->
+<!-- > - Target does not require custom generators -->
+<!-- > - Target  -->
+<!-- > - Target specs are amenable to future formal verification -->
 
 # Backup Slides
 
