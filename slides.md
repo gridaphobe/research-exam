@@ -997,62 +997,51 @@ How to generate lists via SMT solver?
 
 A **single** set of constraints describes **all possible** inputs
 
-<div>
-<img style="float:left;" width=350px src="dot/skeleton-1.png">
-<div style="float:left;">
-</div>
+<div class="skel">
+<img src="dot/skeleton-1.png">
 </div>
 
 # Containers: Query
 
 A **single** set of constraints describes **all possible** inputs
 
-<div>
-<img style="float:left;" width=350px src="dot/skeleton-2.png">
-<div style="float:left;">
-</div>
+<div class="skel">
+<img src="dot/skeleton-2.png">
 </div>
 
 # Containers: Query
 
 A **single** set of constraints describes **all possible** inputs
 
-<div>
-<img style="float:left;" width=350px src="dot/skeleton-3.png">
-<div style="float:left;">
-</div>
+<div class="skel">
+<img src="dot/skeleton-3.png">
 </div>
 
 # Containers: Query
 
 A **single** set of constraints describes **all possible** inputs
 
-<div>
-<img style="float:left;" width=350px src="dot/skeleton-4.png">
-<div style="float:left;">
-</div>
+<div class="skel">
+<img src="dot/skeleton-4.png">
 </div>
 
 # Containers: Query
 
 A **single** set of constraints describes **all possible** inputs
 
-<div>
-<img style="float:left;" width=350px src="dot/skeleton-5.png">
-<div style="float:left;">
-</div>
+<div class="skel">
+<img src="dot/skeleton-5.png">
 </div>
 
 # Containers: Query
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-1-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-1-choice.png">
-<div style="float:left; font-size: 12pt;">
-<div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
-</div>
+
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & \\
 \end{aligned}$
@@ -1063,12 +1052,11 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-2-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-2-choice.png">
-<div style="float:left; font-size: 12pt;">
-<div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
-</div>
+
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1081,12 +1069,11 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-3-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-3-choice.png">
-<div style="float:left; font-size: 12pt;">
-<div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
-</div>
+
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1102,12 +1089,11 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-4-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-4-choice.png">
-<div style="float:left; font-size: 12pt;">
-<div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
-</div>
+
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1126,12 +1112,11 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-5-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
-<div style="float:left; font-size: 12pt;">
-<div style="font-size: 14pt; ">
 Choice variables $\cvar{c}$ **guard** other constraints
-</div>
+
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
@@ -1152,10 +1137,10 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-5-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
-<div style="float:left; font-size: 12pt;">
-<div style="font-size: 14pt; ">
+<div>
 Choice variables $\cvar{c}$ **guard** other constraints
 </div>
 <div>
@@ -1180,7 +1165,7 @@ $\begin{aligned}
                 & \wedge & (\cvar{c}_{21} \Rightarrow \cvar{x}_3 = \ltup{\cvar{w}_3}{\cvar{s}_3} \ \wedge\ 0 < \cvar{w}_3 \ \wedge\ 0 \leq \cvar{s}_3 < 100)
 \end{aligned}$
 </div>
-<div style="font-size: 14pt; ">
+<div>
 Full constraint $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}}$
 </div>
 </div>
@@ -1190,9 +1175,9 @@ Full constraint $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}}$
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-1-decode.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-1-decode.png">
-<div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
 $\begin{aligned}
@@ -1206,9 +1191,9 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-2-decode.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-2-decode.png">
-<div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
 $\begin{aligned}
@@ -1224,9 +1209,9 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-3-decode.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-3-decode.png">
-<div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
 $\begin{aligned}
@@ -1243,9 +1228,9 @@ $\begin{aligned}
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-3-decode.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-3-decode.png">
-<div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
 $\begin{aligned}
@@ -1264,9 +1249,9 @@ Realized value: `[(1,2)]`
 
 A **single** set of constraints describes **all possible** inputs
 
+<div class="skel-query">
+<img src="dot/skeleton-3-decode.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-3-decode.png">
-<div style="float:left; font-size:14pt;">
 Follow the choice variables to reconstruct the list
 
 $\begin{aligned}
@@ -1336,9 +1321,9 @@ Instantiate measure definition each time we unfold `[]` or `(:)`
 best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
+<div class="skel-query">
+<img src="dot/skeleton-5-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
-<div style="float:left; font-size: 12pt;">
 <div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1363,9 +1348,9 @@ $\begin{aligned}
 best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
+<div class="skel-query">
+<img src="dot/skeleton-5-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
-<div style="float:left; font-size: 12pt;">
 <div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1401,9 +1386,9 @@ $\begin{aligned}
 best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 ```
 
+<div class="skel-query">
+<img src="dot/skeleton-5-choice.png">
 <div>
-<img style="float:left;" width=350px src="dot/skeleton-5-choice.png">
-<div style="float:left; font-size: 12pt;">
 <div>
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
@@ -1430,7 +1415,7 @@ $\begin{aligned}
                 & \wedge & (\cvar{c}_{30} \Rightarrow \clen{\cvar{xs}_{3}} = 0) &        &
 \end{aligned}$
 </div>
-<div style="font-size: 14pt; ">
+<div>
 Enforce relation between `k` and `xs` by adding constraint $k \leq \clen{\cvar{xs}_0}$
 
 $\cstr{C} \defeq \cstr{C_{list}} \land \cstr{C_{data}} \land \cstr{C_{size}} \land 0 \leq \cvar{k} \leq \clen{\cvar{xs}_0}$
@@ -1459,13 +1444,13 @@ Compare Target against QuickCheck and SmallCheck
 
 ### Target checks larger inputs than brute-force
 
-<img height=500px src="benchmarks.png">
+<img id="benchmarks" height=500px src="benchmarks.png">
 
 # Evaluation: Results
 
 ### Target provides high coverage with low investment
 
-<img height=300px src="coverage.png">
+<img id="coverage" height=300px src="coverage.png">
 
 # Takeaway
 

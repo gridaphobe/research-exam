@@ -1,5 +1,35 @@
 div.slide {
-    width: 960px;
+    width: 1200px;
     margin-left: auto;
     margin-right: auto;
+}
+
+#benchmarks {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#coverage {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.skel img {
+    height: 750px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.skel-query {
+}
+
+.skel-query img {
+    margin-top: 50px;
+    width: 390px;
+    float: left;
+}
+
+.skel-query > div {
+    font-size: 16pt;
+    float: left;
 }

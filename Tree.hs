@@ -18,7 +18,11 @@ data Tree a
   | Node a (Tree a) (Tree a)
   deriving (Show, Generic)
 
-{-@ type BST a = {v:Tree <{\root v -> v < root}, {\root v -> v > root}> a | balanced v} @-}
+{-@ type BST a = {v:Tree < {\root v -> v < root}
+                         , {\root v -> v > root} >
+                         a
+                 | Balanced v}
+  @-}
 
 {-@ predicate Balanced T = (-1) <= bFac T && bFac T <= 1 @-}
 
@@ -46,29 +50,11 @@ prop_insert_bst_sc  x t = isBST t SC.==> isBST (insert x t)
 
 {-@ data Tree a <pl :: Int -> Int -> Prop, pr :: Int -> Int -> Prop> =
         Leaf
-      | Node { xxx :: a
-             , lll :: Tree <pl,pr> (a<pl xxx>)
-             , rrr :: Tree <pl,pr> (a<pr xxx>)
+      | Node { elem  :: a
+             , left  :: Tree <pl,pr> (a<pl elem>)
+             , right :: Tree <pl,pr> (a<pr elem>)
              }
   @-}
-
-{- type TreeL X = Tree <{\v -> v < X}> @-}
-{- type TreeR X = Tree <{\v -> v > X}> @-}
-
-
-{- data Tree <p :: Int -> Prop> =
-        Leaf
-      | Node { x :: Int<p>
-             , l :: TreeL x
-             , r :: TreeR x
-             }
-  @-}
-
-{- type TreeL X = Tree <{\v -> v < X}> @-}
-{- type TreeR X = Tree <{\v -> v > X}> @-}
-
-
-
 
 instance Targetable a => Targetable (Tree a)
 
@@ -137,6 +123,7 @@ getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
     hl        = getHeight l
     hr        = getHeight r
 
+{-@ measure bFac @-}
 bFac :: Tree a -> Int
 bFac Leaf         = 0
 bFac (Node _ l r) = getHeight l - getHeight r 
