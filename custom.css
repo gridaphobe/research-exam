@@ -1,35 +1,40 @@
 div.slide {
+    margin-top: 100px;
     width: 1200px;
     margin-left: auto;
     margin-right: auto;
 }
 
-#benchmarks {
+img#benchmarks-fig {
+    width: 1000px;
     margin-left: auto;
     margin-right: auto;
 }
 
-#coverage {
+img#coverage-fig {
+    width: 1000px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .skel img {
-    height: 750px;
+    height: 650px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .skel-query {
+    /* margin-top: 100px; */
 }
 
 .skel-query img {
     margin-top: 50px;
-    width: 390px;
+    width: 450px;
     float: left;
 }
 
 .skel-query > div {
+    margin-top: 25px;
     font-size: 16pt;
     float: left;
 }

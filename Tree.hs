@@ -21,10 +21,21 @@ data Tree a
 {-@ type BST a = {v:Tree < {\root v -> v < root}
                          , {\root v -> v > root} >
                          a
-                 | Balanced v}
+                 | balanced v}
   @-}
 
-{-@ predicate Balanced T = (-1) <= bFac T && bFac T <= 1 @-}
+{-@ measure balanced :: Tree a -> Prop
+    balanced (Leaf) = true
+    balanced (Node x l r) = height l - height r <= 1
+                         && height r - height l <= 1
+                         && balanced l && (balanced r)
+  @-}
+
+{-@ measure height :: Tree a -> Int
+    height (Leaf) = 0
+    height (Node x l r) = 1 + if (height l) > (height r)
+                                 then (height l) else (height r)
+  @-}
 
 {-@ insert :: Int -> BST Int -> BST Int @-}
 insert :: Int -> Tree Int -> Tree Int
@@ -101,21 +112,11 @@ tree = Node
 
 singleton x = Node x Leaf Leaf
 
-{-@ measure balanced :: Tree a -> Prop
-    balanced (Leaf) = true
-    balanced (Node x l r) = getHeight l - getHeight r <= 1
-                         && getHeight r - getHeight l <= 1
-                         && balanced l && (balanced r)
-  @-}
 balanced :: Tree a -> Bool
 balanced Leaf = True
 balanced (Node _ l r) = (-1) <= d && d <= 1 && balanced l && balanced r
   where d = getHeight l - getHeight r
 
-{-@ measure getHeight :: Tree a -> Int
-    getHeight (Leaf) = 0
-    getHeight (Node x l r) = 1 + if (getHeight l) > (getHeight r) then (getHeight l) else (getHeight r)
-  @-}
 getHeight :: Tree a -> Int
 getHeight Leaf         = 0
 getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
@@ -123,7 +124,6 @@ getHeight (Node _ l r) = 1 + if hl > hr then hl else hr
     hl        = getHeight l
     hr        = getHeight r
 
-{-@ measure bFac @-}
 bFac :: Tree a -> Int
 bFac Leaf         = 0
 bFac (Node _ l r) = getHeight l - getHeight r 

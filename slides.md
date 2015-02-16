@@ -1060,7 +1060,7 @@ Choice variables $\cvar{c}$ **guard** other constraints
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
 \end{aligned}$
 </div>
 </div>
@@ -1077,10 +1077,10 @@ Choice variables $\cvar{c}$ **guard** other constraints
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
 \end{aligned}$
 </div>
 </div>
@@ -1097,13 +1097,13 @@ Choice variables $\cvar{c}$ **guard** other constraints
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
 \end{aligned}$
 </div>
 </div>
@@ -1120,15 +1120,15 @@ Choice variables $\cvar{c}$ **guard** other constraints
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+                           (\cvar{c}_{21} \Rightarrow \cvar{c}_{30})\\
 \end{aligned}$
 </div>
 </div>
@@ -1147,15 +1147,15 @@ Choice variables $\cvar{c}$ **guard** other constraints
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+                           (\cvar{c}_{21} \Rightarrow \cvar{c}_{30})\\
 \end{aligned}$
 </div>
 <div>
@@ -1328,15 +1328,15 @@ best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+                           (\cvar{c}_{21} \Rightarrow \cvar{c}_{30})\\
 \end{aligned}$
 </div>
 </div>
@@ -1355,15 +1355,15 @@ best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+                           (\cvar{c}_{21} \Rightarrow \cvar{c}_{30})\\
 \end{aligned}$
 </div>
 <div>
@@ -1393,15 +1393,15 @@ best :: k:Nat -> {xs:[Score] | k <= len xs} -> {v:[Score] | k = len v}
 $\begin{aligned}
 \cstr{C_{list}} & \defeq & (\cvar{c}_{00} \Rightarrow \cvar{xs}_0 = \lnil) & \wedge &
                            (\cvar{c}_{01} \Rightarrow \cvar{xs}_0 = \lcons{\cvar{x}_1}{\cvar{xs}_1}) & \wedge &
-                           & & (\cvar{c}_{00} & \oplus & \cvar{c}_{01}) \\
+                           (\cvar{c}_{00} \oplus \cvar{c}_{01}) \\
                 & \wedge & (\cvar{c}_{10} \Rightarrow \cvar{xs}_1 = \lnil) & \wedge &
                            (\cvar{c}_{11} \Rightarrow \cvar{xs}_1 = \lcons{\cvar{x}_2}{\cvar{xs}_2}) & \wedge &
-                           (\cvar{c}_{01} & \Rightarrow & \cvar{c}_{10} & \oplus & \cvar{c}_{11}) \\
+                           (\cvar{c}_{01} \Rightarrow \cvar{c}_{10} \oplus \cvar{c}_{11}) \\
                 & \wedge & (\cvar{c}_{20} \Rightarrow \cvar{xs}_2 = \lnil) & \wedge &
                            (\cvar{c}_{21} \Rightarrow \cvar{xs}_2 = \lcons{\cvar{x}_3}{\cvar{xs}_3}) & \wedge &
-                           (\cvar{c}_{11} & \Rightarrow & \cvar{c}_{20} & \oplus & \cvar{c}_{21}) \\
+                           (\cvar{c}_{11} \Rightarrow \cvar{c}_{20} \oplus \cvar{c}_{21}) \\
                 & \wedge & (\cvar{c}_{30} \Rightarrow \cvar{xs}_3 = \lnil) & & & \wedge &
-                           (\cvar{c}_{21} & \Rightarrow & \cvar{c}_{30}) & &\\
+                           (\cvar{c}_{21} \Rightarrow \cvar{c}_{30})\\
 \end{aligned}$
 </div>
 <div>
@@ -1444,13 +1444,13 @@ Compare Target against QuickCheck and SmallCheck
 
 ### Target checks larger inputs than brute-force
 
-<img id="benchmarks" height=500px src="benchmarks.png">
+<img id="benchmarks-fig" src="benchmarks.png">
 
 # Evaluation: Results
 
 ### Target provides high coverage with low investment
 
-<img id="coverage" height=300px src="coverage.png">
+<img id="coverage-fig" src="coverage.png">
 
 # Takeaway
 
